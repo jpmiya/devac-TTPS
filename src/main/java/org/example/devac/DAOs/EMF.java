@@ -1,5 +1,9 @@
 package org.example.devac.DAOs;
 
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceException;
+
 public class EMF {
     private static EntityManagerFactory em = null;
     static {
