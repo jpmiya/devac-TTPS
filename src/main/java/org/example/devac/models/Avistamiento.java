@@ -15,7 +15,11 @@ public class Avistamiento {
     private String coordenadas;
     private String comentario;
     @ManyToOne
+    @JoinColumn(name = "USUARIO_ID")
     private Usuario usuario;
+    @ManyToOne
+    @JoinColumn(name = "MASCOTA_ID")
+    private Mascota mascota;
 
     // Constructor
     public Avistamiento(String fecha, String foto, String coordenadas, String comentario) {
@@ -41,6 +45,14 @@ public class Avistamiento {
 
     public String getComentario() {
         return comentario;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public Mascota getMascota() {
+        return mascota;
     }
 
 }

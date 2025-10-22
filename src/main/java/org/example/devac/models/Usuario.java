@@ -23,9 +23,10 @@ public class Usuario {
     private int puntos;
     private RolEnum rol;
     private int casosEnZona;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
     private List<Medalla> medallas;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
-    @JoinColumn(name = "USUARIO_ID", nullable = false)
+    @OneToMany(mappedBy = "usuario", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     private List<Avistamiento> avistamientos;
 
     // Constructor

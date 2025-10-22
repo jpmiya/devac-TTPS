@@ -3,8 +3,8 @@ package org.example.devac.DAOs;
 import jakarta.persistence.EntityManager;
 import org.example.devac.models.Usuario;
 
-public class UsuarioDAOHibernateJPA extends GenericDAOHibernateJPA
-        implements UsuarioDAO{
+public class UsuarioDAOHibernateJPA extends GenericDAOHibernateJPA<Usuario>
+    implements UsuarioDAO<Usuario>{
 
 
     public UsuarioDAOHibernateJPA(){

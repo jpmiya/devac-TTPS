@@ -55,12 +55,32 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
 
     @Override
     public void delete(Long id) {
-
+        EntityManager em = EMF.getEMF().createEntityManager();
+        EntityTransaction tx = null;
+        try {
+            tx = em.getTransaction();
+            tx.begin();
+            T toRemove = em.find(getPersistentClass(), id);
+            if (toRemove != null) {
+                em.remove(toRemove);
+            }
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx != null && tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public T get(Long id) {
-        return null;
+        EntityManager em = EMF.getEMF().createEntityManager();
+        try {
+            return em.find(getPersistentClass(), id);
+        } finally {
+            em.close();
+        }
     }
 
     public List<T> getAll(String columnOrder) {
