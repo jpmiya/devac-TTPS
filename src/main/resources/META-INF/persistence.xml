@@ -8,7 +8,7 @@
         <class>org.example.devac.HelloApplication</class>
         <properties>
             <!-- JDBC -->
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysqL.cj.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url"
                   value="jdbc:mysql://localhost:3306/mibd?useSSL=false&amp;serverTimezone=UTC"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>

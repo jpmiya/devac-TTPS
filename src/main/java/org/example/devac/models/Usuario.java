@@ -114,6 +114,8 @@ public class Usuario {
         return casosEnZona;
     }
 
+    public long getId() { return id; }
+
     public List<Medalla> getMedallas() {
         return medallas;
     }
@@ -138,4 +140,9 @@ public class Usuario {
     public void setPosicion(int posicion) {
         this.posicion = posicion;
     }
+
+    public void setMail(String mail) {this.mail = mail;}
+
+    public void setNombreYApellido(String nombreYApellido){this.nombreYApellido = nombreYApellido;}
+
 }
