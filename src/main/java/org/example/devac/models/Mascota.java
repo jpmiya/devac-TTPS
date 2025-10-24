@@ -50,6 +50,10 @@ public class Mascota {
         return avistamientos;
     }
     
+    public Long getId() {
+        return id;
+    }
+    
     public String getNombre() {
         return this.nombre;
     }

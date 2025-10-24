@@ -39,6 +39,11 @@
             <version>7.0.4.Final</version>
         </dependency>
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
             <version>4.0.5</version>
@@ -60,6 +65,13 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Jakarta Persistence (JPA API) -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

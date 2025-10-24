@@ -17,7 +17,7 @@ public class GenericDAOTest {
 
     @BeforeAll
     static void initEMF() {
-        emf = Persistence.createEntityManagerFactory("unlp-test");
+        emf = Persistence.createEntityManagerFactory("devac");
     }
 
     @AfterAll
@@ -27,7 +27,7 @@ public class GenericDAOTest {
 
     @BeforeEach
     void setUp() {
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         tx = em.getTransaction();
         tx.begin();
 
@@ -110,7 +110,8 @@ public class GenericDAOTest {
         genericDao.persist(u2);
         em.flush();
 
-        assertTrue(genericDao.getAll("asc").size() >= 2);
+        // order by nombreYApellido so the JPQL 'order by e.<field>' is valid
+        assertTrue(genericDao.getAll("nombreYApellido").size() >= 2);
         tx.commit();
     }
 }

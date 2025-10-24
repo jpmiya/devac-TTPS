@@ -14,6 +14,7 @@ public class Usuario {
     @Column(name="USUARIO_ID")
     private Long id;
     private String nombreYApellido;
+    @Column(unique = true, nullable = false)
     private String mail;
     private String password;
     private String telefono;
@@ -50,8 +51,9 @@ public class Usuario {
     }
 
 
-    public void crearAvistamiento(String nombreMascota, String coordenadas, String foto, Date fecha, String comentario) {
-        // Por implementar
+    public void crearAvistamiento(long idMascota, String coordenadas, String foto, String fecha, String comentario) {
+        Avistamiento a = new Avistamiento(idMascota, coordenadas, foto, fecha, comentario);
+        this.avistamientos.add(a);
     }
 
     public void sumarPuntos(int cantidad) {
@@ -63,14 +65,10 @@ public class Usuario {
     }
 
     public void crearMascotaPerdida(Mascota mascota) {
-        // Por implementar
+
     }
 
     public void obtenerMedalla(String medalla) {
-        // Por implementar
-    }
-
-    public void mascotaEncontrada(Mascota mascota) {
         // Por implementar
     }
 

@@ -8,7 +8,7 @@ public class EMF {
     private static EntityManagerFactory em = null;
     static {
         try {
-            em = Persistence.createEntityManagerFactory("unlp");
+            em = Persistence.createEntityManagerFactory("devac");
         } catch (PersistenceException e) {
             System.err.println("Error al crear EntityManagerFactory: "+e.getMessage());
             e.printStackTrace();
