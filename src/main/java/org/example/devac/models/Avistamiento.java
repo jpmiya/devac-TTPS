@@ -2,8 +2,6 @@ package org.example.devac.models;
 
 
 import jakarta.persistence.*;
-import org.example.devac.DAOs.MascotaDAO;
-import org.example.devac.DAOs.MascotaDAOHibernateJPA;
 
 @Entity
 public class Avistamiento {
@@ -16,26 +14,22 @@ public class Avistamiento {
     private String foto; // arreglo de bytes
     private String coordenadas;
     private String comentario;
+    // que no se permita un Avistamiento q no tiene un usuario ni una mascota
     @ManyToOne
-    @JoinColumn(name = "USUARIO_ID")
+    @JoinColumn(name = "USUARIO_ID", nullable = false)
     private Usuario usuario;
     @ManyToOne
-    @JoinColumn(name = "MASCOTA_ID")
+    @JoinColumn(name = "MASCOTA_ID", nullable = false)
     private Mascota mascota;
 
     // Constructor
-    public Avistamiento(long idMascota, String fecha, String foto, String coordenadas, String comentario) {
+    public Avistamiento(Usuario usuario,Mascota mascota, String fecha, String foto, String coordenadas, String comentario) {
         this.fecha = fecha;
         this.foto = foto;
         this.coordenadas = coordenadas;
         this.comentario = comentario;
-        MascotaDAO<Mascota> md =  new MascotaDAOHibernateJPA();
-        // load the mascota only if a valid id was provided
-        if (idMascota > 0) {
-            this.mascota = md.get(idMascota);
-        } else {
-            this.mascota = null;
-        }
+        this.mascota = mascota;
+        this.usuario = usuario;
     }
 
     public Avistamiento() {}

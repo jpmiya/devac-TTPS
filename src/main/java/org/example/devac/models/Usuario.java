@@ -1,6 +1,7 @@
 package org.example.devac.models;
 
 import jakarta.persistence.*;
+import org.example.devac.repositories.AvistamientoRepo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +31,7 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     private List<Avistamiento> avistamientos;
 
+
     // Constructor
     public Usuario(String nombreYApellido, String mail, String password, String telefono,
                    String barrio, String ciudad, int posicion, int puntos, int casosEnZona) {
@@ -47,12 +49,13 @@ public class Usuario {
     }
 
     public Usuario() {
-
     }
 
 
-    public void crearAvistamiento(long idMascota, String coordenadas, String foto, String fecha, String comentario) {
-        Avistamiento a = new Avistamiento(idMascota, coordenadas, foto, fecha, comentario);
+    public void crearAvistamiento(Mascota mascota, String coordenadas, String foto, String fecha, String comentario, AvistamientoRepo avistamientoRepo) {
+        //el avistamiento repo solo va a estar por ahora para q pase esto, despues se va a service
+        Avistamiento a = new Avistamiento(this ,mascota, coordenadas, foto, fecha, comentario);
+        avistamientoRepo.save(a);
         this.avistamientos.add(a);
     }
 
