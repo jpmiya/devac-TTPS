@@ -146,4 +146,7 @@ public class Usuario {
 
     public void setNombreYApellido(String nombreYApellido){this.nombreYApellido = nombreYApellido;}
 
+    public void setPassword(String hashed) {
+
+    }
 }
