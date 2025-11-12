@@ -16,7 +16,7 @@ public class Usuario {
     private Long id;
     private String nombreYApellido;
     @Column(unique = true, nullable = false)
-    private String mail;
+    private String email;
     private String password;
     private String telefono;
     private String barrio;
@@ -33,10 +33,10 @@ public class Usuario {
 
 
     // Constructor
-    public Usuario(String nombreYApellido, String mail, String password, String telefono,
+    public Usuario(String nombreYApellido, String email, String password, String telefono,
                    String barrio, String ciudad, int posicion, int puntos, int casosEnZona) {
         this.nombreYApellido = nombreYApellido;
-        this.mail = mail;
+        this.email = email;
         this.password = password;
         this.telefono = telefono;
         this.barrio = barrio;
@@ -83,8 +83,8 @@ public class Usuario {
         return nombreYApellido;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
     public String getPassword() {
@@ -142,7 +142,7 @@ public class Usuario {
         this.posicion = posicion;
     }
 
-    public void setMail(String mail) {this.mail = mail;}
+    public void setMail(String email) {this.email = email;}
 
     public void setNombreYApellido(String nombreYApellido){this.nombreYApellido = nombreYApellido;}
 

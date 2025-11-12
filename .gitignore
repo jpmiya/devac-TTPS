@@ -1,3 +1,20 @@
+# IDE / build
+/.idea/
+/target/
+/out/
+*.iml
+
+# Logs
+*.log
+
+# Local Spring config with secrets (do NOT commit real application.properties)
+/src/main/resources/application.properties
+
+# Optional env
+.env
+
+# OS
+.DS_Store
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

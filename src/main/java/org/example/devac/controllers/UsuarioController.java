@@ -4,13 +4,12 @@ import org.example.devac.models.Usuario;
 import org.example.devac.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
+@RestController
+@RequestMapping("/usuario")
 public class UsuarioController {
 
     @Autowired
@@ -22,7 +21,9 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody String email, @RequestBody String password) {
+    public ResponseEntity<Boolean> login(@RequestBody Map<String,String> body) {
+        String email = body.get("email");
+        String password = body.get("password");
         return ResponseEntity.ok(usuarioService.login(email,password));
     }
 
