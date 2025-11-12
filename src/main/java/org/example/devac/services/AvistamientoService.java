@@ -7,4 +7,5 @@ import java.util.List;
 public interface AvistamientoService {
     public Avistamiento createAvistamiento(Avistamiento avistamiento);
     public List<Avistamiento> getAvistamientos();
+
 }

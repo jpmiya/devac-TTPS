@@ -21,6 +21,7 @@ public class AvistamientoServiceImpl implements AvistamientoService {
     @Override
     public List<Avistamiento> getAvistamientos(){
         return avistamientoRepo.findAll();
+
     }
 
 
