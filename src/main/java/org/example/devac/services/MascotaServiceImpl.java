@@ -30,7 +30,7 @@ public class MascotaServiceImpl implements MascotaService {
         mascotaRepo.delete(mascota);
     }
 
-    public List<Mascota> findAllLost() {
+    public List<Mascota> getAllLost() {
         List<Mascota> perdidos = mascotaRepo.findAllByEstado(EstadoMascota.PERDIDO_AJENO);
         List<Mascota> perdidosMios = mascotaRepo.findAllByEstado(EstadoMascota.PERDIDO_PROPIO);
         perdidos.addAll(perdidosMios);
