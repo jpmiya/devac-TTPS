@@ -47,11 +47,27 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     public Usuario registrarMascota(Mascota mascota, Long idUsuario) {
-        this.mascotaService.registrar(mascota);
-        Usuario usuario = usuarioRepo.findById(idUsuario).get();
-        usuario.agregarMascota(mascota);
-        this.editar(idUsuario, usuario);
+       Usuario usuario = usuarioRepo.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+       usuario.agregarMascota(mascota);
+       usuarioRepo.save(usuario);
+       return usuario;
+    }
+
+    public Usuario editarMascota(Mascota mascota, Long idUsuario) {
+        Usuario usuario = usuarioRepo.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        mascota.setDueno(usuario);
+        mascotaService.editar(mascota);
         return usuario;
     }
+
+    public Usuario eliminarMascota(Mascota mascota,Long idUsuario) {
+        Usuario usuario = usuarioRepo.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.eliminarMascota(mascota);
+        mascotaService.eliminar(mascota);
+        usuarioRepo.save(usuario);
+        return usuario;
+    }
+
+
 
 }

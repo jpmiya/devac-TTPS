@@ -46,6 +46,11 @@ public class Mascota {
 
     }
 
+
+    public void setDueno(Usuario dueno) {
+        this.dueno = dueno;
+    }
+
     public List<Avistamiento> getAvistamientos() {
         return avistamientos;
     }

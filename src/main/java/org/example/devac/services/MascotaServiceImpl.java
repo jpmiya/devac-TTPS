@@ -24,6 +24,10 @@ public class MascotaServiceImpl implements MascotaService {
         return mascotaRepo.save(mascota);
     }
 
+    public void eliminar(Mascota mascota) {
+        mascotaRepo.delete(mascota);
+    }
+
 
 
 

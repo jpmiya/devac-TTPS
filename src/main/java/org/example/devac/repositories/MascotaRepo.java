@@ -12,5 +12,6 @@ public interface MascotaRepo extends  JpaRepository<Mascota,Long>{
     Optional<Mascota> findById(long id);
     Optional<Mascota> findByNombre(String nombre);
     Optional<Mascota> findByEstado(EstadoMascota estado);
+
 }
 

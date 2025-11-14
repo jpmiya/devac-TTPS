@@ -31,8 +31,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     private List<Avistamiento> avistamientos;
 
-    @OneToMany(mappedBy = "usuario", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
-    private List<Mascota>  mascotas;
+    @OneToMany(mappedBy = "dueno", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Mascota> mascotas;
+
 
 
     // Constructor
@@ -59,6 +60,7 @@ public class Usuario {
 
     public Mascota agregarMascota(Mascota mascota) {
         this.mascotas.add(mascota);
+        return mascota;
     }
 
     public void crearAvistamiento(Mascota mascota, String coordenadas, String foto, String fecha, String comentario, AvistamientoRepo avistamientoRepo) {
@@ -66,6 +68,10 @@ public class Usuario {
         Avistamiento a = new Avistamiento(this ,mascota, coordenadas, foto, fecha, comentario);
         avistamientoRepo.save(a);
         this.avistamientos.add(a);
+    }
+
+    public void eliminarMascota(Mascota mascota) {
+        this.mascotas.remove(mascota);
     }
 
     public void sumarPuntos(int cantidad) {

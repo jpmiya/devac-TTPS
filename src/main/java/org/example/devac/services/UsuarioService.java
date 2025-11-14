@@ -12,4 +12,6 @@ public interface UsuarioService {
     Usuario editar(Long id,Usuario usuario);
     boolean login(String email, String password);
     Usuario registrarMascota(Mascota mascota, Long idUsuario);
+    Usuario editarMascota(Mascota mascota, Long idUsuario);
+    Usuario eliminarMascota(Mascota mascota,Long idUsuario);
 }
