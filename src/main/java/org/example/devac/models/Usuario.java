@@ -1,6 +1,7 @@
 package org.example.devac.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.example.devac.repositories.AvistamientoRepo;
 
@@ -9,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@JsonIgnoreProperties({"avistamientos", "mascotas", "password"})
+@JsonIgnoreProperties({"avistamientos", "mascotas"})
 public class Usuario {
 
     @Id
@@ -19,6 +20,7 @@ public class Usuario {
     private String nombreYApellido;
     @Column(unique = true, nullable = false)
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String telefono;
     private String barrio;
