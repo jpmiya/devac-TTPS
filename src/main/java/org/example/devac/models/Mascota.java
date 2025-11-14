@@ -1,11 +1,13 @@
 package org.example.devac.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import java.util.List;
 import jakarta.persistence.*;
 
 
 @Entity
+@JsonIgnoreProperties({"avistamientos"})
 public class Mascota {
 
     @Id
@@ -85,5 +87,54 @@ public class Mascota {
 
     public String getDescripcion() {
         return this.descripcion;
+    }
+
+    public String getTipo() {
+        return this.tipo;
+    }
+
+    public String getRaza() {
+        return this.raza;
+    }
+
+    public Usuario getDueno() {
+        return this.dueno;
+    }
+
+    // Setters
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setTamaño(String tamaño) {
+        this.tamaño = tamaño;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public void setFechaDePerdida(LocalDate fecha) {
+        this.fecha_de_perdida = fecha;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
+    public void setCoordenadas(String coordenadas) {
+        this.coordenadas = coordenadas;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setRaza(String raza) {
+        this.raza = raza;
     }
 }

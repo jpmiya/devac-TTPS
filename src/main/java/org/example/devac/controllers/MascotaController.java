@@ -1,5 +1,6 @@
 package org.example.devac.controllers;
 
+import org.example.devac.dto.MascotaRequest;
 import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
 import org.example.devac.services.MascotaService;
@@ -17,8 +18,8 @@ public class MascotaController {
     private MascotaService mascotaService;
 
     @PostMapping("/register")
-    public ResponseEntity<Mascota> registrar(@RequestBody Mascota mascota) {
-        return ResponseEntity.ok(mascotaService.registrar(mascota));
+    public ResponseEntity<Mascota> registrar(@RequestBody MascotaRequest request) {
+        return ResponseEntity.ok(mascotaService.registrar(request));
     }
 
     @PutMapping("/{id}")

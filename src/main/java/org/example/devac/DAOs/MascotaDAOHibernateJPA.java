@@ -24,4 +24,16 @@ public class MascotaDAOHibernateJPA extends GenericDAOHibernateJPA<Mascota> impl
             em.close();
         }
     }
+
+    @Override
+    public List<Mascota> getByUsuarioId(Long usuarioId) {
+        EntityManager em = EMF.getEMF().createEntityManager();
+        try {
+            return em.createQuery("SELECT m FROM " + getPersistentClass().getSimpleName() + " m WHERE m.dueno.id = :usuarioId", Mascota.class)
+                    .setParameter("usuarioId", usuarioId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

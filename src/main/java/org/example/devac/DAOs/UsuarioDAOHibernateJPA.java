@@ -20,9 +20,10 @@ public class UsuarioDAOHibernateJPA extends GenericDAOHibernateJPA<Usuario>
         Usuario usr;
         try {
             //we get the user from the database
-            usr = (Usuario) em.createQuery("SELECT m FROM " +
-                            this.getPersistentClass().getSimpleName() + " m WHERE m.mail = :mail")
-                    .setParameter("mail", mail).getSingleResult();
+            usr = em.createQuery("SELECT m FROM " +
+                            this.getPersistentClass().getSimpleName() + " m WHERE m.email = :mail", Usuario.class)
+                    .setParameter("mail", mail)
+                    .getSingleResult();
         } catch (Exception e) {
             usr = null;
         } finally {

@@ -4,6 +4,7 @@ import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -14,4 +15,5 @@ public interface UsuarioService {
     Usuario registrarMascota(Mascota mascota, Long idUsuario);
     Usuario editarMascota(Mascota mascota, Long idUsuario);
     Usuario eliminarMascota(Mascota mascota,Long idUsuario);
+    List<Mascota> getMascotasDeUsuario(Long idUsuario);
 }

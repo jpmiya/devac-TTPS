@@ -1,6 +1,7 @@
 package org.example.devac.controllers;
 
 
+import org.example.devac.dto.AvistamientoRequest;
 import org.example.devac.models.Avistamiento;
 import org.example.devac.models.Mascota;
 import org.example.devac.services.MascotaService;
@@ -19,11 +20,11 @@ public class AvistamientoController {
     private AvistamientoService avistamientoService;
 
     @PostMapping("/create")
-    public ResponseEntity<Avistamiento> create(@RequestBody Avistamiento avistamiento) {
-        return ResponseEntity.ok(avistamientoService.createAvistamiento(avistamiento));
+    public ResponseEntity<Avistamiento> create(@RequestBody AvistamientoRequest request) {
+        return ResponseEntity.ok(avistamientoService.createAvistamiento(request));
     }
 
-    @PutMapping("/all")
+    @GetMapping("/all")
     public ResponseEntity<List<Avistamiento>> getAvistamientos() {
         return ResponseEntity.ok(avistamientoService.getAvistamientos());
     }

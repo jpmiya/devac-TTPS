@@ -22,7 +22,7 @@ public class AppConfig {
     @Bean
     public LocalEntityManagerFactoryBean entityManagerFactory() {
         LocalEntityManagerFactoryBean emfb = new LocalEntityManagerFactoryBean();
-        emfb.setPersistenceUnitName("default");
+        emfb.setPersistenceUnitName("devac");
         return emfb;
     }
 

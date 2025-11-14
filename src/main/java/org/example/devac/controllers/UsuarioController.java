@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,22 +31,27 @@ public class UsuarioController {
 
 
     @PutMapping("/edit/{id}")
-    public ResponseEntity<Usuario> editUser(@PathVariable Long id, @RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> editUser(@PathVariable("id") Long id, @RequestBody Usuario usuario) {
         return ResponseEntity.ok(usuarioService.editar(id,usuario));
     }
 
     @PostMapping("/createMascota/{id}")
-    public ResponseEntity<Usuario> registrarMascota(@RequestBody Mascota mascota,@PathVariable Long id) {
+    public ResponseEntity<Usuario> registrarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
         return ResponseEntity.ok(usuarioService.registrarMascota(mascota,id));
     }
 
     @PostMapping("/editMascota/{id}")
-    public ResponseEntity<Usuario> editarMascota(@RequestBody Mascota mascota,@PathVariable Long id) {
+    public ResponseEntity<Usuario> editarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
         return ResponseEntity.ok(usuarioService.editarMascota(mascota,id));
     }
 
     @PostMapping("/deleteMascota/{id}")
-    public ResponseEntity<Usuario> eliminarMascota(@RequestBody Mascota mascota,@PathVariable Long id) {
+    public ResponseEntity<Usuario> eliminarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
         return ResponseEntity.ok(usuarioService.eliminarMascota(mascota,id));
+    }
+
+    @GetMapping("/{id}/mascotas")
+    public ResponseEntity<List<Mascota>> getMascotasDeUsuario(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(usuarioService.getMascotasDeUsuario(id));
     }
 }
