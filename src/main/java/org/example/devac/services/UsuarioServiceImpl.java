@@ -1,6 +1,8 @@
 package org.example.devac.services;
 
+import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
+import org.example.devac.repositories.MascotaRepo;
 import org.example.devac.repositories.UsuarioRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +16,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     UsuarioRepo usuarioRepo;
+    @Autowired
+    MascotaService mascotaService;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -31,6 +35,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public boolean login(String email, String password) {
+
         Optional<Usuario> usuarioOpt = usuarioRepo.findByEmail(email);
         if (usuarioOpt.isEmpty()) {
             return false;
@@ -40,4 +45,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Comparar la contraseña ingresada (en texto plano) con el hash guardado
         return passwordEncoder.matches(password, usuario.getPassword());
     }
+
+    public Usuario registrarMascota(Mascota mascota, Long idUsuario) {
+        this.mascotaService.registrar(mascota);
+        Usuario usuario = usuarioRepo.findById(idUsuario).get();
+        usuario.agregarMascota(mascota);
+        this.editar(idUsuario, usuario);
+        return usuario;
+    }
+
 }

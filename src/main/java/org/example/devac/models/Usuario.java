@@ -31,6 +31,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     private List<Avistamiento> avistamientos;
 
+    @OneToMany(mappedBy = "usuario", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
+    private List<Mascota>  mascotas;
+
 
     // Constructor
     public Usuario(String nombreYApellido, String email, String password, String telefono,
@@ -46,11 +49,17 @@ public class Usuario {
         this.casosEnZona = casosEnZona;
         this.medallas = new ArrayList<>();
         this.avistamientos = new ArrayList<>();
+        this.mascotas = new ArrayList<>();
     }
 
     public Usuario() {
     }
 
+
+
+    public Mascota agregarMascota(Mascota mascota) {
+        this.mascotas.add(mascota);
+    }
 
     public void crearAvistamiento(Mascota mascota, String coordenadas, String foto, String fecha, String comentario, AvistamientoRepo avistamientoRepo) {
         //el avistamiento repo solo va a estar por ahora para q pase esto, despues se va a service
