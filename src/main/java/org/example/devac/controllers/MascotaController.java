@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/mascota")
 public class MascotaController {
@@ -23,4 +25,10 @@ public class MascotaController {
     public ResponseEntity<Mascota> editar(@RequestBody Mascota mascota) {
         return ResponseEntity.ok(mascotaService.editar(mascota));
     }
+
+    @GetMapping("/getAllLost")
+    public ResponseEntity<List<Mascota>> getAllLost() {
+        return ResponseEntity.ok(mascotaService.getAllLost());
+    }
+
 }
