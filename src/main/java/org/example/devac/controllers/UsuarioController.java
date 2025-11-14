@@ -40,7 +40,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.registrarMascota(mascota,id));
     }
 
-    @PostMapping("/editMascota/{id}")
+    @PutMapping("/editMascota/{id}")
     public ResponseEntity<Usuario> editarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
         return ResponseEntity.ok(usuarioService.editarMascota(mascota,id));
     }
