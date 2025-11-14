@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.EntityTransaction;
 
 import java.util.List;
 import java.util.UUID;
@@ -50,16 +51,16 @@ public class UsuarioDAOTest {
         EntityManager em = EMF.getEMF().createEntityManager();
         try {
             TypedQuery<Usuario> q = em.createQuery(
-                    "SELECT x FROM Usuario x WHERE x.mail = :mail", Usuario.class);
-            q.setParameter("mail", email);
+                    "SELECT x FROM Usuario x WHERE x.email = :email", Usuario.class);
+            q.setParameter("email", email);
             Usuario found = q.getSingleResult();
             assertNotNull(found);
-            assertEquals(email, found.getMail());
+            assertEquals(email, found.getEmail());
         } finally {
             em.close();
         }
     }
-/*
+
     @Test
     public void avistamientoCollectionTest() {
         Usuario u = new Usuario("Pepe sand", "mail@mail.com", "contraseña_segura", "22155151515",
@@ -70,8 +71,9 @@ public class UsuarioDAOTest {
         Mascota persisted = mascotaDao.persist(m);
         Long mascotaId = persisted.getId();
 
-        u.crearAvistamiento(mascotaId, "2141424, -124124214", "foto_pepe.jpg",
-                "2025-05-05", "pepe");
+    // pass the persisted Mascota object and a null AvistamientoRepo (test-only)
+    u.crearAvistamiento(persisted, "2141424, -124124214", "foto_pepe.jpg",
+        "2025-05-05", "pepe", null);
 
         List<Avistamiento> avistamientos = u.getAvistamientos();
         assertNotNull(avistamientos);
@@ -86,9 +88,6 @@ public class UsuarioDAOTest {
         }
     }
 
-    comentado porque rompe
- */
-
     @Test
     public void create2UsersWithSameEmailShouldNotPersistTest() {
         String email = "pepe@pepe.com";
@@ -98,13 +97,21 @@ public class UsuarioDAOTest {
         Usuario u2 = new Usuario("not pepe", email, "contraseña_segura", "22155151515",
                 "lomitas", "la plata", 3, 0, 0);
 
-        UsuarioDAO<Usuario> ud = new UsuarioDAOHibernateJPA();
+        // persist both within the same EntityManager/transaction so the DB constraint
+        // will be enforced at commit time (and throw an exception)
         EntityManager em = EMF.getEMF().createEntityManager();
-        assertThrows(Exception.class,  () -> {
-            ud.persist(u1);
-            ud.persist(u2);
-            em.flush();
-        });
+        EntityTransaction tx = em.getTransaction();
+        try {
+            assertThrows(Exception.class, () -> {
+                tx.begin();
+                em.persist(u1);
+                em.persist(u2);
+                tx.commit();
+            });
+        } finally {
+            if (tx.isActive()) tx.rollback();
+            em.close();
+        }
     }
 
     @Test

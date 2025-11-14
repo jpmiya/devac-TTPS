@@ -2,9 +2,11 @@ package org.example.devac.DAOs;
 
 import jakarta.persistence.EntityManager;
 import org.example.devac.models.Mascota;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class MascotaDAOHibernateJPA extends GenericDAOHibernateJPA<Mascota> implements MascotaDAO<Mascota> {
 
     public MascotaDAOHibernateJPA() {

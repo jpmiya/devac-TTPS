@@ -157,11 +157,11 @@ public class Usuario {
         this.posicion = posicion;
     }
 
-    public void setMail(String email) {this.email = email;}
+    public void setEmail(String email) {this.email = email;}
 
     public void setNombreYApellido(String nombreYApellido){this.nombreYApellido = nombreYApellido;}
 
     public void setPassword(String hashed) {
-
+        this.password = hashed;
     }
 }

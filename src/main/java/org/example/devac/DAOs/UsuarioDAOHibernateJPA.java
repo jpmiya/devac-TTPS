@@ -2,7 +2,9 @@ package org.example.devac.DAOs;
 
 import jakarta.persistence.EntityManager;
 import org.example.devac.models.Usuario;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class UsuarioDAOHibernateJPA extends GenericDAOHibernateJPA<Usuario>
     implements UsuarioDAO<Usuario>{
 

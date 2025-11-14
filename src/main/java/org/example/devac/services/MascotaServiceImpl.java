@@ -1,43 +1,41 @@
 package org.example.devac.services;
 
+import org.example.devac.DAOs.MascotaDAO;
 import org.example.devac.models.EstadoMascota;
 import org.example.devac.models.Mascota;
-import org.example.devac.repositories.MascotaRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class MascotaServiceImpl implements MascotaService {
 
     @Autowired
-    MascotaRepo mascotaRepo;
+    MascotaDAO<Mascota> mascotaDAO;
 
     @Override
     public Mascota registrar(Mascota mascota) {
-        return mascotaRepo.save(mascota);
+        return mascotaDAO.persist(mascota);
     }
 
     @Override
     public Mascota editar(Mascota mascota) {
-        return mascotaRepo.save(mascota);
+        return mascotaDAO.update(mascota);
     }
 
     public void eliminar(Mascota mascota) {
-        mascotaRepo.delete(mascota);
+        mascotaDAO.delete(mascota);
     }
 
     public List<Mascota> findAllLost() {
-        List<Mascota> perdidos = mascotaRepo.findAllByEstado(EstadoMascota.PERDIDO_AJENO);
-        List<Mascota> perdidosMios = mascotaRepo.findAllByEstado(EstadoMascota.PERDIDO_PROPIO);
-        perdidos.addAll(perdidosMios);
-        return perdidos;
+        // Obtener todas las mascotas y filtrar por estado perdido
+        List<Mascota> todas = mascotaDAO.getAll("id");
+        return todas.stream()
+            .filter(m -> m.getEstado() == EstadoMascota.PERDIDO_AJENO || 
+                        m.getEstado() == EstadoMascota.PERDIDO_PROPIO)
+            .collect(Collectors.toList());
     }
-
-
-
 
 }

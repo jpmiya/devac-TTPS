@@ -62,7 +62,7 @@ public class GenericDAOTest {
         // Arrange
         Usuario u = new Usuario();
         u.setNombreYApellido("nicolas not beiserman");
-        u.setMail("nico@mail.com");
+        u.setEmail("nico@mail.com");
         genericDao.persist(u);
         em.flush();
         Long id = u.getId();
@@ -83,7 +83,7 @@ public class GenericDAOTest {
     void delete_entity() {
         Usuario u = new Usuario();
         u.setNombreYApellido("B");
-        u.setMail("b@mail.com");
+        u.setEmail("b@mail.com");
         genericDao.persist(u);
         em.flush();
         Long id = u.getId();
@@ -101,10 +101,10 @@ public class GenericDAOTest {
     void findAll_returns_items() {
         Usuario u1 = new Usuario();
         u1.setNombreYApellido("A");
-        u1.setMail("a@mail.com");
+        u1.setEmail("a@mail.com");
         Usuario u2 = new Usuario();
         u2.setNombreYApellido("B");
-        u2.setMail("b@mail.com");
+        u2.setEmail("b@mail.com");
 
         genericDao.persist(u1);
         genericDao.persist(u2);
