@@ -110,14 +110,19 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new BadRequestException("Usuario no encontrado con ID: " + idUsuario);
         }
         
-        // Buscar la mascota completa por ID
+        // Verificar que la mascota existe
         Mascota mascotaCompleta = mascotaDAO.get(mascota.getId());
         if (mascotaCompleta == null) {
             throw new BadRequestException("Mascota no encontrada con ID: " + mascota.getId());
         }
         
-        // Eliminar la mascota
-        mascotaDAO.delete(mascotaCompleta);
+        // Verificar que la mascota pertenece al usuario
+        if (mascotaCompleta.getDueno().getId() != idUsuario) {
+            throw new BadRequestException("La mascota no pertenece a este usuario");
+        }
+        
+        // Eliminar la mascota usando el ID (más seguro que pasar la entidad)
+        mascotaDAO.delete(mascota.getId());
         
         return usuario;
     }
