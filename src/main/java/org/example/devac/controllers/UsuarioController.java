@@ -1,5 +1,6 @@
 package org.example.devac.controllers;
 
+import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
 import org.example.devac.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +34,18 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.editar(id,usuario));
     }
 
+    @PostMapping("/createMascota/{id}")
+    public ResponseEntity<Usuario> registrarMascota(@RequestBody Mascota mascota,@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.registrarMascota(mascota,id));
+    }
+
+    @PostMapping("/editMascota/{id}")
+    public ResponseEntity<Usuario> editarMascota(@RequestBody Mascota mascota,@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.editarMascota(mascota,id));
+    }
+
+    @PostMapping("/deleteMascota/{id}")
+    public ResponseEntity<Usuario> eliminarMascota(@RequestBody Mascota mascota,@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.eliminarMascota(mascota,id));
+    }
 }
