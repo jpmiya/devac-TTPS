@@ -6,6 +6,7 @@ import org.example.devac.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.example.devac.dto.UsuarioRegisterDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @PostMapping("/register")
-    public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> create(@RequestBody UsuarioRegisterDTO usuario) {
         return ResponseEntity.ok(usuarioService.registrar(usuario));
     }
 

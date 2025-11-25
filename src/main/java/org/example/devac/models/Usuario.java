@@ -38,8 +38,6 @@ public class Usuario {
     @OneToMany(mappedBy = "dueno", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Mascota> mascotas;
 
-
-
     // Constructor
     public Usuario(String nombreYApellido, String email, String password, String telefono,
                    String barrio, String ciudad, int posicion, int puntos, int casosEnZona) {
@@ -59,8 +57,6 @@ public class Usuario {
 
     public Usuario() {
     }
-
-
 
     public Mascota agregarMascota(Mascota mascota) {
         this.mascotas.add(mascota);
@@ -98,6 +94,10 @@ public class Usuario {
         // Por implementar
     }
 
+    // ====================
+    // Getters
+    // ====================
+
     public String getNombreYApellido() {
         return nombreYApellido;
     }
@@ -134,7 +134,9 @@ public class Usuario {
         return casosEnZona;
     }
 
-    public long getId() { return id; }
+    public long getId() {
+        return id;
+    }
 
     public List<Medalla> getMedallas() {
         return medallas;
@@ -144,7 +146,18 @@ public class Usuario {
         return avistamientos;
     }
 
-    // Setters necesarios
+    public RolEnum getRol() {
+        return rol;
+    }
+
+    public List<Mascota> getMascotas() {
+        return mascotas;
+    }
+
+    // ====================
+    // Setters
+    // ====================
+
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
@@ -161,11 +174,43 @@ public class Usuario {
         this.posicion = posicion;
     }
 
-    public void setEmail(String email) {this.email = email;}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public void setNombreYApellido(String nombreYApellido){this.nombreYApellido = nombreYApellido;}
+    public void setNombreYApellido(String nombreYApellido) {
+        this.nombreYApellido = nombreYApellido;
+    }
 
     public void setPassword(String hashed) {
         this.password = hashed;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setPuntos(int puntos) {
+        this.puntos = puntos;
+    }
+
+    public void setCasosEnZona(int casosEnZona) {
+        this.casosEnZona = casosEnZona;
+    }
+
+    public void setMedallas(List<Medalla> medallas) {
+        this.medallas = medallas;
+    }
+
+    public void setAvistamientos(List<Avistamiento> avistamientos) {
+        this.avistamientos = avistamientos;
+    }
+
+    public void setMascotas(List<Mascota> mascotas) {
+        this.mascotas = mascotas;
+    }
+
+    public void setRol(RolEnum rol) {
+        this.rol = rol;
     }
 }

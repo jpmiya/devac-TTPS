@@ -4,11 +4,15 @@ import org.example.devac.DAOs.MascotaDAO;
 import org.example.devac.DAOs.UsuarioDAO;
 import org.example.devac.exceptions.BadRequestException;
 import org.example.devac.models.Mascota;
+import org.example.devac.models.RolEnum;
 import org.example.devac.models.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.example.devac.dto.UsuarioRegisterDTO;
+import org.example.devac.repositories.UsuarioRepo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.List;
@@ -25,20 +29,42 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     MascotaService mascotaService;
 
+    @Autowired
+    UsuarioRepo usuarioRepository;
+
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public Usuario registrar(Usuario usuario) {
-        // Validar que no exista otro usuario con el mismo email
-        Usuario existente = usuarioDAO.getByMail(usuario.getEmail());
-        if (existente != null) {
-            throw new BadRequestException("Ya existe un usuario registrado con el email: " + usuario.getEmail());
+    public Usuario registrar(UsuarioRegisterDTO dto) {
+        if (usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new BadRequestException(
+                    "Ya existe un usuario registrado con el email: " + dto.getEmail()
+            );
         }
-        
-        String hashed = passwordEncoder.encode(usuario.getPassword());
+
+        Usuario usuario = new Usuario();
+        usuario.setNombreYApellido(dto.getNombreYApellido());
+        usuario.setEmail(dto.getEmail());
+        usuario.setTelefono(dto.getTelefono());
+        usuario.setBarrio(dto.getBarrio());
+        usuario.setCiudad(dto.getCiudad());
+
+
+        usuario.setPosicion(0);
+        usuario.setPuntos(0);
+        usuario.setRol(RolEnum.USUARIO);
+        usuario.setCasosEnZona(0);
+        usuario.setMedallas(new ArrayList<>());
+        usuario.setAvistamientos(new ArrayList<>());
+        usuario.setMascotas(new ArrayList<>());
+
+        String hashed = passwordEncoder.encode(dto.getPassword());
         usuario.setPassword(hashed);
-        return usuarioDAO.persist(usuario);
+
+        return usuarioRepository.save(usuario);
     }
+
 
     @Override
     public Usuario editar(Long id, Usuario usuario) {
