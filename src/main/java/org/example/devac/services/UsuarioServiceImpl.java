@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.example.devac.dto.UsuarioRegisterDTO;
 import org.example.devac.repositories.UsuarioRepo;
+import org.example.devac.services.UserEditerService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario registrar(UsuarioRegisterDTO dto) {
+
         if (usuarioRepository.existsByEmail(dto.getEmail())) {
             throw new BadRequestException(
                     "Ya existe un usuario registrado con el email: " + dto.getEmail()
@@ -67,20 +69,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 
     @Override
-    public Usuario editar(Long id, Usuario usuario) {
+    public Usuario editar(Long id, Usuario usuario1) {
+        UserEditerService userEditerService = new UserEditerService();
         // Buscar el usuario existente
         Usuario existente = usuarioDAO.get(id);
         if (existente == null) {
             throw new BadRequestException("Usuario no encontrado con ID: " + id);
         }
-        
+      // despues implemento  try{
+            Usuario usuario = usuarioRepository.findById(usuario1.getId()).get();
+       // } catch Exception ex
+
         // Actualizar los campos (manteniendo el ID original)
-        existente.setNombreYApellido(usuario.getNombreYApellido());
-        existente.setEmail(usuario.getEmail());
-        existente.setTelefono(usuario.getTelefono());
-        existente.setBarrio(usuario.getBarrio());
-        existente.setCiudad(usuario.getCiudad());
-        existente.setPosicion(usuario.getPosicion());
+        userEditerService.edit(usuario.getNombreYApellido(),usuario.getEmail(),usuario.getTelefono(),usuario.getBarrio(),usuario.getCiudad(),usuario.getPosicion(),existente);
         
         // Solo actualizar la contraseña si viene una nueva
         if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
