@@ -95,7 +95,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public boolean login(String email, String password) {
         // Buscar por email usando getByMail del DAO
-        Usuario usuario = usuarioDAO.getByMail(email);
+        Usuario usuario = usuarioRepository.findByEmail(email).get();
         
         if (usuario == null) {
             return false;

@@ -4,6 +4,7 @@ import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
 import org.example.devac.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.example.devac.dto.UsuarioRegisterDTO;
@@ -24,10 +25,18 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody Map<String,String> body) {
+    public ResponseEntity<String> login(@RequestBody Map<String,String> body) {
         String email = body.get("email");
         String password = body.get("password");
-        return ResponseEntity.ok(usuarioService.login(email,password));
+        boolean ok = usuarioService.login(email, password);
+
+        if (!ok) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)   // 401
+                    .body("Credenciales inválidas");
+        }
+
+        return ResponseEntity.ok("Login correcto");
     }
 
 
