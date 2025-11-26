@@ -56,12 +56,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.registrarMascota(mascota,id));
     }
 
-    @PutMapping("/editMascota/{id}")
+    @PutMapping("/{id}/editMascota")
     public ResponseEntity<Usuario> editarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
         return ResponseEntity.ok(usuarioService.editarMascota(mascota,id));
     }
 
-    @PostMapping("/deleteMascota/{id}")
+    @PostMapping("/{id}/deleteMascota")
     public ResponseEntity<Usuario> eliminarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
         return ResponseEntity.ok(usuarioService.eliminarMascota(mascota,id));
     }
