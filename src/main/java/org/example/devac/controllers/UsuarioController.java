@@ -1,5 +1,6 @@
 package org.example.devac.controllers;
 
+import org.example.devac.exceptions.BadRequestException;
 import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
 import org.example.devac.services.UsuarioService;
@@ -41,8 +42,13 @@ public class UsuarioController {
 
 
     @PutMapping("/edit/{id}")
-    public ResponseEntity<Usuario> editUser(@PathVariable("id") Long id, @RequestBody Usuario usuario) {
-        return ResponseEntity.ok(usuarioService.editar(id,usuario));
+    public ResponseEntity<String> editUser(@PathVariable("id") Long id, @RequestBody Usuario usuario) {
+        try{
+            return ResponseEntity.ok().body("Usuario modificado");
+        } catch (BadRequestException e){
+            return ResponseEntity.badRequest().body("Usuario no encontrado");
+        }
+
     }
 
     @PostMapping("/createMascota/{id}")
