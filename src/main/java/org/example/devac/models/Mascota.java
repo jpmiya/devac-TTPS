@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.List;
 import jakarta.persistence.*;
 
-
 @Entity
 @JsonIgnoreProperties({"avistamientos"})
 public class Mascota {
@@ -14,9 +13,11 @@ public class Mascota {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="MASCOTA_ID")
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "USUARIO_ID")
     private Usuario dueno;
+
     private String nombre;
     private String tamaño;
     private String color;
@@ -25,17 +26,17 @@ public class Mascota {
     private String foto; // URL de la foto
     private String coordenadas;
     private String descripcion;
+
     @OneToMany(mappedBy = "mascota", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     private List<Avistamiento> avistamientos;
+
     private String tipo;
     private String raza;
-
 
     // Constructor por defecto
     public Mascota() {
     }
 
-    
     public EstadoMascota getEstado() {
         return estado;
     }
@@ -45,22 +46,33 @@ public class Mascota {
     }
 
     public void agregar_avistamiento(Avistamiento avistamiento) {
-
+        // por implementar
     }
-
 
     public void setDueno(Usuario dueno) {
         this.dueno = dueno;
     }
 
+    public Usuario getDueno() {
+        return this.dueno;
+    }
+
     public List<Avistamiento> getAvistamientos() {
         return avistamientos;
     }
-    
+
+    public void setAvistamientos(List<Avistamiento> avistamientos) {
+        this.avistamientos = avistamientos;
+    }
+
     public Long getId() {
         return id;
     }
-    
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getNombre() {
         return this.nombre;
     }
@@ -73,7 +85,13 @@ public class Mascota {
         return this.color;
     }
 
+    // Getter estilo camelCase
     public LocalDate getFechaDePerdida() {
+        return this.fecha_de_perdida;
+    }
+
+    // Getter directo por si lo necesitás así
+    public LocalDate getFecha_de_perdida() {
         return this.fecha_de_perdida;
     }
 
@@ -97,10 +115,6 @@ public class Mascota {
         return this.raza;
     }
 
-    public Usuario getDueno() {
-        return this.dueno;
-    }
-
     // Setters
     public void setNombre(String nombre) {
         this.nombre = nombre;
@@ -115,6 +129,10 @@ public class Mascota {
     }
 
     public void setFechaDePerdida(LocalDate fecha) {
+        this.fecha_de_perdida = fecha;
+    }
+
+    public void setFecha_de_perdida(LocalDate fecha) {
         this.fecha_de_perdida = fecha;
     }
 
