@@ -52,18 +52,24 @@ public class UsuarioController {
     }
 
     @PostMapping("/{id}/createMascota")
-    public ResponseEntity<Usuario> registrarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
-        return ResponseEntity.ok(usuarioService.registrarMascota(mascota,id));
+    public ResponseEntity<?> registrarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
+       try{
+           return ResponseEntity.ok(usuarioService.registrarMascota(mascota,id));
+       } catch (BadRequestException e){
+           return ResponseEntity.badRequest().body("Usuario no encontrado");
+       }
+
     }
 
-    @PutMapping("/{id}/editMascota")
-    public ResponseEntity<Usuario> editarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
-        return ResponseEntity.ok(usuarioService.editarMascota(mascota,id));
+    @PutMapping("/{id}/editMascota/{idMascota}")
+    public ResponseEntity<?> editarMascota(@PathVariable("idMascota") Long idMascota, @PathVariable("id") Long id) {
+        return ResponseEntity.ok(usuarioService.editarMascota(idMascota,id));
     }
 
-    @PostMapping("/{id}/deleteMascota")
-    public ResponseEntity<Usuario> eliminarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
-        return ResponseEntity.ok(usuarioService.eliminarMascota(mascota,id));
+    @PostMapping("/{id}/deleteMascota/{idMascota}")
+    public ResponseEntity<?> eliminarMascota(@PathVariable("idMascota") Long idMascota, @PathVariable("id") Long id) {
+        //falta manejar las distintas excepciones
+        return ResponseEntity.ok(usuarioService.eliminarMascota(idMascota,id));
     }
 
     @GetMapping("/{id}/mascotas")

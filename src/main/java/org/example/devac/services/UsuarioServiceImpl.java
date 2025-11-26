@@ -6,6 +6,7 @@ import org.example.devac.exceptions.BadRequestException;
 import org.example.devac.models.Mascota;
 import org.example.devac.models.RolEnum;
 import org.example.devac.models.Usuario;
+import org.example.devac.repositories.MascotaRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,17 +22,15 @@ import java.util.List;
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
-    UsuarioDAO<Usuario> usuarioDAO;
-    
-    @Autowired
-    MascotaDAO<Mascota> mascotaDAO;
     
     @Autowired
     MascotaService mascotaService;
 
     @Autowired
     UsuarioRepo usuarioRepository;
+
+    @Autowired
+    MascotaRepo mascotaRepository;
 
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -68,17 +67,20 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
 
+
+    //esta funcion esta mal corregir despues
     @Override
     public Usuario editar(Long id, Usuario usuario1) {
+        // despues implemento  try{
+        Usuario usuario = usuarioRepository.findById(usuario1.getId()).get();
+        Usuario existente = usuarioRepository.findById(usuario.getId()).get();
+        // } catch Exception ex
         UserEditerService userEditerService = new UserEditerService();
         // Buscar el usuario existente
-        Usuario existente = usuarioDAO.get(id);
         if (existente == null) {
             throw new BadRequestException("Usuario no encontrado con ID: " + id);
         }
-      // despues implemento  try{
-            Usuario usuario = usuarioRepository.findById(usuario1.getId()).get();
-       // } catch Exception ex
+
 
         // Actualizar los campos (manteniendo el ID original)
         userEditerService.edit(usuario.getNombreYApellido(),usuario.getEmail(),usuario.getTelefono(),usuario.getBarrio(),usuario.getCiudad(),usuario.getPosicion(),existente);
@@ -89,7 +91,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             existente.setPassword(hashed);
         }
         
-        return usuarioDAO.update(existente);
+        return usuarioRepository.save(usuario); // PROBAR
     }
 
     @Override
@@ -105,8 +107,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         return passwordEncoder.matches(password, usuario.getPassword());
     }
 
-    public Usuario registrarMascota(Mascota mascota, Long idUsuario) {
-       Usuario usuario = usuarioDAO.get(idUsuario);
+    public Mascota registrarMascota(Mascota mascota, Long idUsuario) {
+       Usuario usuario = usuarioRepository.findById(idUsuario).get();
        if (usuario == null) {
            throw new BadRequestException("Usuario no encontrado con ID: " + idUsuario);
        }
@@ -114,54 +116,50 @@ public class UsuarioServiceImpl implements UsuarioService {
        // Asignar el dueño a la mascota
        mascota.setDueno(usuario);
        
-       // Persistir la mascota directamente con el DAO
-       mascotaDAO.persist(mascota);
+       mascotaRepository.save(mascota);
        
        // Retornar el usuario
-       return usuario;
+       return mascota;
     }
 
-    public Usuario editarMascota(Mascota mascota, Long idUsuario) {
-        Usuario usuario = usuarioDAO.get(idUsuario);
+    public Mascota editarMascota(Long idMascota, Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).get();
+        Mascota mascota = mascotaRepository.findById(idMascota).get();
         if (usuario == null) {
             throw new BadRequestException("Usuario no encontrado con ID: " + idUsuario);
         }
-        mascota.setDueno(usuario);
         mascotaService.editar(mascota);
-        return usuario;
+        return mascota;
     }
 
-    public Usuario eliminarMascota(Mascota mascota, Long idUsuario) {
-        Usuario usuario = usuarioDAO.get(idUsuario);
+    public Usuario eliminarMascota(Long idMascota, Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).get();
+        Mascota mascota = mascotaRepository.findById(idMascota).get();
         if (usuario == null) {
             throw new BadRequestException("Usuario no encontrado con ID: " + idUsuario);
         }
-        
-        // Verificar que la mascota existe
-        Mascota mascotaCompleta = mascotaDAO.get(mascota.getId());
-        if (mascotaCompleta == null) {
+        if (mascota == null) {
             throw new BadRequestException("Mascota no encontrada con ID: " + mascota.getId());
         }
         
         // Verificar que la mascota pertenece al usuario
-        if (mascotaCompleta.getDueno().getId() != idUsuario) {
+        if (mascota.getDueno().getId() != idUsuario) {
             throw new BadRequestException("La mascota no pertenece a este usuario");
         }
-        
         // Eliminar la mascota usando el ID (más seguro que pasar la entidad)
-        mascotaDAO.delete(mascota.getId());
+        mascotaRepository.delete(mascota);
         
         return usuario;
     }
 
     @Override
     public List<Mascota> getMascotasDeUsuario(Long idUsuario) {
-        Usuario usuario = usuarioDAO.get(idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario).get();
         if (usuario == null) {
             throw new BadRequestException("Usuario no encontrado con ID: " + idUsuario);
         }
         
-        return mascotaDAO.getByUsuarioId(idUsuario);
+        return mascotaRepository.findAllByDueno(idUsuario);
     }
 
 }

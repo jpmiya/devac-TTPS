@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface MascotaRepo extends  JpaRepository<Mascota,Long>{
     Optional<Mascota> findById(long id);
+    List<Mascota> findAllByDueno(Long idUsuario); //chequear si anda asi o hay q implementar
     Optional<Mascota> findByNombre(String nombre);
     List<Mascota> findAllByEstado(EstadoMascota estado);
 }
