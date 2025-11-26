@@ -15,9 +15,9 @@
             <!-- JDBC -->
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url"
-                  value="jdbc:mysql://localhost:3306/devac_bd?useSSL=false&amp;serverTimezone=UTC"/>
-            <property name="jakarta.persistence.jdbc.user" value="root"/>
-            <property name="jakarta.persistence.jdbc.password" value="admin"/>
+                  value="jdbc:mysql://localhost:3306/devac_bd?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=UTC"/>
+            <property name="jakarta.persistence.jdbc.user" value="juan"/>
+            <property name="jakarta.persistence.jdbc.password" value="pass123"/>
             <!-- Hibernate -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

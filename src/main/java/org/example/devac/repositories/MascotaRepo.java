@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+
 public interface MascotaRepo extends  JpaRepository<Mascota,Long>{
     Optional<Mascota> findById(long id);
     List<Mascota> findAllByDueno(Long idUsuario); //chequear si anda asi o hay q implementar
