@@ -51,7 +51,7 @@ public class UsuarioController {
 
     }
 
-    @PostMapping("/createMascota/{id}")
+    @PostMapping("/{id}/createMascota")
     public ResponseEntity<Usuario> registrarMascota(@RequestBody Mascota mascota, @PathVariable("id") Long id) {
         return ResponseEntity.ok(usuarioService.registrarMascota(mascota,id));
     }
