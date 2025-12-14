@@ -126,7 +126,7 @@ public class Usuario {
         return casosEnZona;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -190,6 +190,10 @@ public class Usuario {
         this.casosEnZona = casosEnZona;
     }
 
+    public void setRol(RolEnum rol) {
+        this.rol = rol;
+    }
+
     public void setMedallas(List<Medalla> medallas) {
         this.medallas = medallas;
     }
@@ -200,10 +204,6 @@ public class Usuario {
 
     public void setMascotas(List<Mascota> mascotas) {
         this.mascotas = mascotas;
-    }
-
-    public void setRol(RolEnum rol) {
-        this.rol = rol;
     }
 
     // builder
