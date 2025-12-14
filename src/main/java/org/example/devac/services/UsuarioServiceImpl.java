@@ -38,27 +38,25 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new BadRequestException("Ya existe un usuario registrado con el email: " + usuarioDTO.getEmail());
         }
 
-        // Crear el usuario desde el DTO
-        Usuario usuario = new Usuario();
-        usuario.setNombreYApellido(usuarioDTO.getNombreYApellido());
-        usuario.setEmail(usuarioDTO.getEmail());
-        usuario.setTelefono(usuarioDTO.getTelefono());
-        usuario.setBarrio(usuarioDTO.getBarrio());
-        usuario.setCiudad(usuarioDTO.getCiudad());
-        usuario.setPosicion(0);
-        usuario.setPuntos(0);
-        usuario.setCasosEnZona(0);
-
-        // Hashear la contraseña
+        // Validar contraseña
         String rawPassword = usuarioDTO.getPassword();
         if (rawPassword == null || rawPassword.isEmpty()) {
             throw new BadRequestException("La contraseña no puede estar vacía");
         }
-        String hashed = passwordEncoder.encode(rawPassword);
-        usuario.setPassword(hashed);
 
-        // Asignar rol por defecto
-        usuario.setRol(RolEnum.USUARIO);
+
+        Usuario usuario = new Usuario.Builder()
+                .nombreYApellido(usuarioDTO.getNombreYApellido())
+                .email(usuarioDTO.getEmail())
+                .password(passwordEncoder.encode(rawPassword))
+                .telefono(usuarioDTO.getTelefono())
+                .barrio(usuarioDTO.getBarrio())
+                .ciudad(usuarioDTO.getCiudad())
+                .posicion(0)
+                .puntos(0)
+                .casosEnZona(0)
+                .rol(RolEnum.USUARIO)
+                .build();
 
         return usuarioDAO.persist(usuario);
     }

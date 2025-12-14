@@ -205,4 +205,102 @@ public class Usuario {
     public void setRol(RolEnum rol) {
         this.rol = rol;
     }
+
+    // builder
+
+    public static class Builder {
+        private String nombreYApellido;
+        private String email;
+        private String password;
+        private String telefono;
+        private String barrio;
+        private String ciudad;
+        private int posicion = 0;
+        private int puntos = 0;
+        private int casosEnZona = 0;
+        private RolEnum rol = RolEnum.USUARIO;
+
+        public Builder nombreYApellido(String nombreYApellido) {
+            this.nombreYApellido = nombreYApellido;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder telefono(String telefono) {
+            this.telefono = telefono;
+            return this;
+        }
+
+        public Builder barrio(String barrio) {
+            this.barrio = barrio;
+            return this;
+        }
+
+        public Builder ciudad(String ciudad) {
+            this.ciudad = ciudad;
+            return this;
+        }
+
+        public Builder posicion(int posicion) {
+            this.posicion = posicion;
+            return this;
+        }
+
+        public Builder puntos(int puntos) {
+            this.puntos = puntos;
+            return this;
+        }
+
+        public Builder casosEnZona(int casosEnZona) {
+            this.casosEnZona = casosEnZona;
+            return this;
+        }
+
+        public Builder rol(RolEnum rol) {
+            this.rol = rol;
+            return this;
+        }
+
+        public Usuario build() {
+            // Validaciones
+            validateRequired(email, "Email");
+            validateRequired(password, "Password");
+            validateRequired(nombreYApellido, "Nombre y Apellido");
+
+            Usuario usuario = new Usuario();
+            usuario.nombreYApellido = this.nombreYApellido;
+            usuario.email = this.email;
+            usuario.password = this.password;
+            usuario.telefono = this.telefono;
+            usuario.barrio = this.barrio;
+            usuario.ciudad = this.ciudad;
+            usuario.posicion = this.posicion;
+            usuario.puntos = this.puntos;
+            usuario.casosEnZona = this.casosEnZona;
+            usuario.rol = this.rol;
+            usuario.medallas = new ArrayList<>();
+            usuario.avistamientos = new ArrayList<>();
+            usuario.mascotas = new ArrayList<>();
+            return usuario;
+        }
+    }
+
+    // ====================
+    // Métodos de Validación (reutilizables)
+    // ====================
+
+    private static void validateRequired(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalStateException(fieldName + " es requerido y no puede estar vacío");
+        }
+    }
 }

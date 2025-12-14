@@ -35,25 +35,25 @@ public class MascotaServiceImpl implements MascotaService {
             throw new BadRequestException("Usuario no encontrado");
         }
 
-        // Crear la mascota
-        Mascota mascota = new Mascota();
-        mascota.setDueno(dueno);
-        mascota.setNombre(request.getNombre());
-        mascota.setTamaño(request.getTamaño());
-        mascota.setColor(request.getColor());
-        mascota.setFechaDePerdida(request.getFechaDePerdida());
-        mascota.setFoto(request.getFoto());
-        mascota.setCoordenadas(request.getCoordenadas());
-        mascota.setDescripcion(request.getDescripcion());
-        mascota.setTipo(request.getTipo());
-        mascota.setRaza(request.getRaza());
-        
-        // Establecer estado (usar el del request o por defecto PERDIDO_PROPIO)
-        if (request.getEstado() != null) {
-            mascota.setEstado(request.getEstado());
-        } else {
-            mascota.setEstado(EstadoMascota.PERDIDO_PROPIO);
-        }
+        // Determinar estado
+        EstadoMascota estado = request.getEstado() != null 
+            ? request.getEstado() 
+            : EstadoMascota.PERDIDO_PROPIO;
+
+        // Crear mascota usando Builder Pattern
+        Mascota mascota = new Mascota.Builder()
+                .dueno(dueno)
+                .nombre(request.getNombre())
+                .tamaño(request.getTamaño())
+                .color(request.getColor())
+                .fechaDePerdida(request.getFechaDePerdida())
+                .foto(request.getFoto())
+                .coordenadas(request.getCoordenadas())
+                .descripcion(request.getDescripcion())
+                .tipo(request.getTipo())
+                .raza(request.getRaza())
+                .estado(estado)
+                .build();
 
         return mascotaDAO.persist(mascota);
     }
