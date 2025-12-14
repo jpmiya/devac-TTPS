@@ -1,6 +1,7 @@
 package org.example.devac.DAOs;
 
 import org.example.devac.models.Mascota;
+import org.example.devac.models.Usuario;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,18 @@ public class MascotaDAOTest {
 
 	@Test
 	public void persist_and_getById_shouldReturnPersistedMascota() {
-		Mascota m = new Mascota();
+		// Crear usuario dueño requerido por Builder Pattern
+		Usuario dueno = new Usuario.Builder()
+				.nombreYApellido("Test Owner")
+				.email("owner@test.com")
+				.password("password123")
+				.build();
+
+		Mascota m = new Mascota.Builder()
+				.dueno(dueno)
+				.nombre("Test Pet")
+				.tipo("Perro")
+				.build();
 
 		Mascota created = mascotaDao.persist(m);
 		assertNotNull(created);

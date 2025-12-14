@@ -56,13 +56,13 @@ class UsuarioBuilderTest {
                 .posicion(1)
                 .puntos(100)
                 .casosEnZona(5)
-                .rol(RolEnum.ADMIN)
+                .rol(RolEnum.ADMINISTRADOR)
                 .build();
 
         assertEquals(1, usuario.getPosicion());
         assertEquals(100, usuario.getPuntos());
         assertEquals(5, usuario.getCasosEnZona());
-        assertEquals(RolEnum.ADMIN, usuario.getRol());
+        assertEquals(RolEnum.ADMINISTRADOR, usuario.getRol());
     }
 
     @Test
@@ -167,7 +167,7 @@ class UsuarioBuilderTest {
         assertSame(builder, builder.posicion(1));
         assertSame(builder, builder.puntos(10));
         assertSame(builder, builder.casosEnZona(2));
-        assertSame(builder, builder.rol(RolEnum.ADMIN));
+        assertSame(builder, builder.rol(RolEnum.ADMINISTRADOR));
     }
 
     @Test

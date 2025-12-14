@@ -38,8 +38,15 @@ public class UsuarioDAOTest {
     public void createAndFindByEmail_shouldPersistAndRetrieveUsuario() {
         // crear usuario con email único para evitar colisiones
         String email = "test+" + UUID.randomUUID() + "@example.com";
-        Usuario u = new Usuario("Pepe sand", email, "contraseña_segura", "22155151515",
-                "lomitas", "la plata", 3, 0, 0);
+        Usuario u = new Usuario.Builder()
+                .nombreYApellido("Pepe sand")
+                .email(email)
+                .password("contraseña_segura")
+                .telefono("22155151515")
+                .barrio("lomitas")
+                .ciudad("la plata")
+                .posicion(3)
+                .build();
 
         // persistir usando el DAO
         Usuario created = usuarioDao.persist(u);
@@ -63,8 +70,15 @@ public class UsuarioDAOTest {
 
     @Test
     public void avistamientoCollectionTest() {
-        Usuario u = new Usuario("Pepe sand", "mail@mail.com", "contraseña_segura", "22155151515",
-                "lomitas", "la plata", 3, 0, 0);
+        Usuario u = new Usuario.Builder()
+                .nombreYApellido("Pepe sand")
+                .email("mail@mail.com")
+                .password("contraseña_segura")
+                .telefono("22155151515")
+                .barrio("lomitas")
+                .ciudad("la plata")
+                .posicion(3)
+                .build();
 
         MascotaDAOHibernateJPA mascotaDao = new MascotaDAOHibernateJPA();
         Mascota m = new Mascota();
@@ -82,11 +96,25 @@ public class UsuarioDAOTest {
     @Test
     public void create2UsersWithSameEmailShouldNotPersistTest() {
         String email = "pepe@pepe.com";
-        Usuario u1 = new Usuario("Pepe sand", email, "contraseña_segura", "22155151515",
-                "lomitas", "la plata", 3, 0, 0);
+        Usuario u1 = new Usuario.Builder()
+                .nombreYApellido("Pepe sand")
+                .email(email)
+                .password("contraseña_segura")
+                .telefono("22155151515")
+                .barrio("lomitas")
+                .ciudad("la plata")
+                .posicion(3)
+                .build();
 
-        Usuario u2 = new Usuario("not pepe", email, "contraseña_segura", "22155151515",
-                "lomitas", "la plata", 3, 0, 0);
+        Usuario u2 = new Usuario.Builder()
+                .nombreYApellido("not pepe")
+                .email(email)
+                .password("contraseña_segura")
+                .telefono("22155151515")
+                .barrio("lomitas")
+                .ciudad("la plata")
+                .posicion(3)
+                .build();
 
         // persist both within the same EntityManager/transaction so the DB constraint
         // will be enforced at commit time (and throw an exception)
@@ -107,10 +135,17 @@ public class UsuarioDAOTest {
 
     @Test
     public void createUserWithNullMailShouldNotPersistTest() {
-        Usuario u = new Usuario("Pepe sand", null, "contraseña_segura", "22155151515",
-                "lomitas", "la plata", 3, 0, 0);
-
-        UsuarioDAO<Usuario> ud = new UsuarioDAOHibernateJPA();
-        assertThrows(Exception.class, () -> ud.persist(u));
+        // Builder Pattern valida email requerido, lanza IllegalStateException en build()
+        assertThrows(IllegalStateException.class, () -> {
+            new Usuario.Builder()
+                    .nombreYApellido("Pepe sand")
+                    .email(null)
+                    .password("contraseña_segura")
+                    .telefono("22155151515")
+                    .barrio("lomitas")
+                    .ciudad("la plata")
+                    .posicion(3)
+                    .build();
+        });
     }
 }
