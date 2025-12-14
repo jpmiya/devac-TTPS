@@ -71,15 +71,6 @@ public class UsuarioDAOTest {
         Mascota persisted = mascotaDao.persist(m);
         Long mascotaId = persisted.getId();
 
-    // pass the persisted Mascota object and a null AvistamientoRepo (test-only)
-    u.crearAvistamiento(persisted, "2141424, -124124214", "foto_pepe.jpg",
-        "2025-05-05", "pepe", null);
-
-        List<Avistamiento> avistamientos = u.getAvistamientos();
-        assertNotNull(avistamientos);
-        assertFalse(avistamientos.isEmpty());
-        assertTrue(avistamientos.stream()
-                .anyMatch(a -> a.getMascota() != null && mascotaId.equals(a.getMascota().getId())));
 
         // cleanup persisted mascota
         try {

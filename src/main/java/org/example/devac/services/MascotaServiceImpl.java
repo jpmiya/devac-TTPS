@@ -7,8 +7,6 @@ import org.example.devac.exceptions.BadRequestException;
 import org.example.devac.models.EstadoMascota;
 import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
-import org.example.devac.repositories.MascotaRepo;
-import org.example.devac.repositories.UsuarioRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +18,10 @@ import java.util.stream.Collectors;
 public class MascotaServiceImpl implements MascotaService {
 
     @Autowired
-    UsuarioRepo usuarioRepository;
+    private UsuarioDAO<Usuario> usuarioDAO;
 
     @Autowired
-    MascotaRepo mascotaRepository;
+    private MascotaDAO<Mascota> mascotaDAO;
 
     @Autowired
     MascotaEditerService mascotaEditerService;
@@ -32,8 +30,10 @@ public class MascotaServiceImpl implements MascotaService {
     @Override
     public Mascota registrar(MascotaRequest request) {
         // Buscar el dueño por ID
-        Usuario dueno = usuarioRepository.findById(request.getDuenoId())
-                .orElseThrow(() -> new BadRequestException("Usuario no encontrado"));
+        Usuario dueno = usuarioDAO.get(request.getDuenoId());
+        if (dueno == null) {
+            throw new BadRequestException("Usuario no encontrado");
+        }
 
         // Crear la mascota
         Mascota mascota = new Mascota();
@@ -55,7 +55,7 @@ public class MascotaServiceImpl implements MascotaService {
             mascota.setEstado(EstadoMascota.PERDIDO_PROPIO);
         }
 
-        return mascotaRepository.save(mascota);
+        return mascotaDAO.persist(mascota);
     }
 
     @Override
@@ -64,12 +64,12 @@ public class MascotaServiceImpl implements MascotaService {
     }
 
     public void eliminar(Mascota mascota) {
-        mascotaRepository.delete(mascota);
+        mascotaDAO.delete(mascota.getId());
     }
 
     public List<Mascota> findAllLost() {
         // Obtener todas las mascotas y filtrar por estado perdido
-        List<Mascota> todas = mascotaRepository.findAll();
+        List<Mascota> todas = mascotaDAO.getAll("id");
         return todas.stream()
             .filter(m -> m.getEstado() == EstadoMascota.PERDIDO_AJENO || 
                         m.getEstado() == EstadoMascota.PERDIDO_PROPIO)

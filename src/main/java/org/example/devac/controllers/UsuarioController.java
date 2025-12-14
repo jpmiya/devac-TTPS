@@ -42,13 +42,13 @@ public class UsuarioController {
 
 
     @PutMapping("/edit/{id}")
-    public ResponseEntity<String> editUser(@PathVariable("id") Long id, @RequestBody Usuario usuario) {
-        try{
-            return ResponseEntity.ok().body("Usuario modificado");
-        } catch (BadRequestException e){
-            return ResponseEntity.badRequest().body("Usuario no encontrado");
+    public ResponseEntity<?> editUser(@PathVariable("id") Long id, @RequestBody Usuario usuario) {
+        try {
+            Usuario usuarioActualizado = usuarioService.editar(id, usuario);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
     @PostMapping("/{id}/createMascota")

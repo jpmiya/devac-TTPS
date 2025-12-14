@@ -155,4 +155,8 @@ public class Mascota {
     public void setRaza(String raza) {
         this.raza = raza;
     }
+
+    public boolean isDueno(Long id_usuario) {
+        return id_usuario.equals(this.dueno.getId());
+    }
 }

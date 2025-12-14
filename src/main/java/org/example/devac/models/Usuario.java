@@ -3,7 +3,6 @@ package org.example.devac.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import org.example.devac.repositories.AvistamientoRepo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,13 +60,6 @@ public class Usuario {
     public Mascota agregarMascota(Mascota mascota) {
         this.mascotas.add(mascota);
         return mascota;
-    }
-
-    public void crearAvistamiento(Mascota mascota, String coordenadas, String foto, String fecha, String comentario, AvistamientoRepo avistamientoRepo) {
-        //el avistamiento repo solo va a estar por ahora para q pase esto, despues se va a service
-        Avistamiento a = new Avistamiento(this ,mascota, coordenadas, foto, fecha, comentario);
-        avistamientoRepo.save(a);
-        this.avistamientos.add(a);
     }
 
     public void eliminarMascota(Mascota mascota) {
