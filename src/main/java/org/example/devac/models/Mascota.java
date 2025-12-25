@@ -155,4 +155,118 @@ public class Mascota {
     public void setRaza(String raza) {
         this.raza = raza;
     }
+
+    public boolean isDueno(Long id_usuario) {
+        return id_usuario.equals(this.dueno.getId());
+    }
+
+    // ====================
+    // Builder Pattern
+    // ====================
+
+    public static class Builder {
+        private Usuario dueno;
+        private String nombre;
+        private String tamaño;
+        private String color;
+        private LocalDate fechaDePerdida;
+        private EstadoMascota estado = EstadoMascota.PERDIDO_PROPIO;
+        private String foto;
+        private String coordenadas;
+        private String descripcion;
+        private String tipo;
+        private String raza;
+
+        public Builder dueno(Usuario dueno) {
+            this.dueno = dueno;
+            return this;
+        }
+
+        public Builder nombre(String nombre) {
+            this.nombre = nombre;
+            return this;
+        }
+
+        public Builder tamaño(String tamaño) {
+            this.tamaño = tamaño;
+            return this;
+        }
+
+        public Builder color(String color) {
+            this.color = color;
+            return this;
+        }
+
+        public Builder fechaDePerdida(LocalDate fechaDePerdida) {
+            this.fechaDePerdida = fechaDePerdida;
+            return this;
+        }
+
+        public Builder estado(EstadoMascota estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public Builder foto(String foto) {
+            this.foto = foto;
+            return this;
+        }
+
+        public Builder coordenadas(String coordenadas) {
+            this.coordenadas = coordenadas;
+            return this;
+        }
+
+        public Builder descripcion(String descripcion) {
+            this.descripcion = descripcion;
+            return this;
+        }
+
+        public Builder tipo(String tipo) {
+            this.tipo = tipo;
+            return this;
+        }
+
+        public Builder raza(String raza) {
+            this.raza = raza;
+            return this;
+        }
+
+        public Mascota build() {
+            // Validaciones
+            validateRequired(dueno, "Dueño");
+            validateRequired(nombre, "Nombre");
+            validateRequired(tipo, "Tipo");
+
+            Mascota mascota = new Mascota();
+            mascota.dueno = this.dueno;
+            mascota.nombre = this.nombre;
+            mascota.tamaño = this.tamaño;
+            mascota.color = this.color;
+            mascota.fecha_de_perdida = this.fechaDePerdida;
+            mascota.estado = this.estado;
+            mascota.foto = this.foto;
+            mascota.coordenadas = this.coordenadas;
+            mascota.descripcion = this.descripcion;
+            mascota.tipo = this.tipo;
+            mascota.raza = this.raza;
+            return mascota;
+        }
+    }
+
+    // ====================
+    // Métodos de Validación (reutilizables)
+    // ====================
+
+    private static void validateRequired(Object value, String fieldName) {
+        if (value == null) {
+            throw new IllegalStateException(fieldName + " es requerido y no puede ser null");
+        }
+    }
+
+    private static void validateRequired(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalStateException(fieldName + " es requerido y no puede estar vacío");
+        }
+    }
 }
