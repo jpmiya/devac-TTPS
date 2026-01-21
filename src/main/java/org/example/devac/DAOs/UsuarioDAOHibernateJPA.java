@@ -16,7 +16,7 @@ public class UsuarioDAOHibernateJPA extends GenericDAOHibernateJPA<Usuario>
 
     public Usuario getByMail(String mail) {
         //get the entity Manager
-        EntityManager em = EMF.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         Usuario usr;
         try {
             //we get the user from the database

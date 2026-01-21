@@ -14,7 +14,7 @@ public class AvistamientoDAOHibernateJPA extends GenericDAOHibernateJPA<Avistami
     }
 
     public List<Avistamiento> getByUsuarioId(Long usuarioId) {
-        EntityManager em = EMF.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         try {
             return em.createQuery("SELECT a FROM " + getPersistentClass().getSimpleName() + " a WHERE a.usuario.id = :uid", Avistamiento.class)
                     .setParameter("uid", usuarioId)

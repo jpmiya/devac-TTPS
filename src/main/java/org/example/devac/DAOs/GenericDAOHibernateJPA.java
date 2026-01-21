@@ -1,11 +1,16 @@
 package org.example.devac.DAOs;
 
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
         protected Class<T> persistentClass;
+        
+        @Autowired
+        protected EntityManagerFactory emf;
+        
  public GenericDAOHibernateJPA(Class<T> clase) {
             this.persistentClass = clase;
         }
@@ -14,7 +19,7 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
         }
         @Override
         public T persist(T entity) {
-            EntityManager em = EMF.getEMF().createEntityManager();
+            EntityManager em = emf.createEntityManager();
             EntityTransaction tx = null;
             try {
                 tx = em.getTransaction();
@@ -31,7 +36,7 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
         }
         @Override
         public T update(T entity) {
-            EntityManager em = EMF.getEMF().createEntityManager();
+            EntityManager em = emf.createEntityManager();
             EntityTransaction etx = em.getTransaction();
             etx.begin();
             T entityMerged = em.merge(entity);
@@ -42,7 +47,7 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
     @Override
     public void delete(T entity) {
         EntityTransaction tx = null;
-        try(EntityManager em = EMF.getEMF().createEntityManager()){
+        try(EntityManager em = emf.createEntityManager()){
             tx = em.getTransaction();
             tx.begin();
             em.remove(em.merge(entity));
@@ -55,7 +60,7 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
 
     @Override
     public void delete(Long id) {
-        EntityManager em = EMF.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         EntityTransaction tx = null;
         try {
             tx = em.getTransaction();
@@ -75,7 +80,7 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
 
     @Override
     public T get(Long id) {
-        EntityManager em = EMF.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         try {
             return em.find(getPersistentClass(), id);
         } finally {
@@ -85,7 +90,7 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
 
     public List<T> getAll(String columnOrder) {
         Query consulta =
-                EMF.getEMF().createEntityManager()
+                emf.createEntityManager()
                         .createQuery("SELECT e FROM "+
                                 getPersistentClass().getSimpleName() +
                                 " e order by e." + columnOrder);

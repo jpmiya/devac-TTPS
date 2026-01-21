@@ -48,9 +48,20 @@ public class PersistenceConfig {
         DriverManagerDataSource ds = new DriverManagerDataSource();
 
         ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds.setUrl("jdbc:mysql://localhost:3306/devac_bd?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC");
-        ds.setUsername("juan");
-        ds.setPassword("pass123");
+        
+        // Lee variables de entorno (para Docker) con fallback a valores locales
+        String dbHost = System.getenv().getOrDefault("DB_HOST", "localhost");
+        String dbPort = System.getenv().getOrDefault("DB_PORT", "3306");
+        String dbName = System.getenv().getOrDefault("DB_NAME", "devac_bd");
+        String dbUser = System.getenv().getOrDefault("DB_USER", "juan");
+        String dbPassword = System.getenv().getOrDefault("DB_PASSWORD", "pass123");
+        
+        String url = String.format("jdbc:mysql://%s:%s/%s?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+                dbHost, dbPort, dbName);
+        
+        ds.setUrl(url);
+        ds.setUsername(dbUser);
+        ds.setPassword(dbPassword);
 
         return ds;
     }

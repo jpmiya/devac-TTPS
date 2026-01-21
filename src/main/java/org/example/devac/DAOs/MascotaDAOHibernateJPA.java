@@ -15,7 +15,7 @@ public class MascotaDAOHibernateJPA extends GenericDAOHibernateJPA<Mascota> impl
 
     // ejemplo de método específico: buscar por nombre
     public List<Mascota> getByNombre(String nombre) {
-        EntityManager em = EMF.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         try {
             return em.createQuery("SELECT m FROM " + getPersistentClass().getSimpleName() + " m WHERE m.nombre = :nombre", Mascota.class)
                     .setParameter("nombre", nombre)
@@ -27,7 +27,7 @@ public class MascotaDAOHibernateJPA extends GenericDAOHibernateJPA<Mascota> impl
 
     @Override
     public List<Mascota> getByUsuarioId(Long usuarioId) {
-        EntityManager em = EMF.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         try {
             return em.createQuery("SELECT m FROM " + getPersistentClass().getSimpleName() + " m WHERE m.dueno.id = :usuarioId", Mascota.class)
                     .setParameter("usuarioId", usuarioId)
