@@ -1,0 +1,48 @@
+<div class="home-container">
+  <h1>Bienvenido</h1>
+  <p>Esta es la página principal</p>
+  <div class="actions">
+    <a routerLink="/login" class="btn">Iniciar Sesión</a>
+  </div>
+</div>
+
+<style>
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .btn {
+    padding: 0.75rem 2rem;
+    background: white;
+    color: #667eea;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: transform 0.2s;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+</style>
