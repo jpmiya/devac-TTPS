@@ -1,38 +1,29 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { MascotasService, Mascota, UsuarioRef, EstadoMascota} from '../../app/services/MascotaService';
+
+
+
+
+
+
 
 
 @Component({
-  selector: 'app-lostPets',
-  templateUrl: './lostPets.html',
-  styleUrls: ['./lostPets.css'],
+  selector: 'app-lost-dogs',
+  templateUrl: './lost-dogs.component.html',
+  styleUrls: ['./lost-dogs.component.css'],
 })
-
-
-
-
-
-//DESPUES LO SIGO
-
 export class LostDogsComponent implements OnInit {
-
-  dogs: any[] = [];
+  dogs: Mascota[] = [];
   loading = false;
   error = '';
 
-  private API = 'http://localhost:8080/mascota/findAllLost';
-
-  constructor(private http: HttpClient) {}
+  constructor(private mascotasService: MascotasService) {}
 
   ngOnInit(): void {
-    this.loadDogs();
-  }
-
-  loadDogs(): void {
     this.loading = true;
-    this.error = '';
 
-    this.http.get<any[]>(this.API).subscribe({
+    this.mascotasService.findAllLost().subscribe({
       next: (data) => {
         this.dogs = data ?? [];
         this.loading = false;
@@ -45,4 +36,5 @@ export class LostDogsComponent implements OnInit {
     });
   }
 }
+
 
