@@ -1,0 +1,134 @@
+<div class="page">
+
+  <!-- ================= LOADING ================= -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Cargando avisos...</div>
+  </div>
+
+  <!-- ================= ERROR ================= -->
+  <div class="error-banner" *ngIf="!loading && error">
+    {{ error }}
+  </div>
+
+  <!-- ================= HEADER ================= -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Perros perdidos</h1>
+      <p>Reportes recientes en tu zona</p>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="search">
+        <span class="icon">🔎</span>
+        <input type="text" placeholder="Buscar por nombre, zona o raza..." />
+      </div>
+
+      <select class="select">
+        <option value="all">Todos</option>
+        <option value="today">Hoy</option>
+        <option value="week">Esta semana</option>
+        <option value="found">Encontrados</option>
+        <option value="missing">Aún perdidos</option>
+      </select>
+
+      <button class="primary">+ Nuevo aviso</button>
+    </div>
+  </header>
+
+  <!-- ================= STATS ================= -->
+  <section class="stats" *ngIf="!loading">
+    <div class="stat-card">
+      <div class="stat-title">Avisos</div>
+      <div class="stat-value">{{ dogs?.length || 0 }}</div>
+      <div class="stat-sub">Total</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-title">Aún perdidos</div>
+      <div class="stat-value danger">
+        {{ dogs?.filter(d => d.estado === 'PERDIDO_PROPIO').length || 0 }}
+      </div>
+      <div class="stat-sub">Necesitan difusión</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-title">Encontrados</div>
+      <div class="stat-value ok">
+        {{ dogs?.filter(d => d.estado !== 'PERDIDO_PROPIO').length || 0 }}
+      </div>
+      <div class="stat-sub">Finalizados</div>
+    </div>
+  </section>
+
+  <!-- ================= EMPTY ================= -->
+  <div class="empty" *ngIf="!loading && !error && dogs?.length === 0">
+    No hay avisos por el momento.
+  </div>
+
+  <!-- ================= GRID ================= -->
+  <section class="grid" *ngIf="!loading && dogs?.length">
+
+    <article class="dog-card" *ngFor="let dog of dogs">
+      <div class="thumb">
+
+        <!-- IMAGEN -->
+        <ng-container *ngIf="dog.foto; else noImage">
+          <img [src]="dog.foto" [alt]="dog.nombre || 'Mascota perdida'" />
+        </ng-container>
+
+        <ng-template #noImage>
+          <div class="placeholder">
+            <span>Sin foto</span>
+          </div>
+        </ng-template>
+
+        <!-- BADGE -->
+        <span
+          class="badge"
+          [ngClass]="dog.estado === 'PERDIDO_PROPIO' ? 'missing' : 'found'"
+        >
+          {{ dog.estado === 'PERDIDO_PROPIO' ? 'PERDIDO' : 'ENCONTRADO' }}
+        </span>
+      </div>
+
+      <div class="content">
+        <div class="headline">
+          <h3>{{ dog.nombre || 'Sin nombre' }}</h3>
+          <span class="date">{{ dog.fechaDePerdida || dog.fecha_de_perdida }}</span>
+        </div>
+
+        <p class="desc">
+          {{ dog.descripcion || 'Sin descripción' }}
+        </p>
+
+        <div class="meta">
+          <span class="chip">📍 {{ dog.coordenadas || 'Zona desconocida' }}</span>
+          <span class="chip">🐾 {{ dog.raza || 'Raza desconocida' }}</span>
+          <span class="chip">🎂 {{ dog.tamano || 'N/A' }}</span>
+          <span class="chip">🎨 {{ dog.color || 'N/A' }}</span>
+        </div>
+
+        <div class="footer">
+          <span class="phone">📞 {{ dog.dueno?.telefono || 'Contacto no disponible' }}</span>
+
+          <div class="actions">
+            <button class="ghost">Compartir</button>
+            <button class="secondary" (click)="viewDetails(dog)">
+              Ver detalles
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bottom" *ngIf="!loading && dogs?.length">
+    <button class="ghost">← Anterior</button>
+    <span class="pageinfo">Página 1 de 1</span>
+    <button class="ghost">Siguiente →</button>
+  </footer>
+
+</div>
