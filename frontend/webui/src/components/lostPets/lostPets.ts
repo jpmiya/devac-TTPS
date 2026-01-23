@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MascotasService, Mascota, UsuarioRef, EstadoMascota} from '../../app/services/MascotaService';
 
 
@@ -12,6 +13,8 @@ import { MascotasService, Mascota, UsuarioRef, EstadoMascota} from '../../app/se
   selector: 'app-lost-dogs',
   templateUrl: './lost-dogs.component.html',
   styleUrls: ['./lost-dogs.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class LostDogsComponent implements OnInit {
   dogs: Mascota[] = [];
@@ -34,6 +37,14 @@ export class LostDogsComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  get missingDogsCount(): number {
+    return this.dogs.filter(d => d.estado === 'PERDIDO_PROPIO').length;
+  }
+
+  get foundDogsCount(): number {
+    return this.dogs.filter(d => d.estado !== 'PERDIDO_PROPIO').length;
   }
 }
 
