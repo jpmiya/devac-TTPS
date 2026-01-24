@@ -1,0 +1,132 @@
+<div class="register-page">
+  <div class="register-container">
+    <div class="register-card">
+      <!-- LOGO / HEADER -->
+      <div class="register-header">
+        <h1>Crear cuenta</h1>
+        <p>Únete a la comunidad de rescatistas</p>
+      </div>
+
+      <!-- SUCCESS MESSAGE -->
+      <div class="success-message" *ngIf="success">
+        <span class="icon">✓</span>
+        <p>¡Registro exitoso! Ya puedes iniciar sesión.</p>
+      </div>
+
+      <!-- ERROR MESSAGE -->
+      <div class="error-message" *ngIf="error && !success">
+        <span class="icon">⚠</span>
+        <p>{{ error }}</p>
+      </div>
+
+      <!-- FORM -->
+      <form *ngIf="!success" (ngSubmit)="onSubmit()" class="register-form">
+        <!-- Nombre y Apellido -->
+        <div class="form-group">
+          <label for="nombreYApellido">Nombre y Apellido *</label>
+          <input
+            type="text"
+            id="nombreYApellido"
+            name="nombreYApellido"
+            [(ngModel)]="usuario.nombreYApellido"
+            placeholder="Juan Pérez"
+            required
+            [disabled]="loading"
+          />
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="usuario.email"
+            placeholder="tu@email.com"
+            required
+            [disabled]="loading"
+          />
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">Contraseña *</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="usuario.password"
+            placeholder="Mínimo 6 caracteres"
+            required
+            [disabled]="loading"
+          />
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar Contraseña *</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            placeholder="Repite tu contraseña"
+            required
+            [disabled]="loading"
+          />
+        </div>
+
+        <!-- Teléfono -->
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input
+            type="tel"
+            id="telefono"
+            name="telefono"
+            [(ngModel)]="usuario.telefono"
+            placeholder="221-555-1234"
+            [disabled]="loading"
+          />
+        </div>
+
+        <!-- Barrio -->
+        <div class="form-group">
+          <label for="barrio">Barrio</label>
+          <input
+            type="text"
+            id="barrio"
+            name="barrio"
+            [(ngModel)]="usuario.barrio"
+            placeholder="Centro"
+            [disabled]="loading"
+          />
+        </div>
+
+        <!-- Ciudad -->
+        <div class="form-group">
+          <label for="ciudad">Ciudad</label>
+          <input
+            type="text"
+            id="ciudad"
+            name="ciudad"
+            [(ngModel)]="usuario.ciudad"
+            placeholder="La Plata"
+            [disabled]="loading"
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit" [disabled]="loading">
+          <span *ngIf="!loading">Crear cuenta</span>
+          <span *ngIf="loading" class="loading-spinner">Registrando...</span>
+        </button>
+
+        <!-- Login Link -->
+        <div class="login-link">
+          ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

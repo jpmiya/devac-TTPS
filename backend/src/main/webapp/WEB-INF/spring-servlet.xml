@@ -11,6 +11,9 @@
     <!-- Escaneo de controllers -->
     <context:component-scan base-package="org.example.devac" />
 
+    <!-- Habilitar variables de entorno en XML -->
+    <context:property-placeholder />
+
     <mvc:annotation-driven />
 
 </beans>
