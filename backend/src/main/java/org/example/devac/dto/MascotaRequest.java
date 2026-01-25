@@ -1,13 +1,19 @@
 package org.example.devac.dto;
 
 import org.example.devac.models.EstadoMascota;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDate;
 
 public class MascotaRequest {
     private Long duenoId;
     private String nombre;
+    @JsonProperty("tamanio")
     private String tamaño;
     private String color;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate fechaDePerdida;
     private EstadoMascota estado;
     private String foto;

@@ -1,0 +1,79 @@
+<div class="page">
+
+  <p style="color: white;">loading: {{ loading }}</p>
+
+
+  <!-- LOADING -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Creando mascota...</div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Crear mascota</h1>
+      <p>Completá los datos para registrarla</p>
+    </div>
+
+    <div class="topbar-actions">
+      <button type="button" class="primary" routerLink="/lost-dogs">← Volver</button>
+    </div>
+  </header>
+
+  <!-- ERROR / OK -->
+  <div class="error-banner" *ngIf="!loading && error">
+    {{ error }}
+  </div>
+
+  <div class="ok-banner" *ngIf="!loading && ok">
+    {{ ok }}
+  </div>
+
+  <!-- FORM CARD -->
+  <section class="card">
+    <form class="form" (ngSubmit)="submit()">
+
+      <div class="field">
+        <label class="label">Dueño (duenoId)</label>
+        <input class="input" type="number" [(ngModel)]="form.duenoId" name="duenoId" required />
+      </div>
+
+      <div class="field">
+        <label class="label">Nombre</label>
+        <input class="input" [(ngModel)]="form.nombre" name="nombre" placeholder="Ej: Firulais" required />
+      </div>
+
+      <div class="field">
+        <label class="label">Tamaño</label>
+        <input class="input" [(ngModel)]="form.tamanio" name="tamanio" placeholder="Ej: Mediano" />
+      </div>
+
+      <div class="field">
+        <label class="label">Fecha de pérdida</label>
+        <input
+          type="date"
+          [(ngModel)]="form.fechaDePerdida"
+          name="fechaDePerdida"
+        />
+
+      </div>
+
+      <div class="field full">
+        <label class="label">Estado</label>
+        <select class="select" [(ngModel)]="form.estado" name="estado" required>
+          <option value="PERDIDO_PROPIO">PERDIDO_PROPIO</option>
+          <option value="ENCONTRADO">ENCONTRADO</option>
+          <option value="ADOPCION">ADOPCION</option>
+        </select>
+      </div>
+
+      <div class="actions full">
+        <button type="button" class="ghost" routerLink="/lost-dogs">Cancelar</button>
+        <button type="submit" class="secondary" [disabled]="loading">Crear mascota</button>
+      </div>
+
+    </form>
+  </section>
+
+</div>

@@ -37,6 +37,8 @@ export class LostDogsComponent implements OnInit {
         this.loading = false;
       }
     });
+
+    this.loading = false;
   }
 
   get missingDogsCount(): number {
