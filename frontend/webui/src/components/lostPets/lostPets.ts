@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { finalize } from 'rxjs/operators';
 import { MascotasService, Mascota, UsuarioRef, EstadoMascota} from '../../app/services/MascotaService';
 
 
@@ -21,25 +22,36 @@ export class LostDogsComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(private mascotasService: MascotasService) {}
+  constructor(
+    private mascotasService: MascotasService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
 
   ngOnInit(): void {
     this.loading = true;
+    this.error = '';
+    this.cdr.detectChanges(); // fuerza render del overlay
 
-    this.mascotasService.findAllLost().subscribe({
-      next: (data) => {
-        this.dogs = data ?? [];
+    this.mascotasService.findAllLost()
+      .pipe(finalize(() => {
         this.loading = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = 'No se pudo cargar la lista.';
-        this.loading = false;
-      }
-    });
-
-    this.loading = false;
+        this.cdr.detectChanges(); // fuerza render al terminar
+      }))
+      .subscribe({
+        next: (data) => {
+          console.log('findAllLost data:', data);
+          this.dogs = data ?? [];
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('findAllLost error:', err);
+          this.error = 'No se pudo cargar la lista.';
+          this.cdr.detectChanges();
+        }
+      });
   }
+
 
   get missingDogsCount(): number {
     return this.dogs.filter(d => d.estado === 'PERDIDO_PROPIO').length;
