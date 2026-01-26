@@ -9,6 +9,11 @@
       <a routerLink="/lost-dogs" class="nav-link highlight">Ver mascotas perdidas en tu zona</a>
 
 
+      <div style="color: yellow; font-weight: bold;">
+        DEBUG isLoggedIn={{ isLoggedIn }}
+      </div>
+
+
       <div class="nav-buttons">
         <!-- NO logueado -->
         <ng-container *ngIf="!isLoggedIn; else loggedTemplate">
