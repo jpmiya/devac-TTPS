@@ -27,6 +27,12 @@ export interface Usuario {
   casosEnZona?: number;
 }
 
+
+export interface UsuarioLogin {
+  email: string;
+  password: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
   private baseUrl = environment.apiUrl;
@@ -36,4 +42,14 @@ export class UsuarioService {
   register(usuario: UsuarioRegister): Observable<Usuario> {
     return this.http.post<Usuario>(`${this.baseUrl}/usuario/register`, usuario);
   }
+
+  login(email: string, password: string): Observable<string> {
+    return this.http.post(`${this.baseUrl}/usuario/login`, {
+      email: email,
+      password: password,
+    },
+      {responseType: 'text'})
+  }
+
+
 }

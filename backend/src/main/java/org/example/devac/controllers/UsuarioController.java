@@ -12,6 +12,7 @@ import org.example.devac.dto.UsuarioRegisterDTO;
 
 import java.util.List;
 import java.util.Map;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/usuario")
@@ -29,14 +30,16 @@ public class UsuarioController {
     public ResponseEntity<String> login(@RequestBody Map<String,String> body) {
         String email = body.get("email");
         String password = body.get("password");
-        boolean ok = usuarioService.login(email, password);
+        Usuario usr = usuarioService.login(email, password);
 
-        if (!ok) {
+        if (usr == null) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)   // 401
                     .body("Credenciales inválidas");
         }
 
+
+        //si el service no devolvio null seguro que la password estaba correcta
         return ResponseEntity.ok("Login correcto");
     }
 

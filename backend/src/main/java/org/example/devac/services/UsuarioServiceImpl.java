@@ -62,12 +62,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public boolean login(String email, String password) {
+    public Usuario login(String email, String password) {
         Usuario usr = usuarioDAO.getByMail(email);
         if (usr == null) {
-            return false;
+            return null;
         }
-        return passwordEncoder.matches(password, usr.getPassword());
+        if (passwordEncoder.matches(password, usr.getPassword())){
+            return usr;
+        } else {
+            return null;
+        }
     }
 
     @Override

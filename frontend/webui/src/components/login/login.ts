@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
+import {UsuarioService} from '../../app/services/UsuarioService';
 
 
 @Component({
@@ -13,17 +14,31 @@ import {CommonModule} from '@angular/common';
   loginForm: FormGroup;
 
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,   private usuarioService :UsuarioService) {
     this.loginForm = this.fb.group({
       email:['' , [Validators.required, Validators.email]],
       password:['', [Validators.required]]
     });
+
   }
+
   submit(): void {
     if (this.loginForm.invalid) {
       return;
     }
-    console.log(this.loginForm.value);
+
+    const { email, password } = this.loginForm.value;
+
+    this.usuarioService.login(email, password).subscribe({
+      next: (res) => {
+        console.log(res); // "Login correcto"
+      },
+      error: (err) => {
+        console.error(err);
+        // 401 → credenciales inválidas
+      }
+    });
   }
+
 
 }
