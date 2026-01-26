@@ -168,14 +168,14 @@ class UsuarioServiceImplTest {
 
         when(usuarioDAO.getByMail("juan@example.com")).thenReturn(usuarioConHash);
 
-        boolean result = usuarioService.login("juan@example.com", rawPassword);
+        Usuario result = usuarioService.login("juan@example.com", rawPassword);
 
-        assertTrue(result);
+        assertEquals(usuarioConHash, result);
         verify(usuarioDAO).getByMail("juan@example.com");
     }
 
     @Test
-    void login_withInvalidPassword_shouldReturnFalse() {
+    void login_withInvalidPassword_shouldReturnNull() {
         String hashedPassword = new BCryptPasswordEncoder().encode("password123");
         Usuario usuarioConHash = new Usuario.Builder()
                 .nombreYApellido("Juan Pérez")
@@ -185,18 +185,18 @@ class UsuarioServiceImplTest {
 
         when(usuarioDAO.getByMail("juan@example.com")).thenReturn(usuarioConHash);
 
-        boolean result = usuarioService.login("juan@example.com", "wrongPassword");
+        Usuario result = usuarioService.login("juan@example.com", "wrongPassword");
 
-        assertFalse(result);
+        assertNull(result);
     }
 
     @Test
-    void login_withNonExistentUser_shouldReturnFalse() {
+    void login_withNonExistentUser_shouldReturnNull() {
         when(usuarioDAO.getByMail("nonexistent@example.com")).thenReturn(null);
 
-        boolean result = usuarioService.login("nonexistent@example.com", "password123");
+        Usuario result = usuarioService.login("nonexistent@example.com", "password123");
 
-        assertFalse(result);
+        assertNull(result);
     }
 
     @Test

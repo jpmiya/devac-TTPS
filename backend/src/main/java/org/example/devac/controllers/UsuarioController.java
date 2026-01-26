@@ -27,7 +27,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String,String> body) {
+    public ResponseEntity<String> login(@RequestBody Map<String,String> body, HttpSession session) {
         String email = body.get("email");
         String password = body.get("password");
         Usuario usr = usuarioService.login(email, password);
@@ -37,6 +37,10 @@ public class UsuarioController {
                     .status(HttpStatus.UNAUTHORIZED)   // 401
                     .body("Credenciales inválidas");
         }
+
+        session.setAttribute("USER_ID", usr.getId());
+        session.setAttribute("USER_EMAIL", usr.getEmail());
+
 
 
         //si el service no devolvio null seguro que la password estaba correcta
