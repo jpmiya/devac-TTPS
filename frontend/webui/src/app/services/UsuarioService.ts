@@ -43,13 +43,17 @@ export class UsuarioService {
     return this.http.post<Usuario>(`${this.baseUrl}/usuario/register`, usuario);
   }
 
-  login(email: string, password: string): Observable<string> {
-    return this.http.post(`${this.baseUrl}/usuario/login`, {
-      email: email,
-      password: password,
-    },
-      {responseType: 'text'})
+  login(email: string, password: string) {
+    return this.http.post(
+      `${this.baseUrl}/usuario/login`,
+      { email, password },
+      {
+        withCredentials: true,
+        responseType: 'text'
+      }
+    );
   }
+
 
 
 }

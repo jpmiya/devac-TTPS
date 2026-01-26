@@ -61,6 +61,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioDAO.persist(usuario);
     }
 
+    public Usuario findById(Long idUsuario) {
+        return this.usuarioDAO.getById(idUsuario);
+    }
+
     @Override
     public Usuario login(String email, String password) {
         Usuario usr = usuarioDAO.getByMail(email);

@@ -17,4 +17,5 @@ public interface UsuarioService {
     Mascota editarMascota(Long idMascota, Long idUsuario);
     Usuario eliminarMascota(Long idMascota,Long idUsuario);
     List<Mascota> getMascotasDeUsuario(Long idUsuario);
+    Usuario findById(Long userId);
 }

@@ -1,14 +1,27 @@
 <div class="home-page">
+
+
   <!-- HEADER -->
   <header class="header">
     <nav class="nav">
       <a routerLink="/" class="nav-link active">Home</a>
       <a routerLink="/ranking" class="nav-link">Ranking Colaboradores</a>
       <a routerLink="/lost-dogs" class="nav-link highlight">Ver mascotas perdidas en tu zona</a>
+
+
       <div class="nav-buttons">
-        <a routerLink="/register" class="nav-btn outline">Registrarse</a>
-        <a routerLink="/login" class="nav-btn">Iniciar Sesión</a>
+        <!-- NO logueado -->
+        <ng-container *ngIf="!isLoggedIn; else loggedTemplate">
+          <a routerLink="/register" class="nav-btn outline">Registrarse</a>
+          <a routerLink="/login" class="nav-btn">Iniciar Sesión</a>
+        </ng-container>
+
+        <!-- LOGUEADO -->
+        <ng-template #loggedTemplate>
+          <button class="nav-btn" (click)="logout()">Cerrar sesión</button>
+        </ng-template>
       </div>
+
     </nav>
   </header>
 
@@ -305,15 +318,15 @@
   .nav {
     gap: 10px;
   }
-  
+
   .hero-title {
     font-size: 40px;
   }
-  
+
   .about-content {
     grid-template-columns: 1fr;
   }
-  
+
   .ranking-grid {
     grid-template-columns: 1fr;
     max-width: 400px;
@@ -324,24 +337,24 @@
   .header {
     padding: 15px 20px;
   }
-  
+
   .nav-link, .nav-btn {
     font-size: 12px;
     padding: 6px 10px;
   }
-  
+
   .hero-title {
     font-size: 32px;
   }
-  
+
   .hero-subtitle {
     font-size: 16px;
   }
-  
+
   .hero-content {
     padding: 30px 40px;
   }
-  
+
   .about-text h2 {
     font-size: 28px;
   }

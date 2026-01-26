@@ -14,6 +14,16 @@ public class UsuarioDAOHibernateJPA extends GenericDAOHibernateJPA<Usuario>
     }
 
 
+    public Usuario getById(Long idUsuario) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.find(Usuario.class, idUsuario);
+        } finally {
+            em.close();
+        }
+    }
+
+
     public Usuario getByMail(String mail) {
         //get the entity Manager
         EntityManager em = emf.createEntityManager();

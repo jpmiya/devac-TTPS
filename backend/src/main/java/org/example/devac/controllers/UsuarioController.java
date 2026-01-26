@@ -41,10 +41,29 @@ public class UsuarioController {
         session.setAttribute("USER_ID", usr.getId());
         session.setAttribute("USER_EMAIL", usr.getEmail());
 
-
-
         //si el service no devolvio null seguro que la password estaba correcta
         return ResponseEntity.ok("Login correcto");
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Logout");
+    }
+
+
+
+    @GetMapping("/me")
+    public ResponseEntity<Usuario> me(HttpSession session) {
+        Long userId = (Long) session.getAttribute("USER_ID");
+
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Usuario usuario = usuarioService.findById(userId);
+        return ResponseEntity.ok(usuario);
     }
 
 

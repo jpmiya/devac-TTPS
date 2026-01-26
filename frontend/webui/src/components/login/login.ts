@@ -2,6 +2,8 @@ import {Component} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {UsuarioService} from '../../app/services/UsuarioService';
+import { Router } from '@angular/router';
+
 
 
 @Component({
@@ -14,7 +16,9 @@ import {UsuarioService} from '../../app/services/UsuarioService';
   loginForm: FormGroup;
 
 
-  constructor(private fb: FormBuilder,   private usuarioService :UsuarioService) {
+  constructor(private fb: FormBuilder,
+              private usuarioService :UsuarioService,
+              private router: Router,) {
     this.loginForm = this.fb.group({
       email:['' , [Validators.required, Validators.email]],
       password:['', [Validators.required]]
@@ -31,7 +35,7 @@ import {UsuarioService} from '../../app/services/UsuarioService';
 
     this.usuarioService.login(email, password).subscribe({
       next: (res) => {
-        console.log(res); // "Login correcto"
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.error(err);
