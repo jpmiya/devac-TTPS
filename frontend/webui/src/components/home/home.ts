@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -10,24 +10,29 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './home.html'
 })
 export class HomeComponent implements OnInit {
+  private readonly id = Math.random().toString(16).slice(2);
   isLoggedIn = false;
 
   constructor(
     private http: HttpClient,
-    private router: Router
-  ) {}
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {
+    console.log(`[HOME ${this.id}] constructor`);
+  }
 
   ngOnInit(): void {
-    console.log('HOME init, isLoggedIn=', this.isLoggedIn);
+    console.log(`[HOME ${this.id}] init isLoggedIn=`, this.isLoggedIn);
 
     this.http.get('http://localhost:8080/usuario/me').subscribe({
       next: () => {
         this.isLoggedIn = true;
         console.log('ME 200 -> isLoggedIn=', this.isLoggedIn);
+        this.cdr.detectChanges();
       },
       error: (e) => {
         this.isLoggedIn = false;
-        console.log('ME ERROR -> isLoggedIn=', this.isLoggedIn, e);
+        console.log(`[HOME ${this.id}] ME ERROR ->`, this.isLoggedIn, e.status);
       }
     });
   }
