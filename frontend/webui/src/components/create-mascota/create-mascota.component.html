@@ -108,9 +108,15 @@
       </div>
 
       <div class="field full">
-        <label class="label">Foto (URL)</label>
-        <input class="input" [(ngModel)]="form.foto" name="foto" placeholder="Ej: https://ejemplo.com/foto.jpg" />
-        <small style="color: #888; margin-top: 4px; display: block;">Por ahora solo URLs. Subida de archivos próximamente.</small>
+        <label class="label">Foto</label>
+        <input
+          class="input"
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          name="fotoFile"
+        />
+        <small style="color: #888; margin-top: 4px; display: block;">Formatos: JPG, PNG, GIF. Tamaño máximo: 5MB</small>
       </div>
 
       <div class="actions full">

@@ -74,8 +74,12 @@
       <div class="thumb">
 
         <!-- IMAGEN -->
-        <ng-container *ngIf="dog.foto; else noImage">
-          <img [src]="dog.foto" [alt]="dog.nombre || 'Mascota perdida'" />
+        <ng-container *ngIf="dog.fotoUrl; else noImage">
+          <img
+            [src]="dog.fotoUrl"
+            [alt]="dog.nombre || 'Mascota perdida'"
+            (error)="onImageError($event, dog)"
+          />
         </ng-container>
 
         <ng-template #noImage>

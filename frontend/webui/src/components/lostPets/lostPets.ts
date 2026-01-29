@@ -73,6 +73,10 @@ export class LostDogsComponent implements OnInit {
   get foundDogsCount(): number {
     return this.dogs.filter(d => d.estado !== 'PERDIDO_PROPIO').length;
   }
+
+  onImageError(event: Event, dog: any): void {
+    (event.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EError%3C/text%3E%3C/svg%3E';
+  }
 }
 
 

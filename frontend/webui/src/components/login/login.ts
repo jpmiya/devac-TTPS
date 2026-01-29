@@ -14,6 +14,8 @@ import { Router } from '@angular/router';
 }) export class LogInComponent {
 
   loginForm: FormGroup;
+  errorMessage = '';
+  loading = false;
 
 
   constructor(private fb: FormBuilder,
@@ -33,13 +35,24 @@ import { Router } from '@angular/router';
 
     const { email, password } = this.loginForm.value;
 
+    this.loading = true;
+    this.errorMessage = '';
+
     this.usuarioService.login(email, password).subscribe({
       next: (res) => {
+        this.loading = false;
         this.router.navigate(['/']);
       },
       error: (err) => {
+        this.loading = false;
         console.error(err);
-        // 401 → credenciales inválidas
+        if (err.status === 401) {
+          this.errorMessage = 'Email o contraseña incorrectos';
+        } else if (err.status === 0) {
+          this.errorMessage = 'No se puede conectar con el servidor';
+        } else {
+          this.errorMessage = 'Error al iniciar sesión. Intenta nuevamente.';
+        }
       }
     });
   }

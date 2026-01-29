@@ -18,6 +18,7 @@ export class CreateMascotaComponent implements OnInit {
   loadingUser = true;
   error = '';
   ok = '';
+  selectedFile: File | null = null;
 
   form: MascotaRequest = {
     duenoId: 0,
@@ -34,50 +35,62 @@ export class CreateMascotaComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+    }
+  }
+
   ngOnInit(): void {
     // Obtener el usuario actual para sacar el duenoId
     this.http.get<any>('http://localhost:8080/usuario/me').subscribe({
       next: (user) => {
         this.form.duenoId = user.id;
         this.loadingUser = false;
-        console.log('Usuario actual:', user);
         this.cdr.detectChanges();
       },
       error: (e) => {
-        console.error('Error obteniendo usuario:', e);
         this.error = 'Debes estar logeado para crear un aviso';
         this.loadingUser = false;
         this.cdr.detectChanges();
-        // Redirigir al login después de 2 segundos
         setTimeout(() => this.router.navigate(['/login']), 2000);
       }
     });
   }
 
   submit() {
-    console.log('submit() -> duenoId:', this.form.duenoId);
-    console.log('submit() -> form completo:', this.form);
     this.loading = true;
     this.error = '';
     this.ok = '';
     this.cdr.detectChanges();
 
-    this.mascotasService.register(this.form)
+    // Crear FormData con la estructura que espera el backend
+    const formData = new FormData();
+
+    // El backend espera un campo "mascota" con el JSON completo
+    const mascotaJson = JSON.stringify(this.form);
+    const mascotaBlob = new Blob([mascotaJson], { type: 'application/json' });
+    formData.append('mascota', mascotaBlob);
+
+    // Agregar la foto si fue seleccionada
+    if (this.selectedFile) {
+      formData.append('foto', this.selectedFile, this.selectedFile.name);
+    }
+
+    // Enviar directamente con HttpClient
+    this.http.post<any>('http://localhost:8080/mascota/register', formData)
       .pipe(finalize(() => {
-        console.log('finalize() -> loading false');
         this.loading = false;
         this.cdr.detectChanges();
       }))
       .subscribe({
         next: (res) => {
-          console.log('next()', res);
           this.ok = 'Aviso creado exitosamente!';
           this.cdr.detectChanges();
-          // Redirigir a lost-dogs después de 2 segundos
           setTimeout(() => this.router.navigate(['/lost-dogs']), 2000);
         },
         error: (e) => {
-          console.log('error()', e);
           this.error = 'Falló el registro. Por favor intenta nuevamente.';
           this.cdr.detectChanges();
         }

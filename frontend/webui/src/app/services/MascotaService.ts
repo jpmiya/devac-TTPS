@@ -40,6 +40,7 @@ export interface Mascota {
   color?: string;
   tamaño?: string;
   foto?: string;
+  fotoUrl?: string;
   coordenadas?: string;
   descripcion?: string;
 
