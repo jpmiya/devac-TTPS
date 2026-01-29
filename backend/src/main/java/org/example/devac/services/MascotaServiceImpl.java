@@ -55,7 +55,30 @@ public class MascotaServiceImpl implements MascotaService {
                 .estado(estado)
                 .build();
 
-        return mascotaDAO.persist(mascota);
+        Mascota mascotaGuardada = mascotaDAO.persist(mascota);
+        
+        // Agregar a la lista del usuario
+        dueno.agregarMascota(mascotaGuardada);
+        usuarioDAO.update(dueno);
+        
+        return mascotaGuardada;
+    }
+    
+    // Sobrecarga: registrar con Mascota directamente
+    public Mascota registrar(Mascota mascota, Long duenoId) {
+        Usuario dueno = usuarioDAO.get(duenoId);
+        if (dueno == null) {
+            throw new BadRequestException("Usuario no encontrado");
+        }
+        
+        mascota.setDueno(dueno);
+        Mascota mascotaGuardada = mascotaDAO.persist(mascota);
+        
+        // Agregar a la lista del usuario
+        dueno.agregarMascota(mascotaGuardada);
+        usuarioDAO.update(dueno);
+        
+        return mascotaGuardada;
     }
 
     @Override

@@ -1,19 +1,22 @@
 <div class="page">
 
-  <p style="color: white;">loading: {{ loading }}</p>
+  <!-- LOADING USER -->
+  <div class="loading-overlay" *ngIf="loadingUser">
+    <div class="spinner"></div>
+    <div class="loading-text">Verificando sesión...</div>
+  </div>
 
-
-  <!-- LOADING -->
+  <!-- LOADING SUBMIT -->
   <div class="loading-overlay" *ngIf="loading">
     <div class="spinner"></div>
-    <div class="loading-text">Creando mascota...</div>
+    <div class="loading-text">Creando aviso...</div>
   </div>
 
   <!-- HEADER -->
   <header class="topbar">
     <div class="topbar-left">
-      <h1>Crear mascota</h1>
-      <p>Completá los datos para registrarla</p>
+      <h1>Nuevo aviso de mascota</h1>
+      <p>Completá los datos para publicar el aviso</p>
     </div>
 
     <div class="topbar-actions">
@@ -31,46 +34,88 @@
   </div>
 
   <!-- FORM CARD -->
-  <section class="card">
+  <section class="card" *ngIf="!loadingUser">
     <form class="form" (ngSubmit)="submit()">
 
       <div class="field">
-        <label class="label">Dueño (duenoId)</label>
-        <input class="input" type="number" [(ngModel)]="form.duenoId" name="duenoId" required />
-      </div>
-
-      <div class="field">
-        <label class="label">Nombre</label>
+        <label class="label">Nombre *</label>
         <input class="input" [(ngModel)]="form.nombre" name="nombre" placeholder="Ej: Firulais" required />
       </div>
 
       <div class="field">
-        <label class="label">Tamaño</label>
-        <input class="input" [(ngModel)]="form.tamanio" name="tamanio" placeholder="Ej: Mediano" />
+        <label class="label">Tipo *</label>
+        <select class="select" [(ngModel)]="form.tipo" name="tipo" required>
+          <option value="Perro">Perro</option>
+          <option value="Gato">Gato</option>
+          <option value="Otro">Otro</option>
+        </select>
       </div>
 
       <div class="field">
-        <label class="label">Fecha de pérdida</label>
+        <label class="label">Raza</label>
+        <input class="input" [(ngModel)]="form.raza" name="raza" placeholder="Ej: Labrador" />
+      </div>
+
+      <div class="field">
+        <label class="label">Tamaño</label>
+        <select class="select" [(ngModel)]="form.tamanio" name="tamanio">
+          <option value="">Seleccionar...</option>
+          <option value="Pequeño">Pequeño</option>
+          <option value="Mediano">Mediano</option>
+          <option value="Grande">Grande</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label">Color</label>
+        <input class="input" [(ngModel)]="form.color" name="color" placeholder="Ej: Marrón" />
+      </div>
+
+      <div class="field">
+        <label class="label">Fecha de pérdida *</label>
         <input
+          class="input"
           type="date"
           [(ngModel)]="form.fechaDePerdida"
           name="fechaDePerdida"
+          required
         />
+      </div>
 
+      <div class="field">
+        <label class="label">Estado *</label>
+        <select class="select" [(ngModel)]="form.estado" name="estado" required>
+          <option value="PERDIDO_PROPIO">Perdido (mi mascota)</option>
+          <option value="ENCONTRADO">Encontrado (vi una mascota)</option>
+          <option value="ADOPCION">En adopción</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label">Coordenadas / Zona</label>
+        <input class="input" [(ngModel)]="form.coordenadas" name="coordenadas" placeholder="Ej: Av. Siempreviva 123, Springfield" />
       </div>
 
       <div class="field full">
-        <label class="label">Estado</label>
-        <select class="select" [(ngModel)]="form.estado" name="estado" required>
-          <option value="PERDIDO_PROPIO">PERDIDO_PROPIO</option>
-          <option value="ENCONTRADO">ENCONTRADO</option>
-          <option value="ADOPCION">ADOPCION</option>
-        </select>
+        <label class="label">Descripción</label>
+        <textarea
+          class="input"
+          [(ngModel)]="form.descripcion"
+          name="descripcion"
+          rows="4"
+          placeholder="Detalles adicionales que puedan ayudar a identificar a la mascota..."
+        ></textarea>
+      </div>
+
+      <div class="field full">
+        <label class="label">Foto (URL)</label>
+        <input class="input" [(ngModel)]="form.foto" name="foto" placeholder="Ej: https://ejemplo.com/foto.jpg" />
+        <small style="color: #888; margin-top: 4px; display: block;">Por ahora solo URLs. Subida de archivos próximamente.</small>
       </div>
 
       <div class="actions full">
         <button type="button" class="ghost" routerLink="/lost-dogs">Cancelar</button>
-        <button type="submit" class="secondary" [disabled]="loading">Crear mascota</button>
+        <button type="submit" class="secondary" [disabled]="loading || loadingUser">Publicar aviso</button>
       </div>
 
     </form>

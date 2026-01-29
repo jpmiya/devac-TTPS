@@ -64,7 +64,8 @@
 }
 
 .input,
-.select {
+.select,
+textarea {
   padding: 11px 12px;
   border-radius: 12px;
   border: 1px solid rgba(17, 24, 39, 0.10);
@@ -73,17 +74,25 @@
   font-size: 14px;
   color: #111827;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border 0.15s ease;
+  font-family: inherit;
 }
 
-.input::placeholder {
+.input::placeholder,
+textarea::placeholder {
   color: #6b7280;
 }
 
 .input:focus,
-.select:focus {
+.select:focus,
+textarea:focus {
   border-color: rgba(102, 126, 234, 0.55);
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.18);
   transform: translateY(-1px);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
 .select option {

@@ -84,17 +84,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Mascota registrarMascota(Mascota mascota, Long usuarioId) {
-        Usuario usuario = usuarioDAO.get(usuarioId);
-        if (usuario == null) {
-            throw new BadRequestException("Usuario no encontrado con ID: " + usuarioId);
-        }
-
-        mascota.setDueno(usuario);
-        return mascotaDAO.persist(mascota);
-    }
-
-    @Override
     public Mascota editarMascota(Long idMascota, Long usuarioId) {
         // Validar que el usuario existe y es dueño de la mascota
         Mascota mascotaExistente = validarPropiedadMascota(idMascota, usuarioId);

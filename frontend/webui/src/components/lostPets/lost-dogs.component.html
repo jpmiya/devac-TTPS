@@ -32,7 +32,8 @@
         <option value="missing">Aún perdidos</option>
       </select>
 
-      <button class="primary">+ Nuevo aviso</button>
+
+      <button class="primary" *ngIf="isLoggedIn" routerLink="/create-mascota">+ Nuevo aviso</button>
     </div>
   </header>
 
