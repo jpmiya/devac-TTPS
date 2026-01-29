@@ -161,14 +161,14 @@ class MascotaEditerServiceTest {
     @Test
     void edit_withFotoUpdate_shouldUpdateFoto() {
         Mascota cambios = new Mascota();
-        cambios.setFoto("http://example.com/new-photo.jpg");
+        cambios.setFotoUrl("http://example.com/new-photo.jpg");
 
         when(mascotaDAO.get(10L)).thenReturn(existente);
         when(mascotaDAO.update(any(Mascota.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Mascota result = mascotaEditerService.edit(10L, cambios);
 
-        assertEquals("http://example.com/new-photo.jpg", result.getFoto());
+        assertEquals("http://example.com/new-photo.jpg", result.getFotoUrl());
     }
 
     @Test
@@ -201,7 +201,7 @@ class MascotaEditerServiceTest {
         cambios.setEstado(EstadoMascota.PERDIDO_AJENO);
         cambios.setFechaDePerdida(nuevaFecha);
         cambios.setCoordenadas("-34.0000,-57.0000");
-        cambios.setFoto("http://example.com/updated.jpg");
+        cambios.setFotoUrl("http://example.com/updated.jpg");
 
         when(mascotaDAO.get(10L)).thenReturn(existente);
         when(mascotaDAO.update(any(Mascota.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -216,7 +216,7 @@ class MascotaEditerServiceTest {
         assertEquals(EstadoMascota.PERDIDO_AJENO, result.getEstado());
         assertEquals(nuevaFecha, result.getFechaDePerdida());
         assertEquals("-34.0000,-57.0000", result.getCoordenadas());
-        assertEquals("http://example.com/updated.jpg", result.getFoto());
+        assertEquals("http://example.com/updated.jpg", result.getFotoUrl());
         // Tipo no cambió (no estaba en cambios)
         assertEquals("Perro", result.getTipo());
     }

@@ -73,7 +73,7 @@ class MascotaBuilderTest {
                 .tamaño("Grande")
                 .color("Marrón")
                 .fechaDePerdida(fecha)
-                .foto("http://example.com/photo.jpg")
+                .fotoUrl("http://example.com/photo.jpg")
                 .coordenadas("-34.9214,-57.9544")
                 .descripcion("Perro muy amigable")
                 .raza("Labrador")
@@ -83,7 +83,7 @@ class MascotaBuilderTest {
         assertEquals("Grande", mascota.getTamaño());
         assertEquals("Marrón", mascota.getColor());
         assertEquals(fecha, mascota.getFechaDePerdida());
-        assertEquals("http://example.com/photo.jpg", mascota.getFoto());
+        assertEquals("http://example.com/photo.jpg", mascota.getFotoUrl());
         assertEquals("-34.9214,-57.9544", mascota.getCoordenadas());
         assertEquals("Perro muy amigable", mascota.getDescripcion());
         assertEquals("Labrador", mascota.getRaza());
@@ -173,7 +173,7 @@ class MascotaBuilderTest {
         assertSame(builder, builder.tamaño("Grande"));
         assertSame(builder, builder.color("Marrón"));
         assertSame(builder, builder.fechaDePerdida(LocalDate.now()));
-        assertSame(builder, builder.foto("url"));
+        assertSame(builder, builder.fotoUrl("url"));
         assertSame(builder, builder.coordenadas("coords"));
         assertSame(builder, builder.descripcion("desc"));
         assertSame(builder, builder.raza("Labrador"));

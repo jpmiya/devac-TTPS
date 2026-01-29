@@ -23,7 +23,7 @@ public class Mascota {
     private String color;
     private LocalDate fecha_de_perdida;
     private EstadoMascota estado;
-    private String foto; // URL de la foto
+    private String fotoUrl; // URL de la foto en MinIO
     private String coordenadas;
     private String descripcion;
 
@@ -95,8 +95,8 @@ public class Mascota {
         return this.fecha_de_perdida;
     }
 
-    public String getFoto() {
-        return this.foto;
+    public String getFotoUrl() {
+        return this.fotoUrl;
     }
 
     public String getCoordenadas() {
@@ -136,8 +136,8 @@ public class Mascota {
         this.fecha_de_perdida = fecha;
     }
 
-    public void setFoto(String foto) {
-        this.foto = foto;
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
     }
 
     public void setCoordenadas(String coordenadas) {
@@ -171,7 +171,7 @@ public class Mascota {
         private String color;
         private LocalDate fechaDePerdida;
         private EstadoMascota estado = EstadoMascota.PERDIDO_PROPIO;
-        private String foto;
+        private String fotoUrl;
         private String coordenadas;
         private String descripcion;
         private String tipo;
@@ -207,8 +207,8 @@ public class Mascota {
             return this;
         }
 
-        public Builder foto(String foto) {
-            this.foto = foto;
+        public Builder fotoUrl(String fotoUrl) {
+            this.fotoUrl = fotoUrl;
             return this;
         }
 
@@ -245,7 +245,7 @@ public class Mascota {
             mascota.color = this.color;
             mascota.fecha_de_perdida = this.fechaDePerdida;
             mascota.estado = this.estado;
-            mascota.foto = this.foto;
+            mascota.fotoUrl = this.fotoUrl;
             mascota.coordenadas = this.coordenadas;
             mascota.descripcion = this.descripcion;
             mascota.tipo = this.tipo;

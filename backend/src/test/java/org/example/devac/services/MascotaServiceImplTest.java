@@ -138,7 +138,6 @@ class MascotaServiceImplTest {
     void registrar_shouldSetAllFieldsFromRequest() {
         LocalDate fecha = LocalDate.of(2024, 12, 1);
         mascotaRequest.setFechaDePerdida(fecha);
-        mascotaRequest.setFoto("http://example.com/photo.jpg");
         mascotaRequest.setCoordenadas("-34.9214,-57.9544");
 
         when(usuarioDAO.get(1L)).thenReturn(dueno);
@@ -149,7 +148,6 @@ class MascotaServiceImplTest {
             assertEquals("Grande", m.getTamaño());
             assertEquals("Marrón", m.getColor());
             assertEquals(fecha, m.getFechaDePerdida());
-            assertEquals("http://example.com/photo.jpg", m.getFoto());
             assertEquals("-34.9214,-57.9544", m.getCoordenadas());
             assertEquals("Perro muy amigable", m.getDescripcion());
             assertEquals("Perro", m.getTipo());

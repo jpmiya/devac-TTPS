@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,8 +19,10 @@ public class MascotaController {
     private MascotaService mascotaService;
 
     @PostMapping("/register")
-    public ResponseEntity<Mascota> registrar(@RequestBody MascotaRequest request) {
-        return ResponseEntity.ok(mascotaService.registrar(request));
+    public ResponseEntity<Mascota> registrar(
+            @RequestPart("mascota") MascotaRequest request,
+            @RequestPart(value = "foto", required = false) MultipartFile foto) {
+        return ResponseEntity.ok(mascotaService.registrar(request, foto));
     }
 
     @PutMapping("/{id}")

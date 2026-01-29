@@ -9,6 +9,8 @@ import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +27,18 @@ public class MascotaServiceImpl implements MascotaService {
 
     @Autowired
     MascotaEditerService mascotaEditerService;
+    
+    @Autowired
+    private MinioService minioService;
 
 
     @Override
     public Mascota registrar(MascotaRequest request) {
+        return registrar(request, null);
+    }
+    
+    @Transactional
+    public Mascota registrar(MascotaRequest request, MultipartFile foto) {
         // Buscar el dueño por ID
         Usuario dueno = usuarioDAO.get(request.getDuenoId());
         if (dueno == null) {
@@ -47,7 +57,6 @@ public class MascotaServiceImpl implements MascotaService {
                 .tamaño(request.getTamaño())
                 .color(request.getColor())
                 .fechaDePerdida(request.getFechaDePerdida())
-                .foto(request.getFoto())
                 .coordenadas(request.getCoordenadas())
                 .descripcion(request.getDescripcion())
                 .tipo(request.getTipo())
@@ -55,16 +64,38 @@ public class MascotaServiceImpl implements MascotaService {
                 .estado(estado)
                 .build();
 
+    
         Mascota mascotaGuardada = mascotaDAO.persist(mascota);
         
-        // Agregar a la lista del usuario
-        dueno.agregarMascota(mascotaGuardada);
-        usuarioDAO.update(dueno);
-        
-        return mascotaGuardada;
+        String uploadedFileName = null;
+        try {
+            // Subir foto si existe
+            if (foto != null && !foto.isEmpty()) {
+                uploadedFileName = minioService.uploadFile(foto, mascotaGuardada.getId());
+                String fileUrl = minioService.getFileUrl(uploadedFileName);
+                mascotaGuardada.setFotoUrl(fileUrl);
+                mascotaDAO.update(mascotaGuardada);
+            }
+            
+            return mascotaGuardada;
+            
+        } catch (Exception e) {
+            // Si falló después de subir la foto, eliminarla de MinIO
+            if (uploadedFileName != null) {
+                try {
+                    minioService.deleteFile(uploadedFileName);
+                } catch (Exception deleteEx) {
+                    // Log el error pero no fallar por esto
+                    System.err.println("Error al eliminar foto huérfana de MinIO: " + deleteEx.getMessage());
+                }
+            }
+            // Re-lanzar la excepción para que @Transactional haga rollback de la BD
+            throw e;
+        }
     }
     
     // Sobrecarga: registrar con Mascota directamente
+    @Transactional
     public Mascota registrar(Mascota mascota, Long duenoId) {
         Usuario dueno = usuarioDAO.get(duenoId);
         if (dueno == null) {

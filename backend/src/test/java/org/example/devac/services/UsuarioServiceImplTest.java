@@ -216,6 +216,9 @@ class UsuarioServiceImplTest {
         verify(userEditerService).edit(1L, cambios);
     }
 
+    // Test comentado: el método registrarMascota fue eliminado de UsuarioService
+    // Ahora se usa MascotaService.registrar() directamente
+    /*
     @Test
     void registrarMascota_withValidUsuario_shouldPersistMascota() {
         Mascota mascota = new Mascota.Builder()
@@ -254,6 +257,7 @@ class UsuarioServiceImplTest {
         verify(usuarioDAO).get(999L);
         verify(mascotaDAO, never()).persist(any());
     }
+    */
 
     @Test
     void editarMascota_withValidOwnership_shouldDelegateToMascotaService() {
