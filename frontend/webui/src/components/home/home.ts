@@ -51,4 +51,8 @@ export class HomeComponent implements OnInit {
       }
     });
   }
+
+  goProfile(): void {
+    this.router.navigate(['/profile']);
+  }
 }

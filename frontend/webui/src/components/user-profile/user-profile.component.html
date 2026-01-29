@@ -1,0 +1,126 @@
+<div class="profile-page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <nav class="nav">
+      <a routerLink="/" class="nav-link">Home</a>
+      <a routerLink="/ranking" class="nav-link">Ranking Colaboradores</a>
+      <a routerLink="/lost-dogs" class="nav-link highlight">Ver mascotas perdidas en tu zona</a>
+
+      <div class="nav-buttons" *ngIf="me">
+        <button class="nav-btn outline" type="button" (click)="loadMe()" [disabled]="loading || saving">
+          ↻ Recargar
+        </button>
+
+        <button class="nav-btn outline" type="button" (click)="goToEdit()" [disabled]="loading || saving">
+          Editar Perfil
+        </button>
+
+      </div>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Mi perfil</h1>
+      <p class="hero-subtitle">Datos de tu cuenta y estadísticas</p>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="content">
+    <div class="container">
+
+      <!-- banners -->
+      <div class="status info" *ngIf="loading">Cargando perfil…</div>
+      <div class="status error" *ngIf="error">{{ error }}</div>
+      <div class="status ok" *ngIf="success">{{ success }}</div>
+
+      <ng-container *ngIf="me && !loading">
+
+        <!-- STATS -->
+        <div class="stats">
+          <div class="stat">
+            <div class="label">Rol</div>
+            <div class="value">{{ me.rol }}</div>
+          </div>
+          <div class="stat">
+            <div class="label">Puntos</div>
+            <div class="value">{{ me.puntos }}</div>
+          </div>
+          <div class="stat">
+            <div class="label">Posición</div>
+            <div class="value">#{{ me.posicion }}</div>
+          </div>
+          <div class="stat">
+            <div class="label">Casos en zona</div>
+            <div class="value">{{ me.casosEnZona }}</div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <!-- LEFT -->
+          <section class="card">
+            <div class="card-header">
+              <h2 class="card-title">Tus datos</h2>
+              <p class="card-subtitle" *ngIf="!editMode">Información personal y de contacto</p>
+              <p class="card-subtitle" *ngIf="editMode">Editá lo que necesites y guardá</p>
+            </div>
+
+            <!-- VIEW MODE -->
+            <div class="kv" *ngIf="!editMode">
+              <div class="row">
+                <div class="k">Nombre y apellido</div>
+                <div class="v">{{ me.nombreYApellido }}</div>
+              </div>
+              <div class="row">
+                <div class="k">Email</div>
+                <div class="v mono">{{ me.email }}</div>
+              </div>
+              <div class="row">
+                <div class="k">Teléfono</div>
+                <div class="v">{{ me.telefono || '—' }}</div>
+              </div>
+              <div class="row">
+                <div class="k">Barrio</div>
+                <div class="v">{{ me.barrio || '—' }}</div>
+              </div>
+              <div class="row">
+                <div class="k">Ciudad</div>
+                <div class="v">{{ me.ciudad || '—' }}</div>
+              </div>
+              <div class="row">
+                <div class="k">ID</div>
+                <div class="v mono">#{{ me.id }}</div>
+              </div>
+            </div>
+
+          </section>
+
+          <!-- RIGHT -->
+          <section class="card">
+            <div class="card-header">
+              <h2 class="card-title">Medallas</h2>
+              <p class="card-subtitle">Logros obtenidos</p>
+            </div>
+
+            <div class="chips" *ngIf="me.medallas?.length; else noMedals">
+              <span class="chip" *ngFor="let m of me.medallas">{{ m }}</span>
+            </div>
+
+            <ng-template #noMedals>
+              <div class="empty">Todavía no tenés medallas.</div>
+            </ng-template>
+          </section>
+        </div>
+
+      </ng-container>
+
+      <ng-container *ngIf="!me && !loading">
+        <div class="empty">No hay datos para mostrar (¿estás logueado?).</div>
+      </ng-container>
+
+    </div>
+  </section>
+</div>
