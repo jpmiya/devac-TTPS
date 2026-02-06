@@ -1,7 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, signal} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {UsuarioService} from '../../app/services/UsuarioService';
+import {AuthService} from '../../app/services/AuthService';
 import { Router } from '@angular/router';
 
 
@@ -14,13 +15,15 @@ import { Router } from '@angular/router';
 }) export class LogInComponent {
 
   loginForm: FormGroup;
-  errorMessage = '';
-  loading = false;
+  errorMessage = signal('');
+  loading = signal(false);
+  showPassword = signal(false);
 
 
   constructor(private fb: FormBuilder,
-              private usuarioService :UsuarioService,
-              private router: Router,) {
+              private usuarioService: UsuarioService,
+              private authService: AuthService,
+              private router: Router) {
     this.loginForm = this.fb.group({
       email:['' , [Validators.required, Validators.email]],
       password:['', [Validators.required]]
@@ -35,27 +38,34 @@ import { Router } from '@angular/router';
 
     const { email, password } = this.loginForm.value;
 
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     this.usuarioService.login(email, password).subscribe({
       next: (res) => {
-        this.loading = false;
+        this.loading.set(false);
+        this.authService.setLoggedIn();
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.loading = false;
+        this.loading.set(false);
+        this.loginForm.get('password')?.reset();
+        this.showPassword.set(false);
         console.error(err);
         if (err.status === 401) {
-          this.errorMessage = 'Email o contraseña incorrectos';
+          this.errorMessage.set('Email o contraseña incorrectos');
         } else if (err.status === 0) {
-          this.errorMessage = 'No se puede conectar con el servidor';
+          this.errorMessage.set('No se puede conectar con el servidor');
         } else {
-          this.errorMessage = 'Error al iniciar sesión. Intenta nuevamente.';
+          this.errorMessage.set('Error al iniciar sesión. Intenta nuevamente.');
         }
       }
     });
   }
+
+  goBack(): void {
+    this.router.navigate(['/']);
+  };
 
 
 }

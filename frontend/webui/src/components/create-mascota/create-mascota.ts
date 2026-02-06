@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
@@ -32,8 +32,13 @@ export class CreateMascotaComponent implements OnInit {
     private mascotasService: MascotasService,
     private http: HttpClient,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private location: Location
   ) {}
+
+  goBack(): void {
+    this.location.back();
+  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

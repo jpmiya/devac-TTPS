@@ -9,10 +9,10 @@ import {ProfileComponent} from '../components/user-profile/user-profile';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'login', component: LogInComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LogInComponent, data: { hideNavbar: true } },
+  { path: 'register', component: RegisterComponent, data: { hideNavbar: true } },
   { path: 'lost-dogs', component: LostDogsComponent },
-  {path: 'create-mascota', component:  CreateMascotaComponent },
+  { path: 'create-mascota', component: CreateMascotaComponent },
   { path: 'edit-user', component: EditUserComponent },
-  { path: 'profile', component:  ProfileComponent },
+  { path: 'profile', component: ProfileComponent },
 ];

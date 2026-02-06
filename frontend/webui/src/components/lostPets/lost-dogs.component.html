@@ -11,6 +11,8 @@
     {{ error }}
   </div>
 
+  <button type="button" class="btn-back" (click)="goBack()">← Volver</button>
+
   <!-- ================= HEADER ================= -->
   <header class="topbar">
     <div class="topbar-left">
@@ -33,7 +35,7 @@
       </select>
 
 
-      <button class="primary" *ngIf="isLoggedIn" routerLink="/create-mascota">+ Nuevo aviso</button>
+      <button class="primary" *ngIf="auth.isLoggedIn()" routerLink="/create-mascota">+ Nuevo aviso</button>
     </div>
   </header>
 

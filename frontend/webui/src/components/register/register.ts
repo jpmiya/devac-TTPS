@@ -1,5 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UsuarioService, UsuarioRegister } from '../../app/services/UsuarioService';
@@ -32,8 +32,13 @@ export class RegisterComponent {
   constructor(
     private usuarioService: UsuarioService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private location: Location
   ) {}
+
+  goBack(): void {
+    this.location.back();
+  }
 
   onSubmit(): void {
     // Validaciones básicas
@@ -63,7 +68,7 @@ export class RegisterComponent {
         console.error('❌ ERROR - Error completo:', err);
         this.loading = false;
         this.success = false;
-        
+
         // Mostrar el mensaje del backend directamente
         if (err.status === 0) {
           this.error = 'No se puede conectar con el servidor. Verifica que la API esté corriendo en http://localhost:8080';
@@ -71,7 +76,7 @@ export class RegisterComponent {
           // El backend devuelve { error: "mensaje" }
           this.error = err.error?.error || err.error?.message || 'Error al registrar usuario. Por favor, intenta nuevamente.';
         }
-        
+
         this.cdr.detectChanges(); // Forzar detección de cambios
       },
       complete: () => {
@@ -83,7 +88,7 @@ export class RegisterComponent {
   validateForm(): boolean {
     console.log('Validando formulario. Usuario:', this.usuario);
     console.log('Confirm password:', this.confirmPassword);
-    
+
     if (!this.usuario.nombreYApellido || !this.usuario.email || !this.usuario.password) {
       console.log('Falla validación de campos obligatorios');
       this.error = 'Por favor completa todos los campos obligatorios';

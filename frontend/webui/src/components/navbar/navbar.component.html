@@ -1,0 +1,16 @@
+<header class="header">
+  <nav class="nav">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">Home</a>
+    <a routerLink="/lost-dogs" routerLinkActive="active" class="nav-link highlight">Ver mascotas perdidas en tu zona</a>
+
+    <div class="nav-buttons">
+      @if (!auth.isLoggedIn()) {
+        <a routerLink="/register" class="nav-btn outline">Registrarse</a>
+        <a routerLink="/login" class="nav-btn">Iniciar Sesión</a>
+      } @else {
+        <button class="nav-btn" type="button" (click)="auth.logout()">Cerrar sesión</button>
+        <a routerLink="/profile" class="nav-btn">Mi Perfil</a>
+      }
+    </div>
+  </nav>
+</header>

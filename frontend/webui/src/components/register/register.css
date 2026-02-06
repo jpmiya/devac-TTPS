@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-brand);
   padding: 40px 20px;
 }
 
@@ -13,10 +13,10 @@
 }
 
 .register-card {
-  background: white;
-  border-radius: 20px;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
   padding: 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-card-lg);
 }
 
 .register-header {
@@ -27,20 +27,20 @@
 .register-header h1 {
   font-size: 32px;
   font-weight: 800;
-  color: #111827;
+  color: var(--color-text);
   margin: 0 0 10px 0;
 }
 
 .register-header p {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--color-text-muted);
   margin: 0;
 }
 
 .success-message {
   background: #d1fae5;
-  border: 2px solid #10b981;
-  border-radius: 12px;
+  border: 2px solid var(--color-success);
+  border-radius: var(--radius-lg);
   padding: 16px;
   margin-bottom: 20px;
   display: flex;
@@ -50,7 +50,7 @@
 
 .success-message .icon {
   font-size: 24px;
-  color: #10b981;
+  color: var(--color-success);
   font-weight: 800;
 }
 
@@ -62,8 +62,8 @@
 
 .error-message {
   background: #fee2e2;
-  border: 2px solid #ef4444;
-  border-radius: 12px;
+  border: 2px solid var(--color-error);
+  border-radius: var(--radius-lg);
   padding: 16px;
   margin-bottom: 20px;
   display: flex;
@@ -73,13 +73,13 @@
 
 .error-message .icon {
   font-size: 24px;
-  color: #ef4444;
+  color: var(--color-error);
   font-weight: 800;
 }
 
 .error-message p {
   margin: 0;
-  color: #991b1b;
+  color: var(--color-error-text);
   font-weight: 600;
 }
 
@@ -98,20 +98,20 @@
 .form-group label {
   font-size: 14px;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-text-light);
 }
 
 .form-group input {
   padding: 12px 16px;
   border: 2px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-size: 15px;
   transition: all 0.2s;
   outline: none;
 }
 
 .form-group input:focus {
-  border-color: #667eea;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -127,10 +127,10 @@
 
 .btn-submit {
   padding: 14px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-brand);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
@@ -163,18 +163,18 @@
   text-align: center;
   margin-top: 20px;
   font-size: 14px;
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 .login-link a {
-  color: #667eea;
+  color: var(--color-primary);
   font-weight: 600;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .login-link a:hover {
-  color: #764ba2;
+  color: var(--color-accent);
   text-decoration: underline;
 }
 

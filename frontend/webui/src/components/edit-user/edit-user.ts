@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { EditUserService, MeDTO, UpdateMeDTO } from '../../app/services/EditUserService';
 import {UsuarioService} from '../../app/services/UsuarioService';
@@ -9,7 +9,7 @@ import {UsuarioService} from '../../app/services/UsuarioService';
 @Component({
   selector: 'app-edit-user',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './edit-user.component.html',
   styleUrls: ['./edit-user.component.css'],
 })

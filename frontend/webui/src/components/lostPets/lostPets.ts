@@ -1,9 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { MascotasService, Mascota, UsuarioRef, EstadoMascota} from '../../app/services/MascotaService';
+import { AuthService } from '../../app/services/AuthService';
 
 
 
@@ -23,7 +24,12 @@ export class LostDogsComponent implements OnInit {
   dogs: Mascota[] = [];
   loading = false;
   error = '';
-  isLoggedIn = false;
+  auth = inject(AuthService);
+  private location = inject(Location);
+
+  goBack(): void {
+    this.location.back();
+  }
 
   constructor(
     private http: HttpClient,
@@ -33,17 +39,6 @@ export class LostDogsComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // Verificar si el usuario está logeado
-    this.http.get('http://localhost:8080/usuario/me').subscribe({
-      next: () => {
-        this.isLoggedIn = true;
-        this.cdr.detectChanges();
-      },
-      error: (e) => {
-        this.isLoggedIn = false;
-      }
-    });
-
     this.loading = true;
     this.error = '';
     this.cdr.detectChanges(); // fuerza render del overlay

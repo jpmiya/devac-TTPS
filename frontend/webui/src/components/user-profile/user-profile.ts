@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, ChangeDetectorRef} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private location = inject(Location);
 
   me: MeDTO | null = null;
 
@@ -68,8 +69,75 @@ export class ProfileComponent implements OnInit {
       });
   }
 
+  toggleEdit(): void {
+    this.editMode = !this.editMode;
+    this.success = null;
+    this.error = null;
+
+    if (this.editMode && this.me) {
+      this.form.patchValue({
+        nombreYApellido: this.me.nombreYApellido ?? '',
+        email: this.me.email ?? '',
+        telefono: this.me.telefono ?? '',
+        barrio: this.me.barrio ?? '',
+        ciudad: this.me.ciudad ?? '',
+        password: '',
+      });
+    }
+  }
+
+  cancelEdit(): void {
+    this.editMode = false;
+    this.error = null;
+    this.success = null;
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  saveProfile(): void {
+    if (!this.me || this.form.invalid) return;
+
+    this.saving = true;
+    this.error = null;
+    this.success = null;
+
+    const v = this.form.getRawValue();
+    const payload: UpdateMeDTO = {
+      nombreYApellido: v.nombreYApellido ?? undefined,
+      email: v.email ?? undefined,
+      telefono: v.telefono || undefined,
+      barrio: v.barrio || undefined,
+      ciudad: v.ciudad || undefined,
+    };
+    if (v.password?.trim()) {
+      payload.password = v.password.trim();
+    }
+
+    this.profileSvc.updateMe(this.me.id, payload)
+      .pipe(finalize(() => {
+        this.saving = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: () => {
+          this.success = 'Perfil actualizado correctamente.';
+          this.editMode = false;
+          this.loadMe();
+        },
+        error: (e) => {
+          this.error = this.humanizeHttpError(e, 'No se pudo guardar los cambios.');
+        },
+      });
+  }
+
   goToEdit(): void {
     this.router.navigate(['/edit-user']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
 
