@@ -25,6 +25,7 @@ public class MascotaController {
         return ResponseEntity.ok(mascotaService.registrar(request, foto));
     }
 
+    
     @PutMapping("/{id}")
     public ResponseEntity<Mascota> editar(@RequestBody Mascota mascota) {
         return ResponseEntity.ok(mascotaService.editar(mascota));

@@ -66,6 +66,9 @@ public class MascotaServiceImpl implements MascotaService {
 
     
         Mascota mascotaGuardada = mascotaDAO.persist(mascota);
+
+        dueno.agregarMascota(mascotaGuardada);
+        usuarioDAO.update(dueno);
         
         String uploadedFileName = null;
         try {
