@@ -1,6 +1,7 @@
 package org.example.devac.controllers;
 
 import org.example.devac.dto.MascotaRequest;
+import org.springframework.http.MediaType;
 import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
 import org.example.devac.services.MascotaService;
@@ -18,14 +19,21 @@ public class MascotaController {
     @Autowired
     private MascotaService mascotaService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Mascota> registrar(
+    @PostMapping(value="/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> registrar(
             @RequestPart("mascota") MascotaRequest request,
-            @RequestPart(value = "foto", required = false) MultipartFile foto) {
-        return ResponseEntity.ok(mascotaService.registrar(request, foto));
+            @RequestPart(value="foto", required=false) MultipartFile foto) {
+
+        try {
+            return ResponseEntity.ok(mascotaService.registrar(request, foto));
+        } catch (Exception e) {
+            e.printStackTrace(); // <- esto lo vas a ver en docker logs
+            return ResponseEntity.status(500).body(e.toString());
+        }
     }
 
-    
+
+
     @PutMapping("/{id}")
     public ResponseEntity<Mascota> editar(@RequestBody Mascota mascota) {
         return ResponseEntity.ok(mascotaService.editar(mascota));

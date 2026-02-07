@@ -49,12 +49,13 @@ export class CreateMascotaComponent implements OnInit {
 
   ngOnInit(): void {
     // Obtener el usuario actual para sacar el duenoId
-    this.http.get<any>('http://localhost:8080/usuario/me').subscribe({
-      next: (user) => {
-        this.form.duenoId = user.id;
-        this.loadingUser = false;
-        this.cdr.detectChanges();
-      },
+    this.http.get<any>('http://localhost:8080/usuario/me', { withCredentials: true })
+      .subscribe({
+        next: (user) => {
+          this.form.duenoId = user.id;
+          this.loadingUser = false;
+          this.cdr.detectChanges();
+        },
       error: (e) => {
         this.error = 'Debes estar logeado para crear un aviso';
         this.loadingUser = false;
@@ -76,7 +77,7 @@ export class CreateMascotaComponent implements OnInit {
     // El backend espera un campo "mascota" con el JSON completo
     const mascotaJson = JSON.stringify(this.form);
     const mascotaBlob = new Blob([mascotaJson], { type: 'application/json' });
-    formData.append('mascota', mascotaBlob);
+    formData.append('mascota', mascotaBlob, 'mascota.json');
 
     // Agregar la foto si fue seleccionada
     if (this.selectedFile) {
@@ -84,7 +85,7 @@ export class CreateMascotaComponent implements OnInit {
     }
 
     // Enviar directamente con HttpClient
-    this.http.post<any>('http://localhost:8080/mascota/register', formData)
+    this.http.post<any>('http://localhost:8080/mascota/register', formData, { withCredentials: true })
       .pipe(finalize(() => {
         this.loading = false;
         this.cdr.detectChanges();

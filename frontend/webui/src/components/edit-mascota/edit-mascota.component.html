@@ -1,10 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+<div class="page">
 
-</body>
-</html>
+  <!-- LOADING USER -->
+  <div class="loading-overlay" *ngIf="loadingUser">
+    <div class="spinner"></div>
+    <div class="loading-text">Verificando sesión...</div>
+  </div>
+
+  <!-- LOADING DATA / SUBMIT -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">{{ loadingText }}</div>
+  </div>
+
+  <button type="button" class="btn-back" (click)="goBack()">← Volver</button>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Editar mascota</h1>
+      <p>Actualizá el aviso y guardá los cambios</p>
+    </div>
+  </header>
+
+  <div class="error-banner" *ngIf="!loading && error">
+    {{ error }}
+  </div>
+
+  <div class="ok-banner" *ngIf="!loading && ok">
+    {{ ok }}
+  </div>
+
+  <section class="card" *ngIf="!loadingUser">
+    <form class="form" (ngSubmit)="submit()">
+
+      <div class="field">
+        <label class="label">Nombre *</label>
+        <input class="input" [(ngModel)]="form.nombre" name="nombre" placeholder="Ej: Firulais" required />
+      </div>
+
+      <div class="field">
+        <label class="label">Tipo *</label>
+        <select class="select" [(ngModel)]="form.tipo" name="tipo" required>
+          <option value="Perro">Perro</option>
+          <option value="Gato">Gato</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label">Raza</label>
+        <input class="input" [(ngModel)]="form.raza" name="raza" placeholder="Ej: Labrador" />
+      </div>
+
+      <div class="field">
+        <label class="label">Tamaño</label>
+        <select class="select" [(ngModel)]="form.tamanio" name="tamanio">
+          <option value="">Seleccionar...</option>
+          <option value="Pequeño">Pequeño</option>
+          <option value="Mediano">Mediano</option>
+          <option value="Grande">Grande</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label">Color</label>
+        <input class="input" [(ngModel)]="form.color" name="color" placeholder="Ej: Marrón" />
+      </div>
+
+      <div class="field">
+        <label class="label">Fecha de pérdida *</label>
+        <input class="input" type="date" [(ngModel)]="form.fechaDePerdida" name="fechaDePerdida" required />
+      </div>
+
+      <div class="field">
+        <label class="label">Estado *</label>
+        <select class="select" [(ngModel)]="form.estado" name="estado" required>
+          <option value="PERDIDO_PROPIO">Perdido (mi mascota)</option>
+          <option value="PERDIDO_AJENO">Perdido (aviso de otro)</option>
+          <option value="ENCONTRADO">Encontrado</option>
+          <option value="ADOPCION">En adopción</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label">Coordenadas / Zona</label>
+        <input class="input" [(ngModel)]="form.coordenadas" name="coordenadas" placeholder="Ej: Av. Siempreviva 123, Springfield" />
+      </div>
+
+      <div class="field full">
+        <label class="label">Descripción</label>
+        <textarea
+          class="input"
+          [(ngModel)]="form.descripcion"
+          name="descripcion"
+          rows="4"
+          placeholder="Detalles adicionales..."
+        ></textarea>
+      </div>
+
+      <div class="field full">
+        <label class="label">Foto (opcional)</label>
+        <input
+          class="input"
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          name="fotoFile"
+        />
+        <small class="hint">Si seleccionás una foto nueva, reemplaza la anterior.</small>
+
+        <div class="preview" *ngIf="currentFotoUrl || previewUrl">
+          <img [src]="previewUrl || currentFotoUrl" alt="Foto de la mascota" />
+          <div class="hint">
+            {{ previewUrl ? 'Vista previa (nueva foto)' : 'Foto actual' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="actions full">
+        <button type="button" class="ghost" (click)="reset()">Reset</button>
+        <button type="button" class="danger" (click)="cancel()">Cancelar</button>
+        <button type="submit" class="secondary" [disabled]="loading || loadingUser">Guardar cambios</button>
+      </div>
+
+    </form>
+  </section>
+
+</div>
