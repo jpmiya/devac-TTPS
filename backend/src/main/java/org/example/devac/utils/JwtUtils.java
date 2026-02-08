@@ -41,4 +41,13 @@ public class JwtUtils {
             return null;
         }
     }
+
+    public static jakarta.servlet.http.Cookie createCookie(String token) {
+        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("jwt", token);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false); // false en dev, true en prod
+        cookie.setPath("/");
+        cookie.setMaxAge(3600); // 1 hora
+        return cookie;
+    }
 }
