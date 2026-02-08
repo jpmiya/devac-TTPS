@@ -1,10 +1,8 @@
 package org.example.devac.config;
 
-import org.example.devac.utils.JwtUtils;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -27,23 +25,10 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
 
-        Cookie[] cookies = request.getCookies();
-        Long userId = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
-                    String token = cookie.getValue();
-                    if (JwtUtils.validateToken(token)) {
-                        userId = JwtUtils.extractUserId(token);
-                        request.setAttribute("USER_ID", userId); // para usar en controllers
-                    } else {
-                        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                        return false;
-                    }
-                    break;
-                }
-            }
-        }
+        HttpSession session = request.getSession(false);
+        Long userId = (session == null)
+                ? null
+                : (Long) session.getAttribute("USER_ID");
 
         if (userId == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());

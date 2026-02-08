@@ -10,13 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.example.devac.dto.UsuarioRegisterDTO;
 import org.example.devac.dto.LoginRequest;
-import org.example.devac.utils.JwtUtils;
 
 import java.util.List;
 import java.util.Map;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/usuario")
@@ -30,7 +27,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.registrar(usuario));
     }
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest req, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest req, HttpSession session) {
         try {
             Usuario u = usuarioService.login(req.getEmail(), req.getPassword());
 
@@ -38,8 +35,11 @@ public class UsuarioController {
                 return ResponseEntity.status(401).body("Credenciales inválidas");
             }
 
-            String token = JwtUtils.generateToken(u.getId());
-            response.addCookie(JwtUtils.createCookie(token));
+            // ✅ UNA sola key para todo el sistema
+            session.setAttribute("USER_ID", u.getId());
+
+            System.out.println("LOGIN OK sessionId=" + session.getId()
+                    + " USER_ID=" + session.getAttribute("USER_ID"));
 
             return ResponseEntity.ok().build();
 
@@ -52,21 +52,16 @@ public class UsuarioController {
 
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletResponse response) {
-        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("jwt", null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false); // false en dev, true en prod
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // Eliminar cookie
-        response.addCookie(cookie);
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
         return ResponseEntity.ok("Logout");
     }
 
 
 
     @GetMapping("/me")
-    public ResponseEntity<Usuario> me(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("USER_ID");
+    public ResponseEntity<Usuario> me(HttpSession session) {
+        Long userId = (Long) session.getAttribute("USER_ID");
         if (userId == null) return ResponseEntity.status(401).build();
 
         Usuario usuario = usuarioService.findById(userId);
