@@ -12,6 +12,7 @@ public interface MascotaService {
     Mascota registrar(MascotaRequest request);
     Mascota registrar(MascotaRequest request, MultipartFile foto);
     Mascota editar(Mascota mascota);
+    Mascota editar(Long mascotaId, MascotaRequest request, MultipartFile foto, Long usuarioId);
     void eliminar(Mascota mascota);
     List<Mascota> findAllLost();
     Mascota buscarPorId(Long id);

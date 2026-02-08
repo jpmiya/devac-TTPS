@@ -7,7 +7,7 @@ import org.example.devac.models.Usuario;
 import org.example.devac.services.MascotaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.devac.dto.MascotaResponse;
 
 
@@ -42,57 +42,15 @@ public class MascotaController {
             @PathVariable("id") Long id,
             @RequestPart("mascota") MascotaRequest request,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
-            HttpSession session
+            HttpServletRequest httpRequest
     ) {
         try {
-            // 1) usuario logueado
-            Long meId = (Long) session.getAttribute("USER_ID");
-
+            Long meId = (Long) httpRequest.getAttribute("USER_ID");
             if (meId == null) {
                 return ResponseEntity.status(401).body("No logueado");
             }
 
-            // 2) mascota existente
-            Mascota actual = mascotaService.buscarPorId(id);
-
-            // 3) validar dueño
-            if (actual.getDueno() == null || actual.getDueno().getId() == null) {
-                return ResponseEntity.status(500).body("Mascota sin dueño (datos corruptos)");
-            }
-            if (!actual.getDueno().getId().equals(meId)) {
-                return ResponseEntity.status(403).body("No sos el dueño");
-            }
-
-            // 4) construir mascota actualizada (sin tocar dueño)
-            Mascota mascota = new Mascota.Builder()
-                    .dueno(actual.getDueno())
-                    .nombre(request.getNombre())
-                    .tipo(request.getTipo())
-                    .raza(request.getRaza())
-                    .tamaño(request.getTamaño())          // si tu MascotaRequest se llama getTamaño() así
-                    .color(request.getColor())
-                    .fechaDePerdida(request.getFechaDePerdida())
-                    .coordenadas(request.getCoordenadas())
-                    .descripcion(request.getDescripcion())
-                    .estado(request.getEstado())
-                    .build();
-
-            // CLAVE: el id SIEMPRE del path
-            mascota.setId(id);
-
-            // 5) editar en BD (tu service hace el update)
-            Mascota updated = mascotaService.editar(mascota);
-
-            // 6) si vino foto, acá lo ideal es delegarlo al service
-            // Si ya lo tenés armado en registrar(), creá un método editarConFoto(...) similar.
-            if (foto != null && !foto.isEmpty()) {
-                // EJEMPLO (si creás un método en el service):
-                // updated = mascotaService.editarConFoto(id, mascota, foto);
-
-                // Si todavía no lo tenés, dejalo así y lo agregamos después.
-                System.out.println("Foto recibida: " + foto.getOriginalFilename() + " (" + foto.getSize() + " bytes)");
-            }
-
+            Mascota updated = mascotaService.editar(id, request, foto, meId);
             return ResponseEntity.ok(updated);
 
         } catch (Exception e) {
