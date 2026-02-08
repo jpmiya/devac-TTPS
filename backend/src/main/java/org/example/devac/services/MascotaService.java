@@ -11,9 +11,11 @@ import java.util.Map;
 public interface MascotaService {
     Mascota registrar(MascotaRequest request);
     Mascota registrar(MascotaRequest request, MultipartFile foto);
-    Mascota editar(Mascota mascota);
     void eliminar(Mascota mascota);
     List<Mascota> findAllLost();
     Mascota buscarPorId(Long id);
     Optional<Mascota> findById(Long id);
+
+    Mascota editar(Mascota mascota);
+    Mascota editarConFoto(Long mascotaId, Mascota mascotaActualizada, MultipartFile foto);
 }

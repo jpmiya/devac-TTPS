@@ -37,7 +37,6 @@ export class EditMascotaComponent implements OnInit {
 
   mascotaId!: number;
 
-
   meId: number | null = null;
   isOwner = false;
   selectedFile: File | null = null;
@@ -66,7 +65,8 @@ export class EditMascotaComponent implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private location: Location
-  ) {}
+  ) {
+  }
 
   goBack(): void {
     this.location.back();
@@ -110,9 +110,9 @@ export class EditMascotaComponent implements OnInit {
     this.loadMascota();
 
     // 2) cargar usuario (si está logueado) para saber si es dueño
-    this.http.get<any>('http://localhost:8080/usuario/me', { withCredentials: true }).subscribe({
+    this.http.get<any>('http://localhost:8080/usuario/me', {withCredentials: true}).subscribe({
       next: (user) => {
-        this.meId = user.id;
+        this.meId = user?.id ?? null;
         this.loadingUser = false;
         this.recomputeOwner();
         this.cdr.detectChanges();
@@ -127,7 +127,6 @@ export class EditMascotaComponent implements OnInit {
     });
   }
 
-
   private duenoIdFromMascota: number | null = null;
 
   private recomputeOwner(): void {
@@ -141,7 +140,7 @@ export class EditMascotaComponent implements OnInit {
     this.ok = '';
     this.cdr.detectChanges();
 
-    this.http.get<MascotaResponse>(`http://localhost:8080/mascota/${this.mascotaId}`, { withCredentials: true })
+    this.http.get<MascotaResponse>(`http://localhost:8080/mascota/${this.mascotaId}`, {withCredentials: true})
       .pipe(finalize(() => {
         this.loading = false;
         this.cdr.detectChanges();
@@ -150,11 +149,14 @@ export class EditMascotaComponent implements OnInit {
         next: (m) => {
           const fecha = normalizeDate(m.fechaDePerdida) ?? new Date().toISOString().slice(0, 10);
 
-          // IMPORTANTE: este duenoId es el que usás para isOwner
+          // dueño para check de owner
           this.duenoIdFromMascota = typeof m.duenoId === 'number' ? m.duenoId : null;
           this.recomputeOwner();
 
-          // rellenar form (aunque no seas dueño, para mostrar)
+          // estado normalizado a string (por si viene raro)
+          const estadoStr = normalizeEnum(m.estado) ?? 'PERDIDO_PROPIO';
+
+          // rellenar form
           this.form.duenoId = this.duenoIdFromMascota ?? 0;
           this.form.nombre = m.nombre ?? '';
           this.form.tipo = (m.tipo as any) ?? 'Perro';
@@ -162,7 +164,7 @@ export class EditMascotaComponent implements OnInit {
           this.form.tamanio = (m.tamanio as any) ?? '';
           this.form.color = m.color ?? '';
           this.form.fechaDePerdida = fecha;
-          this.form.estado = (m.estado as any) ?? 'PERDIDO_PROPIO';
+          this.form.estado = estadoStr as any;
           this.form.coordenadas = m.coordenadas ?? '';
           this.form.descripcion = m.descripcion ?? '';
 
@@ -177,13 +179,12 @@ export class EditMascotaComponent implements OnInit {
       });
   }
 
-
   submit(): void {
-
     if (!this.isOwner) {
       this.error = 'No sos el dueño de esta mascota.';
       return;
     }
+
     this.loading = true;
     this.loadingText = 'Guardando cambios...';
     this.error = '';
@@ -192,17 +193,25 @@ export class EditMascotaComponent implements OnInit {
 
     const formData = new FormData();
 
+    // ✅ CLAVE: Blob, NO File
     const mascotaJson = JSON.stringify(this.form);
-    const mascotaBlob = new Blob([mascotaJson], { type: 'application/json' });
-    formData.append('mascota', mascotaBlob);
+    const mascotaBlob = new Blob(
+      [mascotaJson],
+      {type: 'application/json'}
+    );
+
+    formData.append('mascota', mascotaBlob, 'mascota.json');
+
 
     if (this.selectedFile) {
-      formData.append('foto', this.selectedFile, this.selectedFile.name);
+      formData.append('foto', this.selectedFile);
     }
 
-    // Ajustá método/URL según tu backend:
-    // si tenés PUT /mascota/{id}
-    this.http.put<any>(`http://localhost:8080/mascota/${this.mascotaId}`, formData, { withCredentials: true })
+    this.http.put(
+      `http://localhost:8080/mascota/${this.mascotaId}`,
+      formData,
+      {withCredentials: true}
+    )
       .pipe(finalize(() => {
         this.loading = false;
         this.cdr.detectChanges();
@@ -214,19 +223,37 @@ export class EditMascotaComponent implements OnInit {
           this.cdr.detectChanges();
           setTimeout(() => this.router.navigate(['/lost-dogs']), 1200);
         },
-        error: () => {
-          this.error = 'No se pudieron guardar los cambios.';
+        error: (err) => {
+          const msg =
+            typeof err?.error === 'string'
+              ? err.error
+              : err?.error?.message ?? 'Error inesperado';
+
+          this.error = `Error (${err.status}): ${msg}`;
+          console.error(err);
           this.cdr.detectChanges();
         }
       });
   }
 }
 
-function normalizeDate(d: any): string | null {
+  function normalizeDate(d: any): string | null {
   if (!d) return null;
   if (Array.isArray(d) && d.length >= 3) {
     const [y, m, day] = d;
     return `${y}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
   }
   return String(d);
+}
+
+// Normaliza enum a string "LIKE_THIS"
+function normalizeEnum(v: any): string | null {
+  if (v == null) return null;
+  if (typeof v === 'string') return v.trim();
+  // si viene como objeto {name: "..."} o algo raro
+  if (typeof v === 'object') {
+    if (typeof v.name === 'string') return v.name.trim();
+    if (typeof v.value === 'string') return v.value.trim();
+  }
+  return String(v).trim();
 }

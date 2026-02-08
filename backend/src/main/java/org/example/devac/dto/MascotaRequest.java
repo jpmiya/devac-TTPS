@@ -1,4 +1,4 @@
-package org.example.devac.dto;
+    package org.example.devac.dto;
 
 import org.example.devac.models.EstadoMascota;
 import com.fasterxml.jackson.annotation.JsonProperty;

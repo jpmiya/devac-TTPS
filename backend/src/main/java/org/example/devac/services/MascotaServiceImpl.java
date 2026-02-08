@@ -112,10 +112,115 @@ public class MascotaServiceImpl implements MascotaService {
         return mascotaGuardada;
     }
 
-    @Override
-    public Mascota editar(Mascota mascota) {
-        return mascotaEditerService.edit(mascota.getId(),mascota);
+    @Transactional
+    public Mascota editar(Mascota mascota, MultipartFile foto) {
+        // 1) editar los campos normales (tu lógica actual)
+        Mascota updated = mascotaEditerService.edit(mascota.getId(), mascota);
+
+        // 2) si no vino foto, listo
+        if (foto == null || foto.isEmpty()) {
+            return updated;
+        }
+
+        String uploadedFileName = null;
+        String oldFileName = null;
+
+        try {
+            // 3) si ya tenía foto, intentamos borrar el objeto anterior de MinIO
+            if (updated.getFotoUrl() != null && !updated.getFotoUrl().isBlank()) {
+                oldFileName = extractFileNameFromUrl(updated.getFotoUrl());
+            }
+
+            // 4) subir nueva foto
+            uploadedFileName = minioService.uploadFile(foto, updated.getId());
+            String newUrl = minioService.getFileUrl(uploadedFileName);
+
+            // 5) persistir nueva url
+            updated.setFotoUrl(newUrl);
+            mascotaDAO.update(updated);
+
+            // 6) borrar la vieja (si existía) DESPUÉS de que la nueva quedó guardada
+            if (oldFileName != null && !oldFileName.isBlank()) {
+                try {
+                    minioService.deleteFile(oldFileName);
+                } catch (Exception deleteEx) {
+                    System.err.println("No pude borrar foto vieja en MinIO: " + deleteEx.getMessage());
+                }
+            }
+
+            return updated;
+
+        } catch (Exception e) {
+            // si subimos algo nuevo y después falló, limpiamos el nuevo objeto para no dejar basura
+            if (uploadedFileName != null) {
+                try {
+                    minioService.deleteFile(uploadedFileName);
+                } catch (Exception deleteEx) {
+                    System.err.println("Error al eliminar foto nueva huérfana de MinIO: " + deleteEx.getMessage());
+                }
+            }
+            throw e;
+        }
     }
+
+    @Override
+    @Transactional
+    public Mascota editar(Mascota mascota) {
+        // lógica de edición sin foto
+        return mascotaEditerService.edit(mascota.getId(), mascota);
+    }
+
+    /**
+     * Tu fotoUrl guarda algo tipo: http://localhost:9000/mascotas/123_...jpg
+     * Necesitamos extraer el "123_...jpg" para borrar el objeto.
+     */
+    private String extractFileNameFromUrl(String url) {
+        int idx = url.lastIndexOf('/');
+        if (idx == -1) return url;
+        return url.substring(idx + 1);
+    }
+
+
+    @Transactional
+    public Mascota editarConFoto(Long mascotaId, Mascota mascotaActualizada, MultipartFile foto) {
+
+        Mascota actual = mascotaDAO.get(mascotaId);
+        if (actual == null) {
+            throw new BadRequestException("Mascota no encontrada");
+        }
+
+        // 1️⃣ actualizar campos normales
+        actual.setNombre(mascotaActualizada.getNombre());
+        actual.setTipo(mascotaActualizada.getTipo());
+        actual.setRaza(mascotaActualizada.getRaza());
+        actual.setTamaño(mascotaActualizada.getTamaño());
+        actual.setColor(mascotaActualizada.getColor());
+        actual.setFechaDePerdida(mascotaActualizada.getFechaDePerdida());
+        actual.setCoordenadas(mascotaActualizada.getCoordenadas());
+        actual.setDescripcion(mascotaActualizada.getDescripcion());
+        actual.setEstado(mascotaActualizada.getEstado());
+
+        // 2️⃣ si hay foto → subir y persistir
+        if (foto != null && !foto.isEmpty()) {
+            System.out.println("[MINIO] Subiendo foto mascotaId=" + mascotaId);
+
+            String objectName = minioService.uploadFile(foto, mascotaId);
+            String url = minioService.getFileUrl(objectName);
+
+            System.out.println("[BD] set fotoUrl=" + url);
+            actual.setFotoUrl(url);
+        }
+
+        // 3️⃣ guardar en BD
+        mascotaDAO.update(actual);
+        System.out.println("[BD] UPDATE OK mascotaId=" + mascotaId);
+
+        return actual;
+    }
+
+
+
+
 
     public void eliminar(Mascota mascota) {
         mascotaDAO.delete(mascota.getId());

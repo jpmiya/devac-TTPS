@@ -9,6 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpSession;
 import org.example.devac.dto.MascotaResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.example.devac.exceptions.BadRequestException;
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 import org.springframework.http.ResponseEntity;
@@ -20,8 +28,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/mascota")
 public class MascotaController {
-    @Autowired
-    private MascotaService mascotaService;
+    private final MascotaService mascotaService;
+    private final ObjectMapper objectMapper;
+
+    public MascotaController(MascotaService mascotaService, ObjectMapper objectMapper) {
+        this.mascotaService = mascotaService;
+        this.objectMapper = objectMapper;
+    }
 
     @PostMapping(value="/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registrar(
@@ -37,69 +50,98 @@ public class MascotaController {
     }
 
 
+
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> editar(
             @PathVariable("id") Long id,
-            @RequestPart("mascota") MascotaRequest request,
+            @RequestPart("mascota") String mascotaJson,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
             HttpSession session
     ) {
+        System.out.println("ENTRE AL PUT editar id=" + id);
+
+        // 0) Validación rápida
+        if (id == null || id <= 0) {
+            return ResponseEntity.badRequest().body("ID inválido");
+        }
+        if (mascotaJson == null || mascotaJson.isBlank()) {
+            return ResponseEntity.badRequest().body("Parte 'mascota' vacía o inexistente");
+        }
+
+        // 1) Parse JSON -> DTO
+        final MascotaRequest request;
         try {
-            // 1) usuario logueado
+            System.out.println("[PUT] mascotaJson length=" + mascotaJson.length());
+            System.out.println("[PUT] mascotaJson head=" + mascotaJson.substring(0, Math.min(200, mascotaJson.length())));
+            request = objectMapper.readValue(mascotaJson, MascotaRequest.class);
+        } catch (JsonProcessingException e) {
+            System.err.println("[PUT] ERROR parseando JSON 'mascota': " + e.getMessage());
+            return ResponseEntity.badRequest().body("JSON inválido en parte 'mascota': " + e.getOriginalMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error leyendo parte 'mascota': " + e);
+        }
+
+        try {
+            // 2) Auth por session
             Long meId = (Long) session.getAttribute("USER_ID");
+            if (meId == null) return ResponseEntity.status(401).body("No logueado");
 
-            if (meId == null) {
-                return ResponseEntity.status(401).body("No logueado");
-            }
+            // 3) Buscar mascota actual
+            Mascota actual = mascotaService.buscarPorId(id); // si esto ya lanza excepción, perfecto
+            if (actual == null) return ResponseEntity.status(404).body("Mascota no existe");
 
-            // 2) mascota existente
-            Mascota actual = mascotaService.buscarPorId(id);
-
-            // 3) validar dueño
             if (actual.getDueno() == null || actual.getDueno().getId() == null) {
-                return ResponseEntity.status(500).body("Mascota sin dueño (datos corruptos)");
+                return ResponseEntity.status(500).body("Mascota sin dueño");
             }
+
+            // 4) Permisos
             if (!actual.getDueno().getId().equals(meId)) {
                 return ResponseEntity.status(403).body("No sos el dueño");
             }
 
-            // 4) construir mascota actualizada (sin tocar dueño)
-            Mascota mascota = new Mascota.Builder()
+            // 5) Logs de multipart
+            System.out.println("=== PUT /mascota/" + id + " ===");
+            System.out.println("sessionId=" + session.getId());
+            System.out.println("USER_ID=" + meId);
+            System.out.println("foto null? " + (foto == null));
+            if (foto != null) {
+                System.out.println("foto empty? " + foto.isEmpty());
+                System.out.println("foto name=" + foto.getOriginalFilename());
+                System.out.println("foto size=" + foto.getSize());
+                System.out.println("foto contentType=" + foto.getContentType());
+            }
+
+            // 6) Construir “parcial” manteniendo dueño + id
+            Mascota mascotaActualizada = new Mascota.Builder()
                     .dueno(actual.getDueno())
                     .nombre(request.getNombre())
                     .tipo(request.getTipo())
                     .raza(request.getRaza())
-                    .tamaño(request.getTamaño())          // si tu MascotaRequest se llama getTamaño() así
+                    .tamaño(request.getTamaño())
                     .color(request.getColor())
                     .fechaDePerdida(request.getFechaDePerdida())
                     .coordenadas(request.getCoordenadas())
                     .descripcion(request.getDescripcion())
-                    .estado(request.getEstado())
+                    .estado(request.getEstado() != null ? request.getEstado() : actual.getEstado())
                     .build();
 
-            // CLAVE: el id SIEMPRE del path
-            mascota.setId(id);
+            mascotaActualizada.setId(id);
 
-            // 5) editar en BD (tu service hace el update)
-            Mascota updated = mascotaService.editar(mascota);
-
-            // 6) si vino foto, acá lo ideal es delegarlo al service
-            // Si ya lo tenés armado en registrar(), creá un método editarConFoto(...) similar.
-            if (foto != null && !foto.isEmpty()) {
-                // EJEMPLO (si creás un método en el service):
-                // updated = mascotaService.editarConFoto(id, mascota, foto);
-
-                // Si todavía no lo tenés, dejalo así y lo agregamos después.
-                System.out.println("Foto recibida: " + foto.getOriginalFilename() + " (" + foto.getSize() + " bytes)");
-            }
+            // 7) Service (sin cast)
+            Mascota updated = mascotaService.editarConFoto(id, mascotaActualizada, foto);
 
             return ResponseEntity.ok(updated);
 
+        } catch (BadRequestException e) {
+            // tus validaciones de negocio
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body(e.toString());
+            return ResponseEntity.status(500).body("Error editando mascota: " + e);
         }
     }
+
 
 
 
@@ -113,8 +155,13 @@ public class MascotaController {
 
 
     @GetMapping("/findAllLost")
-    public ResponseEntity<List<Mascota>> findAllLost() {
-        return ResponseEntity.ok(mascotaService.findAllLost());
+    public ResponseEntity<List<MascotaResponse>> getAllLost() {
+        List<Mascota> perdidas = mascotaService.findAllLost();
+        List<MascotaResponse> resp = perdidas.stream()
+                .map(this::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(resp);
     }
 
 
