@@ -101,30 +101,29 @@ export class EditMascotaComponent implements OnInit {
     this.mascotaId = Number(idStr);
 
     if (!this.mascotaId || Number.isNaN(this.mascotaId)) {
-      this.error = 'ID inválido.';
-      this.loadingUser = false;
+      this.redirectWithError('ID de mascota inválido.');
       return;
     }
 
-    // 1) cargar mascota (para mostrar pantalla)
-    this.loadMascota();
-
-    // 2) cargar usuario (si está logueado) para saber si es dueño
+    // 1) verificar sesión
     this.http.get<any>('http://localhost:8080/usuario/me', { withCredentials: true }).subscribe({
       next: (user) => {
         this.meId = user.id;
         this.loadingUser = false;
-        this.recomputeOwner();
         this.cdr.detectChanges();
+        // 2) cargar mascota y verificar ownership
+        this.loadMascotaAndCheckOwner();
       },
       error: () => {
-        // no logueado: puede ver, pero no editar
-        this.meId = null;
-        this.loadingUser = false;
-        this.isOwner = false;
-        this.cdr.detectChanges();
+        this.redirectWithError('Tenés que estar logueado para editar una mascota.');
       }
     });
+  }
+
+  private redirectWithError(msg: string): void {
+    // Guardamos el mensaje en sessionStorage para mostrarlo en home (opcional)
+    alert(msg);
+    this.router.navigate(['/']);
   }
 
 
@@ -134,7 +133,7 @@ export class EditMascotaComponent implements OnInit {
     this.isOwner = !!(this.meId && this.duenoIdFromMascota && this.meId === this.duenoIdFromMascota);
   }
 
-  private loadMascota(): void {
+  private loadMascotaAndCheckOwner(): void {
     this.loading = true;
     this.loadingText = 'Cargando aviso...';
     this.error = '';
@@ -148,13 +147,17 @@ export class EditMascotaComponent implements OnInit {
       }))
       .subscribe({
         next: (m) => {
-          const fecha = normalizeDate(m.fechaDePerdida) ?? new Date().toISOString().slice(0, 10);
-
-          // IMPORTANTE: este duenoId es el que usás para isOwner
+          // Verificar ownership ANTES de mostrar el formulario
           this.duenoIdFromMascota = typeof m.duenoId === 'number' ? m.duenoId : null;
           this.recomputeOwner();
 
-          // rellenar form (aunque no seas dueño, para mostrar)
+          if (!this.isOwner) {
+            this.redirectWithError('No tenés permiso para editar esta mascota.');
+            return;
+          }
+
+          const fecha = normalizeDate(m.fechaDePerdida) ?? new Date().toISOString().slice(0, 10);
+
           this.form.duenoId = this.duenoIdFromMascota ?? 0;
           this.form.nombre = m.nombre ?? '';
           this.form.tipo = (m.tipo as any) ?? 'Perro';
@@ -170,12 +173,21 @@ export class EditMascotaComponent implements OnInit {
           this.originalFormJson = JSON.stringify(this.form);
           this.cdr.detectChanges();
         },
-        error: () => {
-          this.error = 'No se pudo cargar la mascota.';
-          this.cdr.detectChanges();
+        error: (err) => {
+          const status = err?.status;
+          if (status === 404) {
+            this.redirectWithError('La mascota no existe.');
+          } else if (status === 403) {
+            this.redirectWithError('No tenés permiso para editar esta mascota.');
+          } else {
+            this.redirectWithError('No se pudo cargar la mascota.');
+          }
         }
       });
   }
+
+  /** @deprecated — reemplazado por loadMascotaAndCheckOwner */
+  private loadMascota(): void { this.loadMascotaAndCheckOwner(); }
 
 
   submit(): void {

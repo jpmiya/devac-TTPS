@@ -136,6 +136,10 @@ export class ProfileComponent implements OnInit {
     this.router.navigate(['/edit-user']);
   }
 
+  goToMyPets(): void {
+    this.router.navigate(['/my-pets']);
+  }
+
   goBack(): void {
     this.location.back();
   }
@@ -154,11 +158,6 @@ export class ProfileComponent implements OnInit {
     if (status === 409) return 'Conflicto: ese email ya existe (409).';
 
     return msg ? String(msg) : fallback;
-  }
-
-
-  goToMyPets(): void {
-    this.router.navigate(['/my-pets']);
   }
 
 
