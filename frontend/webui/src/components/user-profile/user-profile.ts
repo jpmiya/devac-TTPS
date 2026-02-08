@@ -64,7 +64,13 @@ export class ProfileComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: (e) => {
+          if (e?.status === 401 || e?.status === 403) {
+            alert('Tenés que estar logueado para ver tu perfil.');
+            this.router.navigate(['/']);
+            return;
+          }
           this.error = this.humanizeHttpError(e, 'No pude cargar tu perfil.');
+          this.cdr.detectChanges();
         },
       });
   }
