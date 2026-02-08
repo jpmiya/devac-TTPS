@@ -57,7 +57,6 @@ public class MascotaServiceImpl implements MascotaService {
                 .tamaño(request.getTamaño())
                 .color(request.getColor())
                 .fechaDePerdida(request.getFechaDePerdida())
-                .coordenadas(request.getCoordenadas())
                 .descripcion(request.getDescripcion())
                 .tipo(request.getTipo())
                 .raza(request.getRaza())
@@ -140,7 +139,6 @@ public class MascotaServiceImpl implements MascotaService {
                 .tamaño(request.getTamaño())
                 .color(request.getColor())
                 .fechaDePerdida(request.getFechaDePerdida())
-                .coordenadas(request.getCoordenadas())
                 .descripcion(request.getDescripcion())
                 .estado(request.getEstado())
                 .build();

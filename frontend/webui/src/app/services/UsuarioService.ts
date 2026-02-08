@@ -11,6 +11,7 @@ export interface UsuarioRegister {
   telefono: string;
   barrio: string;
   ciudad: string;
+  coordenadas?: string;
   posicion?: number;
   puntos?: number;
   casosEnZona?: number;
@@ -27,7 +28,6 @@ export interface Mascota {
   tamaño?: string;
   foto?: string;
   fotoUrl?: string;
-  coordenadas?: string;
   descripcion?: string;
 
   estado?: EstadoMascota;

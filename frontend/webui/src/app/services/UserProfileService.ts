@@ -19,7 +19,8 @@ export type MeDTO = {
 export type UpdateMeDTO = Partial<Pick<MeDTO,
   'nombreYApellido' | 'email' | 'telefono' | 'barrio' | 'ciudad'
 >> & {
-  password?: string; // opcional si tu endpoint lo permite
+  password?: string;
+  coordenadas?: string;
 };
 
 @Injectable({ providedIn: 'root' })

@@ -28,6 +28,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private UserEditerService userEditerService;
 
+    @Autowired
+    private GeorefService georefService;
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -44,14 +47,24 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new BadRequestException("La contraseña no puede estar vacía");
         }
 
+        // Resolver barrio y ciudad desde coordenadas usando Georef
+        String barrio = usuarioDTO.getBarrio();
+        String ciudad = usuarioDTO.getCiudad();
+        if (usuarioDTO.getCoordenadas() != null && !usuarioDTO.getCoordenadas().isBlank()) {
+            GeorefService.UbicacionResult ubicacion = georefService.resolverUbicacion(usuarioDTO.getCoordenadas());
+            if (ubicacion != null) {
+                barrio = ubicacion.getBarrio();
+                ciudad = ubicacion.getCiudad();
+            }
+        }
 
         Usuario usuario = new Usuario.Builder()
                 .nombreYApellido(usuarioDTO.getNombreYApellido())
                 .email(usuarioDTO.getEmail())
                 .password(passwordEncoder.encode(rawPassword))
                 .telefono(usuarioDTO.getTelefono())
-                .barrio(usuarioDTO.getBarrio())
-                .ciudad(usuarioDTO.getCiudad())
+                .barrio(barrio)
+                .ciudad(ciudad)
                 .posicion(0)
                 .puntos(0)
                 .casosEnZona(0)

@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { ProfileService, MeDTO, UpdateMeDTO } from '../../app/services/UserProfileService';
+import { LocationPickerComponent, LatLon } from '../location-picker/location-picker';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LocationPickerComponent],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
 })
@@ -28,6 +29,7 @@ export class ProfileComponent implements OnInit {
 
   editMode = false;
   showPassword = false;
+  selectedCoords: string | null = null;
 
   form = this.fb.group({
     nombreYApellido: ['', [Validators.required, Validators.minLength(3)]],
@@ -102,6 +104,10 @@ export class ProfileComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
+  onLocationSelected(coords: string): void {
+    this.selectedCoords = coords;
+  }
+
   saveProfile(): void {
     if (!this.me || this.form.invalid) return;
 
@@ -117,6 +123,9 @@ export class ProfileComponent implements OnInit {
       barrio: v.barrio || undefined,
       ciudad: v.ciudad || undefined,
     };
+    if (this.selectedCoords) {
+      payload.coordenadas = this.selectedCoords;
+    }
     if (v.password?.trim()) {
       payload.password = v.password.trim();
     }

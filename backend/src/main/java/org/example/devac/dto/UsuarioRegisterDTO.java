@@ -8,6 +8,7 @@ public class UsuarioRegisterDTO {
     private String telefono;
     private String barrio;
     private String ciudad;
+    private String coordenadas;
 
     public UsuarioRegisterDTO() {
     }
@@ -58,5 +59,13 @@ public class UsuarioRegisterDTO {
 
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
+    }
+
+    public String getCoordenadas() {
+        return coordenadas;
+    }
+
+    public void setCoordenadas(String coordenadas) {
+        this.coordenadas = coordenadas;
     }
 }

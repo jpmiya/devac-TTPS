@@ -92,30 +92,11 @@
           />
         </div>
 
-        <!-- Barrio -->
+        <!-- Ubicación -->
         <div class="form-group">
-          <label for="barrio">Barrio</label>
-          <input
-            type="text"
-            id="barrio"
-            name="barrio"
-            [(ngModel)]="usuario.barrio"
-            placeholder="Centro"
-            [disabled]="loading"
-          />
-        </div>
-
-        <!-- Ciudad -->
-        <div class="form-group">
-          <label for="ciudad">Ciudad</label>
-          <input
-            type="text"
-            id="ciudad"
-            name="ciudad"
-            [(ngModel)]="usuario.ciudad"
-            placeholder="La Plata"
-            [disabled]="loading"
-          />
+          <label>Ubicación</label>
+          <p class="field-hint">Seleccioná tu ubicación en el mapa o usá el botón de geolocalización. El barrio y ciudad se calculan automáticamente.</p>
+          <app-location-picker (coordsString)="onLocationSelected($event)"></app-location-picker>
         </div>
 
         <!-- Submit Button -->

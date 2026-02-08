@@ -24,6 +24,9 @@ public class AvistamientoServiceImpl implements AvistamientoService {
     @Autowired
     MascotaDAO<Mascota> mascotaDAO;
 
+    @Autowired
+    GeorefService georefService;
+
     @Override
     public Avistamiento createAvistamiento(AvistamientoRequest request) {
         // Buscar el usuario por ID
@@ -47,6 +50,15 @@ public class AvistamientoServiceImpl implements AvistamientoService {
             request.getCoordenadas(),
             request.getComentario()
         );
+
+        // Resolver barrio y ciudad desde coordenadas usando Georef
+        if (request.getCoordenadas() != null && !request.getCoordenadas().isBlank()) {
+            GeorefService.UbicacionResult ubicacion = georefService.resolverUbicacion(request.getCoordenadas());
+            if (ubicacion != null) {
+                avistamiento.setBarrio(ubicacion.getBarrio());
+                avistamiento.setCiudad(ubicacion.getCiudad());
+            }
+        }
 
         return avistamientoDAO.persist(avistamiento);
     }

@@ -3,11 +3,12 @@ import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UsuarioService, UsuarioRegister } from '../../app/services/UsuarioService';
+import { LocationPickerComponent } from '../location-picker/location-picker';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, LocationPickerComponent],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
@@ -38,6 +39,10 @@ export class RegisterComponent {
 
   goBack(): void {
     this.location.back();
+  }
+
+  onLocationSelected(coords: string): void {
+    this.usuario.coordenadas = coords;
   }
 
   onSubmit(): void {

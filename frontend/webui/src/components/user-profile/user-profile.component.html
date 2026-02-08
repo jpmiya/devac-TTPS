@@ -114,14 +114,10 @@
                   <input class="input" formControlName="telefono" placeholder="Ej: 221-555-1234" />
                 </div>
 
-                <div class="field">
-                  <label class="label">Barrio</label>
-                  <input class="input" formControlName="barrio" placeholder="Tu barrio" />
-                </div>
-
-                <div class="field">
-                  <label class="label">Ciudad</label>
-                  <input class="input" formControlName="ciudad" placeholder="Tu ciudad" />
+                <div class="field full">
+                  <label class="label">Ubicación</label>
+                  <span class="hint">Seleccioná tu ubicación en el mapa. El barrio y ciudad se actualizan automáticamente.</span>
+                  <app-location-picker (coordsString)="onLocationSelected($event)"></app-location-picker>
                 </div>
 
                 <div class="field full">

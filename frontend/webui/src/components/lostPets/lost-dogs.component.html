@@ -36,11 +36,17 @@
 
 
       <button class="primary" *ngIf="auth.isLoggedIn()" routerLink="/create-mascota">+ Nuevo aviso</button>
+      <button class="primary" (click)="toggleMap()">{{ showMap ? '📋 Ver lista' : '🗺️ Ver mapa' }}</button>
     </div>
   </header>
 
+  <!-- ================= MAP ================= -->
+  <section class="map-section" *ngIf="showMap && !loading">
+    <div #lostDogsMap class="lost-dogs-map"></div>
+  </section>
+
   <!-- ================= STATS ================= -->
-  <section class="stats" *ngIf="!loading">
+  <section class="stats" *ngIf="!loading && !showMap">
     <div class="stat-card">
       <div class="stat-title">Avisos</div>
       <div class="stat-value">{{ dogs.length || 0 }}</div>
@@ -65,12 +71,12 @@
   </section>
 
   <!-- ================= EMPTY ================= -->
-  <div class="empty" *ngIf="!loading && !error && dogs.length === 0">
+  <div class="empty" *ngIf="!loading && !error && dogs.length === 0 && !showMap">
     No hay avisos por el momento.
   </div>
 
   <!-- ================= GRID ================= -->
-  <section class="grid" *ngIf="!loading && dogs.length">
+  <section class="grid" *ngIf="!loading && dogs.length && !showMap">
 
     <article class="dog-card" *ngFor="let dog of dogs">
       <div class="thumb">
@@ -110,7 +116,7 @@
         </p>
 
         <div class="meta">
-          <span class="chip">📍 {{ dog.coordenadas || 'Zona desconocida' }}</span>
+          <span class="chip">📍 {{ dog.dueno?.barrio || dog.dueno?.ciudad || 'Zona desconocida' }}</span>
           <span class="chip">🐾 {{ dog.raza || 'Raza desconocida' }}</span>
           <span class="chip">🎂 {{ dog['tamaño'] || 'N/A' }}</span>
           <span class="chip">🎨 {{ dog.color || 'N/A' }}</span>
