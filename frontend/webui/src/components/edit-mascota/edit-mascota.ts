@@ -37,6 +37,9 @@ export class EditMascotaComponent implements OnInit {
 
   mascotaId!: number;
 
+
+  meId: number | null = null;
+  isOwner = false;
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   currentFotoUrl: string | null = null;
@@ -94,7 +97,6 @@ export class EditMascotaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // id desde ruta: /mascota/:id/edit (ajustá al path que uses)
     const idStr = this.route.snapshot.paramMap.get('id');
     this.mascotaId = Number(idStr);
 
@@ -104,23 +106,32 @@ export class EditMascotaComponent implements OnInit {
       return;
     }
 
-    // 1) verificar sesión y obtener duenoId (por compatibilidad con tu backend actual)
+    // 1) cargar mascota (para mostrar pantalla)
+    this.loadMascota();
+
+    // 2) cargar usuario (si está logueado) para saber si es dueño
     this.http.get<any>('http://localhost:8080/usuario/me', { withCredentials: true }).subscribe({
       next: (user) => {
-        this.form.duenoId = user.id;
+        this.meId = user.id;
         this.loadingUser = false;
+        this.recomputeOwner();
         this.cdr.detectChanges();
-
-        // 2) cargar datos de mascota
-        this.loadMascota();
       },
       error: () => {
-        this.error = 'Debes estar logeado para editar un aviso';
+        // no logueado: puede ver, pero no editar
+        this.meId = null;
         this.loadingUser = false;
+        this.isOwner = false;
         this.cdr.detectChanges();
-        setTimeout(() => this.router.navigate(['/login']), 1500);
       }
     });
+  }
+
+
+  private duenoIdFromMascota: number | null = null;
+
+  private recomputeOwner(): void {
+    this.isOwner = !!(this.meId && this.duenoIdFromMascota && this.meId === this.duenoIdFromMascota);
   }
 
   private loadMascota(): void {
@@ -137,13 +148,14 @@ export class EditMascotaComponent implements OnInit {
       }))
       .subscribe({
         next: (m) => {
-          // si tu backend devuelve fecha como array, esto lo normaliza
           const fecha = normalizeDate(m.fechaDePerdida) ?? new Date().toISOString().slice(0, 10);
 
-          // ojo: si tu response trae duenoId, podés setearlo.
-          // si no, mantenemos el duenoId del /me
-          if (typeof m.duenoId === 'number') this.form.duenoId = m.duenoId;
+          // IMPORTANTE: este duenoId es el que usás para isOwner
+          this.duenoIdFromMascota = typeof m.duenoId === 'number' ? m.duenoId : null;
+          this.recomputeOwner();
 
+          // rellenar form (aunque no seas dueño, para mostrar)
+          this.form.duenoId = this.duenoIdFromMascota ?? 0;
           this.form.nombre = m.nombre ?? '';
           this.form.tipo = (m.tipo as any) ?? 'Perro';
           this.form.raza = m.raza ?? '';
@@ -155,7 +167,6 @@ export class EditMascotaComponent implements OnInit {
           this.form.descripcion = m.descripcion ?? '';
 
           this.currentFotoUrl = m.fotoUrl ?? null;
-
           this.originalFormJson = JSON.stringify(this.form);
           this.cdr.detectChanges();
         },
@@ -166,7 +177,13 @@ export class EditMascotaComponent implements OnInit {
       });
   }
 
+
   submit(): void {
+
+    if (!this.isOwner) {
+      this.error = 'No sos el dueño de esta mascota.';
+      return;
+    }
     this.loading = true;
     this.loadingText = 'Guardando cambios...';
     this.error = '';

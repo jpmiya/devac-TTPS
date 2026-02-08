@@ -7,6 +7,7 @@ import { CreateMascotaComponent } from '../components/create-mascota/create-masc
 import { EditUserComponent } from '../components/edit-user/edit-user';
 import {ProfileComponent} from '../components/user-profile/user-profile';
 import {MyPetsComponent} from '../components/my-pets/my-pets';
+import {EditMascotaComponent} from '../components/edit-mascota/edit-mascota';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -14,6 +15,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent, data: { hideNavbar: true } },
   { path: 'lost-dogs', component: LostDogsComponent },
   { path: 'create-mascota', component: CreateMascotaComponent },
+  {path: 'mascota/:id/edit', component:EditMascotaComponent},
   { path: 'edit-user', component: EditUserComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'my-pets', component: MyPetsComponent }

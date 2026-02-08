@@ -78,4 +78,10 @@ export class MyPetsComponent implements OnInit {
         }
       });
   }
+
+  editPet(id: number | undefined): void {
+    if (!id) return;
+    this.router.navigate(['/mascota', id, 'edit']);
+  }
+
 }

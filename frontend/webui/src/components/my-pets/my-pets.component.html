@@ -36,6 +36,15 @@
             <a class="link" *ngIf="m.fotoUrl" [href]="m.fotoUrl" target="_blank" rel="noreferrer">
               Ver foto
             </a>
+
+            <button
+              type="button"
+              class="btn-edit"
+              (click)="editPet(m.id)"
+            >
+              Editar mascota
+            </button>
+
           </article>
         </div>
       </ng-container>

@@ -130,4 +130,28 @@ public class MascotaServiceImpl implements MascotaService {
             .collect(Collectors.toList());
     }
 
+
+
+    @Override
+    public Optional<Mascota> findById(Long id) {
+        if (id == null) return Optional.empty();
+        return Optional.ofNullable(mascotaDAO.get(id));
+    }
+
+    @Override
+    public Mascota buscarPorId(Long id) {
+        if (id == null) {
+            throw new BadRequestException("ID inválido");
+        }
+
+        Mascota m = mascotaDAO.get(id);
+        if (m == null) {
+            // si tenés NotFoundException, mejor usar esa.
+            throw new BadRequestException("Mascota no encontrada");
+        }
+
+        return m;
+    }
+
+
 }
