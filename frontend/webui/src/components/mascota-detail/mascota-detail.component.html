@@ -1,0 +1,56 @@
+<div class="page">
+
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Cargando detalle...</div>
+  </div>
+
+  <div class="error-banner" *ngIf="!loading && error">
+    {{ error }}
+  </div>
+
+  <button type="button" class="btn-back" (click)="goBack()">← Volver</button>
+
+  <section class="card" *ngIf="!loading && !error && mascota">
+
+    <div class="hero">
+      <ng-container *ngIf="mascota.fotoUrl; else noImage">
+        <img [src]="mascota.fotoUrl" [alt]="mascota.nombre || 'Mascota'" />
+      </ng-container>
+      <ng-template #noImage>
+        <div class="placeholder">Sin foto</div>
+      </ng-template>
+
+      <span class="badge">
+        {{ estadoLabel }}
+      </span>
+    </div>
+
+    <div class="content">
+      <h1>{{ mascota.nombre || 'Sin nombre' }}</h1>
+
+      <div class="meta">
+        <div><b>Tipo:</b> {{ mascota.tipo || 'N/A' }}</div>
+        <div><b>Raza:</b> {{ mascota.raza || 'N/A' }}</div>
+        {{ tamanioDisplay }}
+
+        <div><b>Color:</b> {{ mascota.color || 'N/A' }}</div>
+        <div><b>Fecha:</b> {{ fecha }}</div>
+        <div><b>Zona:</b> {{ mascota.coordenadas || 'N/A' }}</div>
+      </div>
+
+      <div class="desc">
+        <h3>Descripción</h3>
+        <p>{{ mascota.descripcion || 'Sin descripción' }}</p>
+      </div>
+
+      <div class="contact">
+        <h3>Contacto</h3>
+        <div><b>Nombre:</b> {{ mascota.dueno?.nombreYApellido || 'N/A' }}</div>
+        <div><b>Teléfono:</b> {{ mascota.dueno?.telefono || 'N/A' }}</div>
+        <div><b>Email:</b> {{ mascota.dueno?.email || 'N/A' }}</div>
+      </div>
+    </div>
+
+  </section>
+</div>

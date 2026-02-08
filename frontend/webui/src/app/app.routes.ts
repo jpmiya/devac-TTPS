@@ -8,6 +8,7 @@ import { EditUserComponent } from '../components/edit-user/edit-user';
 import {ProfileComponent} from '../components/user-profile/user-profile';
 import {MyPetsComponent} from '../components/my-pets/my-pets';
 import {EditMascotaComponent} from '../components/edit-mascota/edit-mascota';
+import {MascotaDetailComponent} from '../components/mascota-detail/mascota-detail';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -18,5 +19,6 @@ export const routes: Routes = [
   {path: 'mascota/:id/edit', component:EditMascotaComponent},
   { path: 'edit-user', component: EditUserComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: 'my-pets', component: MyPetsComponent }
+  { path: 'my-pets', component: MyPetsComponent },
+  { path: 'mascota/:id', component: MascotaDetailComponent },
 ];

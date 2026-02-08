@@ -120,11 +120,14 @@
           <span class="phone">📞 {{ dog.dueno?.nombre || 'Contacto no disponible' }}</span>
 
           <div class="actions">
-            <button class="ghost">Compartir</button>
-            <button class="secondary">
+            <button
+              class="secondary"
+              [routerLink]="['/mascota', dog.id]"
+            >
               Ver detalles
             </button>
           </div>
+
         </div>
       </div>
     </article>
