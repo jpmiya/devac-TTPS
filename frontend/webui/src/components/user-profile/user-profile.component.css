@@ -339,3 +339,21 @@
   .hero-title { font-size: 28px; }
   .content { padding: 40px 20px 70px; }
 }
+
+.btn-secondary {
+  background: transparent;
+  color: #111827;
+  border: 1px solid rgba(17, 24, 39, 0.15);
+  padding: 10px 22px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn-secondary:hover {
+  background: rgba(17, 24, 39, 0.04);
+  transform: translateY(-1px);
+}
+

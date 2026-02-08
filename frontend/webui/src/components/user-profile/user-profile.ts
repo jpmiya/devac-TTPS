@@ -157,4 +157,9 @@ export class ProfileComponent implements OnInit {
   }
 
 
+  goToMyPets(): void {
+    this.router.navigate(['/my-pets']);
+  }
+
+
 }

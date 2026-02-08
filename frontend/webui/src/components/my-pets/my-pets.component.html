@@ -1,0 +1,45 @@
+<div class="page">
+  <button type="button" class="btn-back" (click)="goBack()">← Volver</button>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Mis mascotas</h1>
+      <p class="hero-subtitle" *ngIf="me">Usuario: {{ me.nombreYApellido }}</p>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container">
+
+      <div class="status info" *ngIf="loading">Cargando…</div>
+      <div class="status error" *ngIf="error">{{ error }}</div>
+
+      <ng-container *ngIf="!loading && !error">
+        <div class="empty" *ngIf="!mascotas.length">
+          No tenés mascotas registradas todavía.
+        </div>
+
+        <div class="grid" *ngIf="mascotas.length">
+          <article class="card" *ngFor="let m of mascotas">
+            <div class="top">
+              <div class="name">{{ m.nombre }}</div>
+              <span class="badge">{{ m.estado || '—' }}</span>
+            </div>
+
+            <div class="meta">
+              <div><b>Tipo:</b> {{ m.tipo || '—' }}</div>
+              <div><b>Raza:</b> {{ m.raza || '—' }}</div>
+              <div><b>Color:</b> {{ m.color || '—' }}</div>
+              <div><b>Fecha pérdida:</b> {{ m.fecha_de_perdida || '—' }}</div>
+            </div>
+
+            <a class="link" *ngIf="m.fotoUrl" [href]="m.fotoUrl" target="_blank" rel="noreferrer">
+              Ver foto
+            </a>
+          </article>
+        </div>
+      </ng-container>
+
+    </div>
+  </section>
+</div>

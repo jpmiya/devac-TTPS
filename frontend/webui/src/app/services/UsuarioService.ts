@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import {EstadoMascota, UsuarioRef} from './MascotaService';
 
 export interface UsuarioRegister {
   nombreYApellido: string;
@@ -13,6 +14,28 @@ export interface UsuarioRegister {
   posicion?: number;
   puntos?: number;
   casosEnZona?: number;
+}
+
+
+export interface Mascota {
+  id: number;
+  nombre: string;
+
+  tipo?: string;
+  raza?: string;
+  color?: string;
+  tamaño?: string;
+  foto?: string;
+  fotoUrl?: string;
+  coordenadas?: string;
+  descripcion?: string;
+
+  estado?: EstadoMascota;
+
+  // normalmente llega como string "2026-01-23"
+  fecha_de_perdida?: string;
+
+  dueno?: UsuarioRef;
 }
 
 export interface Usuario {
@@ -54,6 +77,15 @@ export class UsuarioService {
     );
   }
 
+  getMascotasDeUsuario(userId: number): Observable<Mascota[]> {
+    return this.http.get<Mascota[]>(`${this.baseUrl}/usuario/${userId}/mascotas`, { withCredentials: true });
+  }
+
+  getMe(): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.baseUrl}/usuario/me`, {
+      withCredentials: true
+    });
+  }
 
 
 
