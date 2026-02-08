@@ -39,31 +39,37 @@ public class MascotaController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> editar(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestPart("mascota") MascotaRequest request,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
             HttpSession session
     ) {
         try {
             // 1) usuario logueado
-            Usuario me = (Usuario) session.getAttribute("usuario");
-            if (me == null) return ResponseEntity.status(401).build();
+            Long meId = (Long) session.getAttribute("USER_ID");
+
+            if (meId == null) {
+                return ResponseEntity.status(401).body("No logueado");
+            }
 
             // 2) mascota existente
             Mascota actual = mascotaService.buscarPorId(id);
 
             // 3) validar dueño
-            if (actual.getDueno() == null || !actual.getDueno().getId().equals(me.getId())) {
-                return ResponseEntity.status(403).build();
+            if (actual.getDueno() == null || actual.getDueno().getId() == null) {
+                return ResponseEntity.status(500).body("Mascota sin dueño (datos corruptos)");
+            }
+            if (!actual.getDueno().getId().equals(meId)) {
+                return ResponseEntity.status(403).body("No sos el dueño");
             }
 
-            // 4) mapear request -> Mascota (usando el existente como base)
+            // 4) construir mascota actualizada (sin tocar dueño)
             Mascota mascota = new Mascota.Builder()
-                    .dueno(actual.getDueno())                 // NO se toca
+                    .dueno(actual.getDueno())
                     .nombre(request.getNombre())
                     .tipo(request.getTipo())
                     .raza(request.getRaza())
-                    .tamaño(request.getTamaño())              // ojo: tu request parece usar "Tamaño"
+                    .tamaño(request.getTamaño())          // si tu MascotaRequest se llama getTamaño() así
                     .color(request.getColor())
                     .fechaDePerdida(request.getFechaDePerdida())
                     .coordenadas(request.getCoordenadas())
@@ -71,15 +77,20 @@ public class MascotaController {
                     .estado(request.getEstado())
                     .build();
 
-            mascota.setId(id); // CLAVE: el id viene del path, no del body
+            // CLAVE: el id SIEMPRE del path
+            mascota.setId(id);
 
-            // 5) editar en BD
+            // 5) editar en BD (tu service hace el update)
             Mascota updated = mascotaService.editar(mascota);
 
-            // 6) si vino foto, la subís y actualizás fotoUrl (si tu service ya lo hace, mejor moverlo ahí)
+            // 6) si vino foto, acá lo ideal es delegarlo al service
+            // Si ya lo tenés armado en registrar(), creá un método editarConFoto(...) similar.
             if (foto != null && !foto.isEmpty()) {
-                // si querés, acá llamás a un método del service tipo editarFoto(id, foto)
-                // por ahora, si no tenés método, dejalo sin foto y lo agregamos después
+                // EJEMPLO (si creás un método en el service):
+                // updated = mascotaService.editarConFoto(id, mascota, foto);
+
+                // Si todavía no lo tenés, dejalo así y lo agregamos después.
+                System.out.println("Foto recibida: " + foto.getOriginalFilename() + " (" + foto.getSize() + " bytes)");
             }
 
             return ResponseEntity.ok(updated);
@@ -91,11 +102,13 @@ public class MascotaController {
     }
 
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<MascotaResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<MascotaResponse> getById(@PathVariable("id") Long id) {
         Mascota m = mascotaService.buscarPorId(id);
         return ResponseEntity.ok(toResponse(m));
     }
+
 
 
 

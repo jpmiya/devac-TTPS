@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.example.devac.dto.UsuarioRegisterDTO;
+import org.example.devac.dto.LoginRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -25,25 +26,29 @@ public class UsuarioController {
     public ResponseEntity<Usuario> create(@RequestBody UsuarioRegisterDTO usuario) {
         return ResponseEntity.ok(usuarioService.registrar(usuario));
     }
-
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String,String> body, HttpSession session) {
-        String email = body.get("email");
-        String password = body.get("password");
-        Usuario usr = usuarioService.login(email, password);
+    public ResponseEntity<?> login(@RequestBody LoginRequest req, HttpSession session) {
+        try {
+            Usuario u = usuarioService.login(req.getEmail(), req.getPassword());
 
-        if (usr == null) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)   // 401
-                    .body("Credenciales inválidas");
+            if (u == null) {
+                return ResponseEntity.status(401).body("Credenciales inválidas");
+            }
+
+            // ✅ UNA sola key para todo el sistema
+            session.setAttribute("USER_ID", u.getId());
+
+            System.out.println("LOGIN OK sessionId=" + session.getId()
+                    + " USER_ID=" + session.getAttribute("USER_ID"));
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(e.toString());
         }
-
-        session.setAttribute("USER_ID", usr.getId());
-        session.setAttribute("USER_EMAIL", usr.getEmail());
-
-        //si el service no devolvio null seguro que la password estaba correcta
-        return ResponseEntity.ok("Login correcto");
     }
+
 
 
     @PostMapping("/logout")
@@ -57,14 +62,14 @@ public class UsuarioController {
     @GetMapping("/me")
     public ResponseEntity<Usuario> me(HttpSession session) {
         Long userId = (Long) session.getAttribute("USER_ID");
-
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        if (userId == null) return ResponseEntity.status(401).build();
 
         Usuario usuario = usuarioService.findById(userId);
+        if (usuario == null) return ResponseEntity.status(401).build();
+
         return ResponseEntity.ok(usuario);
     }
+
 
 
     @PutMapping("/edit/{id}")
