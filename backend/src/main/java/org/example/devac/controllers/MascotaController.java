@@ -1,9 +1,11 @@
 package org.example.devac.controllers;
 
 import org.example.devac.dto.MascotaRequest;
+import org.example.devac.utils.JwtUtils;
 import org.springframework.http.MediaType;
 import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
+import org.example.devac.utils.JwtUtils.*;
 import org.example.devac.services.MascotaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import org.example.devac.dto.MascotaResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.example.devac.exceptions.BadRequestException;
+
+
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,11 +60,25 @@ public class MascotaController {
             @PathVariable("id") Long id,
             @RequestPart("mascota") String mascotaJson,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
-            HttpSession session
-    ) {
-        System.out.println("ENTRE AL PUT editar id=" + id);
+            @CookieValue(value = "jwt", required = false) String token
+    )
 
-        // 0) Validación rápida
+        {
+
+            if (token == null || token.isBlank()) {
+                return ResponseEntity.status(401).body("No autorizado");
+            }
+            if (!JwtUtils.validateToken(token)) {
+                return ResponseEntity.status(401).body("Token inválido");
+            }
+            Long meId = JwtUtils.extractUserId(token);
+            if (meId == null) {
+                return ResponseEntity.status(401).body("Token inválido");
+            }
+
+
+
+            // 0) Validación rápida
         if (id == null || id <= 0) {
             return ResponseEntity.badRequest().body("ID inválido");
         }
@@ -83,9 +101,9 @@ public class MascotaController {
         }
 
         try {
-            // 2) Auth por session
-            Long meId = (Long) session.getAttribute("USER_ID");
-            if (meId == null) return ResponseEntity.status(401).body("No logueado");
+
+
+
 
             // 3) Buscar mascota actual
             Mascota actual = mascotaService.buscarPorId(id); // si esto ya lanza excepción, perfecto
@@ -102,7 +120,6 @@ public class MascotaController {
 
             // 5) Logs de multipart
             System.out.println("=== PUT /mascota/" + id + " ===");
-            System.out.println("sessionId=" + session.getId());
             System.out.println("USER_ID=" + meId);
             System.out.println("foto null? " + (foto == null));
             if (foto != null) {
