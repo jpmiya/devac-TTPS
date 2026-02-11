@@ -11,10 +11,13 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String, String>> handleBadRequest(BadRequestException ex) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGeneric(Exception ex) {
+        ex.printStackTrace();
+
         Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        error.put("error", "Error interno del servidor");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
+
 }

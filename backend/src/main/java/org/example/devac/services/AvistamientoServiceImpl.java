@@ -9,6 +9,11 @@ import org.example.devac.models.Avistamiento;
 import org.example.devac.models.Mascota;
 import org.example.devac.models.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+import org.example.devac.exceptions.BadRequestException;
+import org.springframework.transaction.annotation.Transactional;
+
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,32 +29,45 @@ public class AvistamientoServiceImpl implements AvistamientoService {
     @Autowired
     MascotaDAO<Mascota> mascotaDAO;
 
-    @Override
-    public Avistamiento createAvistamiento(AvistamientoRequest request) {
-        // Buscar el usuario por ID
+    @Autowired private MinioService minioService;
+
+
+    @Transactional
+    public Avistamiento createAvistamiento(AvistamientoRequest request, MultipartFile foto) {
         Usuario usuario = usuarioDAO.get(request.getUsuarioId());
-        if (usuario == null) {
-            throw new RuntimeException("Usuario no encontrado con ID: " + request.getUsuarioId());
-        }
+        if (usuario == null) throw new BadRequestException("Usuario no encontrado");
 
-        // Buscar la mascota por ID
         Mascota mascota = mascotaDAO.get(request.getMascotaId());
-        if (mascota == null) {
-            throw new RuntimeException("Mascota no encontrada con ID: " + request.getMascotaId());
-        }
+        if (mascota == null) throw new BadRequestException("Mascota no encontrada");
 
-        // Crear el avistamiento
-        Avistamiento avistamiento = new Avistamiento(
-            usuario,
-            mascota,
-            request.getFecha(),
-            request.getFoto(),
-            request.getCoordenadas(),
-            request.getComentario()
+        Avistamiento av = new Avistamiento(
+                usuario,
+                mascota,
+                request.getFecha(),
+                null, // fotoUrl después
+                request.getCoordenadas(),
+                request.getComentario()
         );
 
-        return avistamientoDAO.persist(avistamiento);
+        Avistamiento guardado = avistamientoDAO.persist(av);
+
+        String uploaded = null;
+        try {
+            if (foto != null && !foto.isEmpty()) {
+                uploaded = minioService.uploadFile(foto, guardado.getId()); // o "avistamientos/"
+                String url = minioService.getFileUrl(uploaded);
+                guardado.setFotoUrl(url);
+                avistamientoDAO.update(guardado);
+            }
+            return guardado;
+        } catch (Exception e) {
+            if (uploaded != null) {
+                try { minioService.deleteFile(uploaded); } catch (Exception ignore) {}
+            }
+            throw e;
+        }
     }
+
 
     @Override
     public List<Avistamiento> getAvistamientos(){

@@ -88,27 +88,5 @@ public class UsuarioController {
         }
     }
 
-    @PutMapping("/{id}/mascotas/{idMascota}")
-    public ResponseEntity<?> editarMascota(@PathVariable("idMascota") Long idMascota, @PathVariable("id") Long id) {
-        try {
-            return ResponseEntity.ok(usuarioService.editarMascota(idMascota, id));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 
-    @DeleteMapping("/{id}/mascotas/{idMascota}")
-    public ResponseEntity<?> eliminarMascota(@PathVariable("idMascota") Long idMascota, @PathVariable("id") Long id) {
-        try {
-            usuarioService.eliminarMascota(idMascota, id);
-            return ResponseEntity.ok().build();
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/{id}/mascotas")
-    public ResponseEntity<List<Mascota>> getMascotasDeUsuario(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(usuarioService.getMascotasDeUsuario(id));
-    }
 }

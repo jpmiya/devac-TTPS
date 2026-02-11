@@ -1,0 +1,66 @@
+<!-- create-avistamiento.component.html -->
+<div class="page">
+  <button type="button" class="btn-back" (click)="goBack()">← Volver</button>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Reportar avistamiento</h1>
+      <p class="hero-subtitle">Contá dónde lo viste y ayudá a encontrarlo</p>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container">
+
+      <div class="status info" *ngIf="loading">{{ loadingText }}</div>
+      <div class="status error" *ngIf="error">{{ error }}</div>
+      <div class="status ok" *ngIf="ok">{{ ok }}</div>
+
+      <form class="card" (ngSubmit)="submit()" *ngIf="!loading">
+        <div class="field">
+          <label class="label">Mascota</label>
+          <select class="input" [(ngModel)]="form.mascotaId" name="mascotaId" required>
+            <option [ngValue]="0" disabled>Seleccioná una mascota</option>
+            <option *ngFor="let m of mascotas" [ngValue]="m.id">
+              #{{ m.id }} - {{ m.nombre }} ({{ m.estado || '—' }})
+            </option>
+          </select>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label class="label">Fecha</label>
+            <input class="input" type="date" [(ngModel)]="form.fecha" name="fecha" required />
+          </div>
+
+          <div class="field">
+            <label class="label">Coordenadas</label>
+            <input class="input" type="text" [(ngModel)]="form.coordenadas" name="coordenadas"
+                   placeholder="Plaza Moreno" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Comentario</label>
+          <textarea class="input textarea" [(ngModel)]="form.comentario" name="comentario"
+                    placeholder="Ej: lo vi cerca de la plaza, con collar rojo"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="label">Foto (opcional)</label>
+          <input class="input" type="file" (change)="onFileSelected($event)" accept="image/*" />
+          <small class="hint" *ngIf="selectedFile">Seleccionada: {{ selectedFile.name }}</small>
+        </div>
+
+
+        <div class="actions">
+          <button class="btn outline" type="button" (click)="reset()">Reset</button>
+          <button class="btn primary" type="submit" [disabled]="saving || form.mascotaId === 0">
+            {{ saving ? 'Guardando…' : 'Crear avistamiento' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </section>
+</div>

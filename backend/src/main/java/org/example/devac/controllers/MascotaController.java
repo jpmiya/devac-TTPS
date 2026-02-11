@@ -1,28 +1,14 @@
 package org.example.devac.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.devac.dto.MascotaRequest;
+import org.example.devac.dto.MascotaResponse;
+import org.example.devac.exceptions.BadRequestException;
+import org.example.devac.models.Mascota;
+import org.example.devac.services.MascotaService;
 import org.example.devac.utils.JwtUtils;
 import org.springframework.http.MediaType;
-import org.example.devac.models.Mascota;
-import org.example.devac.models.Usuario;
-import org.example.devac.utils.JwtUtils.*;
-import org.example.devac.services.MascotaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import jakarta.servlet.http.HttpSession;
-import org.example.devac.dto.MascotaResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.example.devac.exceptions.BadRequestException;
-
-
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/mascota")
 public class MascotaController {
+
     private final MascotaService mascotaService;
     private final ObjectMapper objectMapper;
 
@@ -40,20 +27,14 @@ public class MascotaController {
         this.objectMapper = objectMapper;
     }
 
-    @PostMapping(value="/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registrar(
             @RequestPart("mascota") MascotaRequest request,
-            @RequestPart(value="foto", required=false) MultipartFile foto) {
-
-        try {
-            return ResponseEntity.ok(mascotaService.registrar(request, foto));
-        } catch (Exception e) {
-            e.printStackTrace(); // <- esto lo vas a ver en docker logs
-            return ResponseEntity.status(500).body(e.toString());
-        }
+            @RequestPart(value = "foto", required = false) MultipartFile foto
+    ) {
+        // si mascotaService.registrar() tira excepción -> GlobalExceptionHandler la maneja
+        return ResponseEntity.ok(mascotaService.registrar(request, foto));
     }
-
-
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> editar(
@@ -61,162 +42,96 @@ public class MascotaController {
             @RequestPart("mascota") String mascotaJson,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
             @CookieValue(value = "jwt", required = false) String token
-    )
+    ) {
+        // ===== auth (control de flujo, no excepción) =====
+        Long meId = extractMeIdOr401(token);
+        if (meId == null) return ResponseEntity.status(401).body("No autorizado");
 
-        {
+        // ===== validaciones rápidas (podés tirarlas como BadRequestException) =====
+        if (id == null || id <= 0) throw new BadRequestException("ID inválido");
+        if (mascotaJson == null || mascotaJson.isBlank()) throw new BadRequestException("Parte 'mascota' vacía o inexistente");
 
-            if (token == null || token.isBlank()) {
-                return ResponseEntity.status(401).body("No autorizado");
-            }
-            if (!JwtUtils.validateToken(token)) {
-                return ResponseEntity.status(401).body("Token inválido");
-            }
-            Long meId = JwtUtils.extractUserId(token);
-            if (meId == null) {
-                return ResponseEntity.status(401).body("Token inválido");
-            }
-
-
-
-            // 0) Validación rápida
-        if (id == null || id <= 0) {
-            return ResponseEntity.badRequest().body("ID inválido");
-        }
-        if (mascotaJson == null || mascotaJson.isBlank()) {
-            return ResponseEntity.badRequest().body("Parte 'mascota' vacía o inexistente");
-        }
-
-        // 1) Parse JSON -> DTO
+        // ===== parse JSON =====
         final MascotaRequest request;
         try {
-            System.out.println("[PUT] mascotaJson length=" + mascotaJson.length());
-            System.out.println("[PUT] mascotaJson head=" + mascotaJson.substring(0, Math.min(200, mascotaJson.length())));
             request = objectMapper.readValue(mascotaJson, MascotaRequest.class);
         } catch (JsonProcessingException e) {
-            System.err.println("[PUT] ERROR parseando JSON 'mascota': " + e.getMessage());
-            return ResponseEntity.badRequest().body("JSON inválido en parte 'mascota': " + e.getOriginalMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Error leyendo parte 'mascota': " + e);
+            throw new BadRequestException("JSON inválido en parte 'mascota': " + e.getOriginalMessage());
         }
 
-        try {
-
-
-
-
-            // 3) Buscar mascota actual
-            Mascota actual = mascotaService.buscarPorId(id); // si esto ya lanza excepción, perfecto
-            if (actual == null) return ResponseEntity.status(404).body("Mascota no existe");
-
-            if (actual.getDueno() == null || actual.getDueno().getId() == null) {
-                return ResponseEntity.status(500).body("Mascota sin dueño");
-            }
-
-            // 4) Permisos
-            if (!actual.getDueno().getId().equals(meId)) {
-                return ResponseEntity.status(403).body("No sos el dueño");
-            }
-
-            // 5) Logs de multipart
-            System.out.println("=== PUT /mascota/" + id + " ===");
-            System.out.println("USER_ID=" + meId);
-            System.out.println("foto null? " + (foto == null));
-            if (foto != null) {
-                System.out.println("foto empty? " + foto.isEmpty());
-                System.out.println("foto name=" + foto.getOriginalFilename());
-                System.out.println("foto size=" + foto.getSize());
-                System.out.println("foto contentType=" + foto.getContentType());
-            }
-
-            // 6) Construir “parcial” manteniendo dueño + id
-            Mascota mascotaActualizada = new Mascota.Builder()
-                    .dueno(actual.getDueno())
-                    .nombre(request.getNombre())
-                    .tipo(request.getTipo())
-                    .raza(request.getRaza())
-                    .tamaño(request.getTamaño())
-                    .color(request.getColor())
-                    .fechaDePerdida(request.getFechaDePerdida())
-                    .coordenadas(request.getCoordenadas())
-                    .descripcion(request.getDescripcion())
-                    .estado(request.getEstado() != null ? request.getEstado() : actual.getEstado())
-                    .build();
-
-            mascotaActualizada.setId(id);
-
-            // 7) Service (sin cast)
-            Mascota updated = mascotaService.editarConFoto(id, mascotaActualizada, foto);
-
-            return ResponseEntity.ok(updated);
-
-        } catch (BadRequestException e) {
-            // tus validaciones de negocio
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Error editando mascota: " + e);
+        // ===== buscar y permisos =====
+        Mascota actual = mascotaService.buscarPorId(id);
+        if (actual == null) return ResponseEntity.status(404).body("Mascota no existe");
+        if (actual.getDueno() == null || actual.getDueno().getId() == null) {
+            // esto sí es inconsistencia del servidor -> mejor lanzar RuntimeException
+            throw new IllegalStateException("Mascota sin dueño");
         }
+        if (!actual.getDueno().getId().equals(meId)) {
+            return ResponseEntity.status(403).body("No sos el dueño");
+        }
+
+        // ===== construir update =====
+        Mascota mascotaActualizada = new Mascota.Builder()
+                .dueno(actual.getDueno())
+                .nombre(request.getNombre())
+                .tipo(request.getTipo())
+                .raza(request.getRaza())
+                .tamaño(request.getTamaño())
+                .color(request.getColor())
+                .fechaDePerdida(request.getFechaDePerdida())
+                .coordenadas(request.getCoordenadas())
+                .descripcion(request.getDescripcion())
+                .estado(request.getEstado() != null ? request.getEstado() : actual.getEstado())
+                .build();
+
+        mascotaActualizada.setId(id);
+
+        Mascota updated = mascotaService.editarConFoto(id, mascotaActualizada, foto);
+        return ResponseEntity.ok(updated);
     }
-
-
-
 
     @GetMapping("/{id}")
     public ResponseEntity<MascotaResponse> getById(@PathVariable("id") Long id) {
         Mascota m = mascotaService.buscarPorId(id);
+        if (m == null) return ResponseEntity.status(404).build();
         return ResponseEntity.ok(toResponse(m));
     }
-
-
-
 
     @GetMapping("/findAllLost")
     public ResponseEntity<List<MascotaResponse>> getAllLost() {
         List<Mascota> perdidas = mascotaService.findAllLost();
-        List<MascotaResponse> resp = perdidas.stream()
-                .map(this::toResponse)
-                .toList();
-
+        List<MascotaResponse> resp = perdidas.stream().map(this::toResponse).toList();
         return ResponseEntity.ok(resp);
     }
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> borrar(
             @PathVariable("id") Long id,
             @CookieValue(value = "jwt", required = false) String token
-    ){
-        if (token == null || token.isBlank()) {
-            return ResponseEntity.status(401).body("No autorizado");
-        }
-        if (!JwtUtils.validateToken(token)) {
-            return ResponseEntity.status(401).body("Token inválido");
-        }
-
-        Long meId = JwtUtils.extractUserId(token);
-        if (meId == null) {
-            return ResponseEntity.status(401).body("Token inválido");
-        }
+    ) {
+        Long meId = extractMeIdOr401(token);
+        if (meId == null) return ResponseEntity.status(401).body("No autorizado");
 
         Mascota actual = mascotaService.buscarPorId(id);
         if (actual == null) return ResponseEntity.status(404).body("Mascota no existe");
-
         if (actual.getDueno() == null || actual.getDueno().getId() == null) {
-            return ResponseEntity.status(500).body("Mascota sin dueño");
+            throw new IllegalStateException("Mascota sin dueño");
         }
-
         if (!actual.getDueno().getId().equals(meId)) {
             return ResponseEntity.status(403).body("No sos el dueño");
         }
 
-        mascotaService.eliminar(actual); // implementá borrar(id) en tu service/repo
+        mascotaService.eliminar(actual);
         return ResponseEntity.ok().build();
     }
 
+    // ===== helpers =====
 
-
+    private Long extractMeIdOr401(String token) {
+        if (token == null || token.isBlank()) return null;
+        if (!JwtUtils.validateToken(token)) return null;
+        return JwtUtils.extractUserId(token);
+    }
 
     private MascotaResponse toResponse(Mascota m) {
         MascotaResponse r = new MascotaResponse();

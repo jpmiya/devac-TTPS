@@ -1,0 +1,214 @@
+/* avistamientos.component.css */
+
+.page { background: #f9fafb; min-height: 100vh; }
+
+/* Top bar */
+.topbar{
+  max-width: 980px;
+  margin: 18px auto 0;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Back: lo adaptamos para que no quede pegado a la izquierda absoluta */
+.btn-back{
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(17,24,39,0.04);
+  border: 1px solid rgba(17,24,39,0.10);
+  color: #111827;
+  font-weight: 900;
+  cursor: pointer;
+}
+.btn-back:hover{
+  text-decoration: none;
+  background: rgba(17,24,39,0.07);
+}
+
+/* Create button */
+.btn-create{
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(59,130,246,.22);
+  background: rgba(59,130,246,.12);
+  color: #1d4ed8;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 20px rgba(59,130,246,.10);
+}
+.btn-create:hover{
+  background: rgba(59,130,246,.18);
+  box-shadow: 0 12px 26px rgba(59,130,246,.14);
+}
+.btn-create:active{
+  transform: translateY(1px);
+}
+
+/* Responsive topbar */
+@media (max-width: 640px){
+  .topbar{
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn-create, .btn-back{
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+/* Back */
+.btn-back{
+  margin: 18px 0 0 18px;
+  background: transparent;
+  border: none;
+  color: #111827;
+  font-weight: 900;
+  cursor: pointer;
+}
+.btn-back:hover{
+  text-decoration: underline;
+}
+
+/* Hero */
+.hero {
+  min-height: 220px;
+  background: var(--gradient-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+}
+.hero-content{
+  text-align: center;
+  color: white;
+  background: rgba(0,0,0,0.15);
+  padding: 26px 34px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.20);
+  backdrop-filter: blur(10px);
+}
+.hero-title { font-size: 34px; font-weight: 900; margin: 0 0 6px; }
+.hero-subtitle { font-size: 14px; opacity: .95; margin: 0; }
+
+/* Layout */
+.content { padding: 28px 18px 70px; }
+.container { max-width: 980px; margin: 0 auto; }
+
+/* Status */
+.status { margin: 10px 0 14px; padding: 12px 14px; border-radius: 12px; font-size: 14px; }
+.status.info { background: rgba(59,130,246,.10); border: 1px solid rgba(59,130,246,.20); color: #1d4ed8; }
+.status.error { background: rgba(239,68,68,.10); border: 1px solid rgba(239,68,68,.25); color: #7f1d1d; }
+
+/* Empty */
+.empty {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px dashed rgba(17, 24, 39, 0.18);
+  color: #6b7280;
+  text-align: center;
+  background: white;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Card */
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border: 1px solid rgba(17,24,39,0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle top accent line */
+.card::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 4px;
+  width: 100%;
+  background: rgba(59,130,246,.25);
+}
+
+/* Card header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.name { font-weight: 900; font-size: 16px; color: #111827; }
+
+/* Badge (fecha) */
+.badge {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(17,24,39,0.12);
+  background: rgba(17,24,39,0.03);
+  color: #111827;
+  white-space: nowrap;
+}
+
+/* Meta */
+.meta {
+  margin-top: 10px;
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: #111827;
+}
+.meta b{
+  color: #111827;
+}
+
+/* Comment highlight */
+.meta div:last-child{
+  padding-top: 8px;
+  margin-top: 6px;
+  border-top: 1px solid rgba(17,24,39,0.08);
+  color: #374151;
+}
+
+/* Photo link */
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 13px;
+  text-decoration: none;
+
+  /* lindo y consistente con tu edit button */
+  background: rgba(59,130,246,.12);
+  color: #1d4ed8;
+  border: 1px solid rgba(59,130,246,.18);
+}
+.link:hover{
+  background: rgba(59,130,246,.18);
+}
+
+/* Responsive */
+@media (max-width: 980px){
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px){
+  .grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 28px; }
+}

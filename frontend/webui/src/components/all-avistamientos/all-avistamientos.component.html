@@ -1,0 +1,50 @@
+<div class="page">
+  <button type="button" class="btn-back" (click)="goBack()">← Volver</button>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Avistamientos</h1>
+      <p class="hero-subtitle">Reportes recientes de la comunidad</p>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container">
+
+      <div class="status info" *ngIf="loading">Cargando…</div>
+      <div class="status error" *ngIf="error">{{ error }}</div>
+
+      <ng-container *ngIf="!loading && !error">
+        <div class="empty" *ngIf="!items.length">
+          No hay avistamientos todavía.
+        </div>
+        <button type="button" class="btn-create" (click)="goCrear()">
+          + Crear avistamiento
+        </button>
+
+
+        <div class="grid" *ngIf="items.length">
+          <article class="card" *ngFor="let a of items">
+            <div class="top">
+              <div class="name">Avistamiento #{{ a.id }}</div>
+              <span class="badge">{{ formatDate(a.fecha) }}</span>
+            </div>
+
+            <div class="meta">
+              <div><b>Mascota:</b> {{ a.mascotaNombre ?? (a.mascotaId != null ? ('#' + a.mascotaId) : '—') }}</div>
+              <div><b>Usuario:</b> {{ a.usuarioNombre ?? (a.usuarioId != null ? ('#' + a.usuarioId) : '—') }}</div>
+
+              <div><b>Coordenadas:</b> {{ a.coordenadas || '—' }}</div>
+              <div><b>Comentario:</b> {{ a.comentario || '—' }}</div>
+            </div>
+
+            <a class="link" *ngIf="a.fotoUrl" [href]="a.fotoUrl" target="_blank" rel="noreferrer">
+              Ver foto
+            </a>
+          </article>
+        </div>
+      </ng-container>
+
+    </div>
+  </section>
+</div>

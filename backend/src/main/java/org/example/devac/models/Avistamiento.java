@@ -13,7 +13,9 @@ public class Avistamiento {
     @Column(name="AVISTAMIENTO_ID")
     private Long id;
     private String fecha;
-    private String foto; // arreglo de bytes
+    @Column(length = 1024)
+    private String foto;
+    private String fotoUrl;
     private String coordenadas;
     private String comentario;
     // que no se permita un Avistamiento q no tiene un usuario ni una mascota
@@ -63,5 +65,8 @@ public class Avistamiento {
     public Long getId() {
         return id;
     }
+
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
 }

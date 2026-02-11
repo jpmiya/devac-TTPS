@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -18,6 +18,8 @@ export class EditUserComponent implements OnInit {
   private editUserService = inject(EditUserService);
   private userService = inject(UsuarioService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
 
   loading = false;
   saving = false;
@@ -43,10 +45,14 @@ export class EditUserComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
     this.successMessage = '';
+    this.cdr.detectChanges();
 
     this.editUserService
       .getMe()
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }))
       .subscribe({
         next: (me) => {
           this.originalMe = me;
@@ -61,36 +67,43 @@ export class EditUserComponent implements OnInit {
 
           this.form.markAsPristine();
           this.form.markAsUntouched();
+
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error(err);
           this.errorMessage = 'No se pudo cargar tu perfil.';
+          this.cdr.detectChanges();
         },
       });
   }
 
+
   save(): void {
     this.successMessage = '';
     this.errorMessage = '';
+    this.cdr.detectChanges();
 
     if (!this.originalMe?.id) {
       this.errorMessage = 'No se pudo determinar el id del usuario.';
+      this.cdr.detectChanges();
       return;
     }
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.errorMessage = 'Revisá los campos.';
+      this.cdr.detectChanges();
       return;
     }
 
     if (!this.form.dirty) {
       this.successMessage = 'No hay cambios para guardar.';
+      this.cdr.detectChanges();
       return;
     }
 
     const v = this.form.getRawValue();
-
     const payload: UpdateMeDTO = {
       nombreYApellido: v.nombreYApellido.trim(),
       email: v.email.trim(),
@@ -100,21 +113,31 @@ export class EditUserComponent implements OnInit {
     };
 
     this.saving = true;
+    this.cdr.detectChanges();
 
     this.editUserService
-      .updateMe(this.originalMe.id, payload) // ✅ ACÁ VA EL ID
-      .pipe(finalize(() => (this.saving = false)))
+      .updateMe(this.originalMe.id, payload)
+      .pipe(finalize(() => {
+        this.saving = false;
+        this.cdr.detectChanges();
+      }))
       .subscribe({
         next: () => {
-          // actualizar el “original” para que Cancel vuelva a esto
           this.originalMe = { ...this.originalMe!, ...payload } as MeDTO;
-
           this.form.markAsPristine();
           this.successMessage = 'Cambios guardados.';
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error(err);
-          this.errorMessage = err?.error?.message ?? 'No se pudieron guardar los cambios.';
+          // ojo: tu backend a veces manda string, no {message:...}
+          const msg =
+            typeof err?.error === 'string'
+              ? err.error
+              : err?.error?.message ?? 'No se pudieron guardar los cambios.';
+
+          this.errorMessage = msg;
+          this.cdr.detectChanges();
         },
       });
   }
