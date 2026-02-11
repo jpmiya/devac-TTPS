@@ -89,4 +89,9 @@ public class UsuarioController {
     }
 
 
+    @GetMapping("/{id}/mascotas")
+    public ResponseEntity<List<Mascota>> getMascotasDeUsuario(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(usuarioService.getMascotasDeUsuario(id));
+    }
+
 }
