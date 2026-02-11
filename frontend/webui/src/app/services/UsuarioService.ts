@@ -88,6 +88,14 @@ export class UsuarioService {
   }
 
 
+  deleteMascota(id: number) {
+    return this.http.delete(`${this.baseUrl}/mascota/${id}`, {
+      withCredentials: true,
+      responseType: 'text'
+    });
+  }
+
+
 
 
 }

@@ -183,6 +183,40 @@ public class MascotaController {
 
 
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> borrar(
+            @PathVariable("id") Long id,
+            @CookieValue(value = "jwt", required = false) String token
+    ){
+        if (token == null || token.isBlank()) {
+            return ResponseEntity.status(401).body("No autorizado");
+        }
+        if (!JwtUtils.validateToken(token)) {
+            return ResponseEntity.status(401).body("Token inválido");
+        }
+
+        Long meId = JwtUtils.extractUserId(token);
+        if (meId == null) {
+            return ResponseEntity.status(401).body("Token inválido");
+        }
+
+        Mascota actual = mascotaService.buscarPorId(id);
+        if (actual == null) return ResponseEntity.status(404).body("Mascota no existe");
+
+        if (actual.getDueno() == null || actual.getDueno().getId() == null) {
+            return ResponseEntity.status(500).body("Mascota sin dueño");
+        }
+
+        if (!actual.getDueno().getId().equals(meId)) {
+            return ResponseEntity.status(403).body("No sos el dueño");
+        }
+
+        mascotaService.eliminar(actual); // implementá borrar(id) en tu service/repo
+        return ResponseEntity.ok().build();
+    }
+
+
+
 
     private MascotaResponse toResponse(Mascota m) {
         MascotaResponse r = new MascotaResponse();

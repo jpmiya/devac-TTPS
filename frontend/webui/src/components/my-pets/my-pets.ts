@@ -84,4 +84,37 @@ export class MyPetsComponent implements OnInit {
     this.router.navigate(['/mascota', id, 'edit']);
   }
 
+  deletePet(id: number | undefined): void {
+    if (!id) return;
+
+    const ok = confirm('¿Seguro que querés borrar esta mascota? Esta acción no se puede deshacer.');
+    if (!ok) return;
+
+    this.loading = true;
+    this.error = null;
+    this.cdr.detectChanges();
+
+    this.usuarioSvc.deleteMascota(id)
+      .pipe(finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: () => {
+          // sacarla de la lista sin recargar todo
+          this.mascotas = this.mascotas.filter(m => m.id !== id);
+          this.cdr.detectChanges();
+        },
+        error: (e) => {
+          const msg =
+            typeof e?.error === 'string'
+              ? e.error
+              : e?.error?.message ?? 'Error inesperado';
+          this.error = `No pude borrar la mascota. (${e.status}) ${msg}`;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+
 }

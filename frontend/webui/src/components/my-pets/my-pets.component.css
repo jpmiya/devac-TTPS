@@ -98,3 +98,31 @@
 @media (max-width: 640px){
   .grid { grid-template-columns: 1fr; }
 }
+
+
+.btn-delete{
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  border: 1px solid rgba(239,68,68,.35);
+
+  background: rgba(239,68,68,.10);
+  color: #b91c1c;
+
+  transition: all .18s ease;
+}
+
+.btn-delete:hover{
+  background: rgba(239,68,68,.18);
+  border-color: rgba(239,68,68,.55);
+  transform: translateY(-1px);
+}
+
+.btn-delete:active{
+  transform: translateY(0);
+  background: rgba(239,68,68,.25);
+}
+
