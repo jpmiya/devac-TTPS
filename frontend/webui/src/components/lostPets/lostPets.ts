@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { MascotasService, Mascota, UsuarioRef, EstadoMascota} from '../../app/services/MascotaService';
 import { AuthService } from '../../app/services/AuthService';
+import { environment } from '../../environments/environment';
 import * as L from 'leaflet';
 
 // Fix Leaflet default marker icon paths
@@ -64,6 +65,7 @@ export class LostDogsComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.dogs = data ?? [];
+          this.hydrateOwnersFromDetail();
           this.cdr.detectChanges();
         },
         error: (err) => {
@@ -83,6 +85,25 @@ export class LostDogsComponent implements OnInit {
     } else if (this.map) {
       this.map.remove();
       this.map = null;
+    }
+  }
+
+  private hydrateOwnersFromDetail(): void {
+    for (const dog of this.dogs as any[]) {
+      if (dog?.dueno || !dog?.id) continue;
+
+      this.http.get<any>(`${environment.apiUrl}/mascota/${dog.id}`, { withCredentials: true })
+        .subscribe({
+          next: (detail) => {
+            if (detail?.dueno) {
+              dog.dueno = detail.dueno;
+              this.cdr.detectChanges();
+            }
+          },
+          error: () => {
+            // si falla detalle, dejamos fallback actual
+          }
+        });
     }
   }
 
@@ -136,6 +157,27 @@ export class LostDogsComponent implements OnInit {
 
   get foundDogsCount(): number {
     return this.dogs.filter(d => d.estado !== 'PERDIDO_PROPIO').length;
+  }
+
+  getCityLabel(dog: Mascota): string {
+    const owner: any = dog.dueno as any;
+    return (
+      owner?.barrio ||
+      (dog as any)?.barrioDueno ||
+      (dog as any)?.barrio ||
+      'Barrio desconocido'
+    );
+  }
+
+  getContactPhone(dog: Mascota): string {
+    const owner: any = dog.dueno as any;
+    return (
+      owner?.telefono ||
+      owner?.telefonoContacto ||
+      owner?.celular ||
+      owner?.phone ||
+      'Contacto no disponible'
+    );
   }
 
   onImageError(event: Event, dog: any): void {

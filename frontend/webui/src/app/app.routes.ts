@@ -9,12 +9,14 @@ import {ProfileComponent} from '../components/user-profile/user-profile';
 import {MyPetsComponent} from '../components/my-pets/my-pets';
 import {EditMascotaComponent} from '../components/edit-mascota/edit-mascota';
 import {MascotaDetailComponent} from '../components/mascota-detail/mascota-detail';
+import { AdoptionDogsComponent } from '../components/adoption-dogs/adoption-dogs';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LogInComponent, data: { hideNavbar: true } },
   { path: 'register', component: RegisterComponent, data: { hideNavbar: true } },
   { path: 'lost-dogs', component: LostDogsComponent },
+  { path: 'adoption-dogs', component: AdoptionDogsComponent },
   { path: 'create-mascota', component: CreateMascotaComponent },
   {path: 'mascota/:id/edit', component:EditMascotaComponent},
   { path: 'edit-user', component: EditUserComponent },

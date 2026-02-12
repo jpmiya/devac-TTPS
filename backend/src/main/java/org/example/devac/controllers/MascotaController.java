@@ -164,6 +164,16 @@ public class MascotaController {
         return ResponseEntity.ok(resp);
     }
 
+    @GetMapping("/findAllAdopted")
+    public ResponseEntity<List<MascotaResponse>> getAllAdopted() {
+        List<Mascota> adoptadas = mascotaService.findAllAdopted();
+        List<MascotaResponse> resp = adoptadas.stream()
+                .map(this::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(resp);
+    }
+
 
 
 
@@ -181,6 +191,16 @@ public class MascotaController {
         r.setCoordenadas(m.getCoordenadas());
         r.setDescripcion(m.getDescripcion());
         r.setFotoUrl(m.getFotoUrl());
+
+        if (m.getDueno() != null) {
+            MascotaResponse.DuenoResumen dueno = new MascotaResponse.DuenoResumen();
+            dueno.setTelefono(m.getDueno().getTelefono());
+            dueno.setBarrio(m.getDueno().getBarrio());
+            dueno.setCiudad(m.getDueno().getCiudad());
+            dueno.setCoordenadas(m.getDueno().getCoordenadas());
+            r.setDueno(dueno);
+        }
+
         return r;
     }
 }

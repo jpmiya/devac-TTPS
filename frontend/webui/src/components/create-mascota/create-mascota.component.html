@@ -84,8 +84,7 @@
         <label class="label">Estado *</label>
         <select class="select" [(ngModel)]="form.estado" name="estado" required>
           <option value="PERDIDO_PROPIO">Perdido (mi mascota)</option>
-          <option value="ENCONTRADO">Encontrado (vi una mascota)</option>
-          <option value="ADOPCION">En adopción</option>
+          <option value="ADOPTADO">En adopción</option>
         </select>
       </div>
 
@@ -98,6 +97,13 @@
           rows="4"
           placeholder="Detalles adicionales que puedan ayudar a identificar a la mascota..."
         ></textarea>
+      </div>
+
+      <div class="field full">
+        <label class="label">Ubicación</label>
+        <span class="hint">Seleccioná en el mapa dónde se perdió/encontró la mascota.</span>
+        <app-location-picker (coordsString)="onLocationSelected($event)"></app-location-picker>
+        <small class="coords-preview" *ngIf="form.coordenadas">Enviando: {{ form.coordenadas }}</small>
       </div>
 
       <div class="field full">

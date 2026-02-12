@@ -9,6 +9,7 @@ export interface UsuarioRef {
   id: number;
   nombre?: string;
   email?: string;
+  telefono?: string;
   barrio?: string;
   ciudad?: string;
   coordenadas?: string;   // "lat,lon"
@@ -21,6 +22,7 @@ export interface MascotaRequest {
   color?: string;
   fechaDePerdida: string;    // camelCase
   estado: EstadoMascota;
+  coordenadas?: string;      // "lat,long"
   foto?: string;
   descripcion?: string;
   tipo?: string;
@@ -30,6 +32,7 @@ export interface MascotaRequest {
 export interface Mascota {
   id: number;
   nombre: string;
+  duenoId?: number;
 
   tipo?: string;
   raza?: string;
@@ -38,6 +41,12 @@ export interface Mascota {
   foto?: string;
   fotoUrl?: string;
   descripcion?: string;
+  telefono?: string;
+  ciudad?: string;
+  barrio?: string;
+  coordenadas?: string;
+  telefonoDueno?: string;
+  ciudadDueno?: string;
 
   estado?: EstadoMascota;
 
@@ -59,6 +68,12 @@ export class MascotasService {
     });
   }
 
+  findAllAdopted(): Observable<Mascota[]> {
+    return this.http.get<Mascota[]>(`${this.baseUrl}/mascota/findAllAdopted`, {
+      withCredentials: true,
+    });
+  }
+
   /**
    * Backend espera:
    *  - multipart/form-data
@@ -74,6 +89,7 @@ export class MascotasService {
       color: req.color ?? null,
       fechaDePerdida: req.fechaDePerdida,
       estado: req.estado,
+      coordenadas: req.coordenadas ?? null,
       foto: req.foto ?? null,
       descripcion: req.descripcion ?? null,
       tipo: req.tipo ?? null,

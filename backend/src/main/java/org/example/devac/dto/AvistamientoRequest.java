@@ -1,11 +1,17 @@
 package org.example.devac.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 public class AvistamientoRequest {
     private Long usuarioId;
     private Long mascotaId;
     private String fecha;
     private String foto;
     private String coordenadas;
+    @JsonAlias({"lat", "latitude"})
+    private Double latitud;
+    @JsonAlias({"lng", "lon", "long", "longitude"})
+    private Double longitud;
     private String comentario;
 
     // Constructor vacío
@@ -33,6 +39,14 @@ public class AvistamientoRequest {
         return coordenadas;
     }
 
+    public Double getLatitud() {
+        return latitud;
+    }
+
+    public Double getLongitud() {
+        return longitud;
+    }
+
     public String getComentario() {
         return comentario;
     }
@@ -56,6 +70,14 @@ public class AvistamientoRequest {
 
     public void setCoordenadas(String coordenadas) {
         this.coordenadas = coordenadas;
+    }
+
+    public void setLatitud(Double latitud) {
+        this.latitud = latitud;
+    }
+
+    public void setLongitud(Double longitud) {
+        this.longitud = longitud;
     }
 
     public void setComentario(String comentario) {

@@ -1,0 +1,57 @@
+<div class="page">
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Cargando adopciones...</div>
+  </div>
+
+  <div class="error-banner" *ngIf="!loading && error">
+    {{ error }}
+  </div>
+
+  <button type="button" class="btn-back" (click)="goBack()">← Volver</button>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Perros en adopción</h1>
+      <p>Encontrá un compañero para tu hogar</p>
+    </div>
+  </header>
+
+  <div class="empty" *ngIf="!loading && !error && pets.length === 0">
+    No hay mascotas en adopción por el momento.
+  </div>
+
+  <section class="grid" *ngIf="!loading && pets.length">
+    <article class="card" *ngFor="let pet of pets">
+      <div class="thumb">
+        <ng-container *ngIf="pet.fotoUrl; else noImage">
+          <img [src]="pet.fotoUrl" [alt]="pet.nombre || 'Mascota en adopción'" />
+        </ng-container>
+        <ng-template #noImage>
+          <div class="placeholder">Sin foto</div>
+        </ng-template>
+        <span class="badge">ADOPCIÓN</span>
+      </div>
+
+      <div class="content">
+        <div class="headline">
+          <h3>{{ pet.nombre || 'Sin nombre' }}</h3>
+          <span class="date">{{ pet.fecha_de_perdida || '—' }}</span>
+        </div>
+
+        <p class="desc">{{ pet.descripcion || 'Sin descripción' }}</p>
+
+        <div class="meta">
+          <span class="chip">📍 {{ getLocation(pet) }}</span>
+          <span class="chip">🐾 {{ pet.raza || 'Raza desconocida' }}</span>
+          <span class="chip">🎨 {{ pet.color || 'N/A' }}</span>
+        </div>
+
+        <div class="footer">
+          <span class="phone">📞 {{ getPhone(pet) }}</span>
+          <button class="secondary" [routerLink]="['/mascota', pet.id]">Ver detalles</button>
+        </div>
+      </div>
+    </article>
+  </section>
+</div>

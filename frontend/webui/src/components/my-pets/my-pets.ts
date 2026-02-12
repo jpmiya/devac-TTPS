@@ -23,6 +23,7 @@ export class MyPetsComponent implements OnInit {
   mascotas: Mascota[] = [];
 
   loading = false;
+  deletingId: number | null = null;
   error: string | null = null;
 
   ngOnInit(): void {
@@ -82,6 +83,33 @@ export class MyPetsComponent implements OnInit {
   editPet(id: number | undefined): void {
     if (!id) return;
     this.router.navigate(['/mascota', id, 'edit']);
+  }
+
+  deletePet(id: number | undefined): void {
+    if (!id || !this.me?.id || this.deletingId) return;
+
+    const ok = confirm('¿Seguro que querés borrar esta mascota? Esta acción no se puede deshacer.');
+    if (!ok) return;
+
+    this.deletingId = id;
+    this.error = null;
+    this.cdr.detectChanges();
+
+    this.usuarioSvc.deleteMascotaDeUsuario(this.me.id, id)
+      .pipe(finalize(() => {
+        this.deletingId = null;
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: () => {
+          this.mascotas = this.mascotas.filter((m) => m.id !== id);
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.error = 'No se pudo borrar la mascota. Intentá nuevamente.';
+          this.cdr.detectChanges();
+        }
+      });
   }
 
 }

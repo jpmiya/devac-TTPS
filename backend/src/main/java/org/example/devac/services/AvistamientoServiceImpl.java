@@ -29,6 +29,8 @@ public class AvistamientoServiceImpl implements AvistamientoService {
 
     @Override
     public Avistamiento createAvistamiento(AvistamientoRequest request) {
+        String coordenadas = resolveCoordenadas(request);
+
         // Buscar el usuario por ID
         Usuario usuario = usuarioDAO.get(request.getUsuarioId());
         if (usuario == null) {
@@ -47,13 +49,13 @@ public class AvistamientoServiceImpl implements AvistamientoService {
             mascota,
             request.getFecha(),
             request.getFoto(),
-            request.getCoordenadas(),
+            coordenadas,
             request.getComentario()
         );
 
         // Resolver barrio y ciudad desde coordenadas usando Georef
-        if (request.getCoordenadas() != null && !request.getCoordenadas().isBlank()) {
-            GeorefService.UbicacionResult ubicacion = georefService.resolverUbicacion(request.getCoordenadas());
+        if (coordenadas != null && !coordenadas.isBlank()) {
+            GeorefService.UbicacionResult ubicacion = georefService.resolverUbicacion(coordenadas);
             if (ubicacion != null) {
                 avistamiento.setBarrio(ubicacion.getBarrio());
                 avistamiento.setCiudad(ubicacion.getCiudad());
@@ -61,6 +63,16 @@ public class AvistamientoServiceImpl implements AvistamientoService {
         }
 
         return avistamientoDAO.persist(avistamiento);
+    }
+
+    private String resolveCoordenadas(AvistamientoRequest request) {
+        if (request.getCoordenadas() != null && !request.getCoordenadas().isBlank()) {
+            return request.getCoordenadas().trim();
+        }
+        if (request.getLatitud() != null && request.getLongitud() != null) {
+            return request.getLatitud() + "," + request.getLongitud();
+        }
+        return null;
     }
 
     @Override

@@ -45,6 +45,15 @@
               Editar mascota
             </button>
 
+            <button
+              type="button"
+              class="btn-delete"
+              (click)="deletePet(m.id)"
+              [disabled]="deletingId === m.id"
+            >
+              {{ deletingId === m.id ? 'Borrando...' : 'Borrar mascota' }}
+            </button>
+
           </article>
         </div>
       </ng-container>

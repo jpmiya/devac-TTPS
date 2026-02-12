@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class MascotaServiceImpl implements MascotaService {
@@ -39,6 +38,8 @@ public class MascotaServiceImpl implements MascotaService {
     
     @Transactional
     public Mascota registrar(MascotaRequest request, MultipartFile foto) {
+        String coordenadas = resolveCoordenadas(request);
+
         // Buscar el dueño por ID
         Usuario dueno = usuarioDAO.get(request.getDuenoId());
         if (dueno == null) {
@@ -57,6 +58,7 @@ public class MascotaServiceImpl implements MascotaService {
                 .tamaño(request.getTamaño())
                 .color(request.getColor())
                 .fechaDePerdida(request.getFechaDePerdida())
+                .coordenadas(coordenadas)
                 .descripcion(request.getDescripcion())
                 .tipo(request.getTipo())
                 .raza(request.getRaza())
@@ -109,6 +111,12 @@ public class MascotaServiceImpl implements MascotaService {
         usuarioDAO.update(dueno);
         
         return mascotaGuardada;
+    }
+
+    @Transactional
+    @Override
+    public Mascota editar(Mascota mascota) {
+        return editar(mascota, null);
     }
 
     @Transactional
@@ -165,6 +173,8 @@ public class MascotaServiceImpl implements MascotaService {
     @Override
     @Transactional
     public Mascota editar(Long mascotaId, MascotaRequest request, MultipartFile foto, Long usuarioId) {
+        String coordenadas = resolveCoordenadas(request);
+
         // 1) Buscar mascota existente
         Mascota actual = buscarPorId(mascotaId);
 
@@ -185,6 +195,7 @@ public class MascotaServiceImpl implements MascotaService {
                 .tamaño(request.getTamaño())
                 .color(request.getColor())
                 .fechaDePerdida(request.getFechaDePerdida())
+                .coordenadas(coordenadas)
                 .descripcion(request.getDescripcion())
                 .estado(request.getEstado())
                 .build();
@@ -216,6 +227,16 @@ public class MascotaServiceImpl implements MascotaService {
         int idx = url.lastIndexOf('/');
         if (idx == -1) return url;
         return url.substring(idx + 1);
+    }
+
+    private String resolveCoordenadas(MascotaRequest request) {
+        if (request.getCoordenadas() != null && !request.getCoordenadas().isBlank()) {
+            return request.getCoordenadas().trim();
+        }
+        if (request.getLatitud() != null && request.getLongitud() != null) {
+            return request.getLatitud() + "," + request.getLongitud();
+        }
+        return null;
     }
 
 
@@ -265,12 +286,12 @@ public class MascotaServiceImpl implements MascotaService {
     }
 
     public List<Mascota> findAllLost() {
-        // Obtener todas las mascotas y filtrar por estado perdido
-        List<Mascota> todas = mascotaDAO.getAll("id");
-        return todas.stream()
-            .filter(m -> m.getEstado() == EstadoMascota.PERDIDO_AJENO || 
-                        m.getEstado() == EstadoMascota.PERDIDO_PROPIO)
-            .collect(Collectors.toList());
+        return mascotaDAO.findAllLostWithDueno();
+    }
+
+    @Override
+    public List<Mascota> findAllAdopted() {
+        return mascotaDAO.findAllAdoptedWithDueno();
     }
 
 

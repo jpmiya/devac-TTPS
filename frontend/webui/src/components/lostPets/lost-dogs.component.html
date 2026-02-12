@@ -116,14 +116,13 @@
         </p>
 
         <div class="meta">
-          <span class="chip">📍 {{ dog.dueno?.barrio || dog.dueno?.ciudad || 'Zona desconocida' }}</span>
+          <span class="chip">📍 {{ getCityLabel(dog) }}</span>
           <span class="chip">🐾 {{ dog.raza || 'Raza desconocida' }}</span>
-          <span class="chip">🎂 {{ dog['tamaño'] || 'N/A' }}</span>
           <span class="chip">🎨 {{ dog.color || 'N/A' }}</span>
         </div>
 
         <div class="footer">
-          <span class="phone">📞 {{ dog.dueno?.nombre || 'Contacto no disponible' }}</span>
+          <span class="phone">📞 {{ getContactPhone(dog) }}</span>
 
           <div class="actions">
             <button

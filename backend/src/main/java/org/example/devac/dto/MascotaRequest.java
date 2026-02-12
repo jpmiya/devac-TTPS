@@ -3,6 +3,7 @@
 import org.example.devac.models.EstadoMascota;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 import java.time.LocalDate;
 
@@ -18,6 +19,10 @@ public class MascotaRequest {
     private EstadoMascota estado;
     private String foto;
     private String coordenadas;
+    @JsonAlias({"lat", "latitude"})
+    private Double latitud;
+    @JsonAlias({"lng", "lon", "long", "longitude"})
+    private Double longitud;
     private String descripcion;
     private String tipo;
     private String raza;
@@ -57,6 +62,14 @@ public class MascotaRequest {
 
     public String getCoordenadas() {
         return coordenadas;
+    }
+
+    public Double getLatitud() {
+        return latitud;
+    }
+
+    public Double getLongitud() {
+        return longitud;
     }
 
     public String getDescripcion() {
@@ -102,6 +115,14 @@ public class MascotaRequest {
 
     public void setCoordenadas(String coordenadas) {
         this.coordenadas = coordenadas;
+    }
+
+    public void setLatitud(Double latitud) {
+        this.latitud = latitud;
+    }
+
+    public void setLongitud(Double longitud) {
+        this.longitud = longitud;
     }
 
     public void setDescripcion(String descripcion) {

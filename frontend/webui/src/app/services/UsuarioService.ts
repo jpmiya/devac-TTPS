@@ -81,6 +81,12 @@ export class UsuarioService {
     return this.http.get<Mascota[]>(`${this.baseUrl}/usuario/${userId}/mascotas`, { withCredentials: true });
   }
 
+  deleteMascotaDeUsuario(userId: number, idMascota: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/usuario/${userId}/mascotas/${idMascota}`, {
+      withCredentials: true
+    });
+  }
+
   getMe(): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.baseUrl}/usuario/me`, {
       withCredentials: true

@@ -32,11 +32,11 @@
       <div class="meta">
         <div><b>Tipo:</b> {{ mascota.tipo || 'N/A' }}</div>
         <div><b>Raza:</b> {{ mascota.raza || 'N/A' }}</div>
-        {{ tamanioDisplay }}
+        <div><b>Tamaño:</b> {{ tamanioDisplay }}</div>
 
         <div><b>Color:</b> {{ mascota.color || 'N/A' }}</div>
         <div><b>Fecha:</b> {{ fecha }}</div>
-        <div><b>Zona:</b> {{ mascota.coordenadas || 'N/A' }}</div>
+        <div><b>Barrio:</b> {{ zonaDisplay }}</div>
       </div>
 
       <div class="desc">
@@ -46,9 +46,7 @@
 
       <div class="contact">
         <h3>Contacto</h3>
-        <div><b>Nombre:</b> {{ mascota.dueno?.nombreYApellido || 'N/A' }}</div>
-        <div><b>Teléfono:</b> {{ mascota.dueno?.telefono || 'N/A' }}</div>
-        <div><b>Email:</b> {{ mascota.dueno?.email || 'N/A' }}</div>
+        <div><b>Teléfono:</b> {{ contactoTelefono }}</div>
       </div>
     </div>
 

@@ -5,11 +5,12 @@ import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { MascotasService, MascotaRequest } from '../../app/services/MascotaService';
 import { finalize } from 'rxjs/operators';
+import { LocationPickerComponent } from '../location-picker/location-picker';
 
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, LocationPickerComponent],
   templateUrl: './create-mascota.component.html',
   styleUrls: ['./create-mascota.component.css']
 })
@@ -45,6 +46,10 @@ export class CreateMascotaComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
     }
+  }
+
+  onLocationSelected(coords: string): void {
+    this.form.coordenadas = coords;
   }
 
   ngOnInit(): void {

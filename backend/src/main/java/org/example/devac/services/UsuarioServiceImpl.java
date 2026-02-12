@@ -100,7 +100,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Mascota editarMascota(Long idMascota, Long usuarioId) {
         // Validar que el usuario existe y es dueño de la mascota
         Mascota mascotaExistente = validarPropiedadMascota(idMascota, usuarioId);
-        
+
         // delego la edicion a mascotaservice
         return mascotaService.editar(mascotaExistente);
     }

@@ -62,6 +62,18 @@
   color: #374151;
 }
 
+.hint {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.coords-preview {
+  margin-top: 4px;
+  color: #4b5563;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
 .input,
 .select,
 textarea {

@@ -25,6 +25,27 @@
   background: rgba(59,130,246,.18);
 }
 
+.btn-delete{
+  margin-top: 8px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 900;
+  background: rgba(239,68,68,.12);
+  color: #b91c1c;
+}
+
+.btn-delete:hover:enabled{
+  background: rgba(239,68,68,.18);
+}
+
+.btn-delete:disabled{
+  opacity: .65;
+  cursor: not-allowed;
+}
+
 
 .hero {
   min-height: 220px;

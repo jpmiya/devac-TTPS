@@ -3,6 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 type MascotaDetail = {
   id: number;
@@ -10,18 +11,32 @@ type MascotaDetail = {
   tipo?: string;
   raza?: string;
   tamanio?: string;
+  tamaño?: string;
   color?: string;
   fechaDePerdida?: any;
   fecha_de_perdida?: any; // por si tu backend mezcla
   estado?: string;
   coordenadas?: string;
+  ciudad?: string;
+  barrio?: string;
   descripcion?: string;
   fotoUrl?: string;
+  // Campos aplanados posibles del dueño
+  duenoId?: number;
+  nombreDueno?: string;
+  nombreYApellidoDueno?: string;
+  emailDueno?: string;
+  telefonoDueno?: string;
+  ciudadDueno?: string;
+  barrioDueno?: string;
   dueno?: {
     id?: number;
     nombreYApellido?: string;
+    nombre?: string;
     telefono?: string;
     email?: string;
+    ciudad?: string;
+    barrio?: string;
   };
 };
 
@@ -55,7 +70,7 @@ export class MascotaDetailComponent implements OnInit {
     }
 
     this.loading = true;
-    this.http.get<MascotaDetail>(`http://localhost:8080/mascota/${id}`, { withCredentials: true })
+    this.http.get<MascotaDetail>(`${environment.apiUrl}/mascota/${id}`, { withCredentials: true })
       .pipe(finalize(() => {
         this.loading = false;
         this.cdr.detectChanges();
@@ -96,6 +111,45 @@ export class MascotaDetailComponent implements OnInit {
   get tamanioDisplay(): string {
     const m: any = this.mascota;
     return (m?.tamanio ?? m?.tamaño ?? '').toString().trim() || 'N/A';
+  }
+
+  get contactoNombre(): string {
+    const m: any = this.mascota;
+    return (
+      m?.dueno?.nombreYApellido ||
+      m?.dueno?.nombre ||
+      m?.nombreYApellidoDueno ||
+      m?.nombreDueno ||
+      'N/A'
+    );
+  }
+
+  get contactoTelefono(): string {
+    const m: any = this.mascota;
+    return (
+      m?.dueno?.telefono ||
+      m?.telefonoDueno ||
+      'N/A'
+    );
+  }
+
+  get contactoEmail(): string {
+    const m: any = this.mascota;
+    return (
+      m?.dueno?.email ||
+      m?.emailDueno ||
+      'N/A'
+    );
+  }
+
+  get zonaDisplay(): string {
+    const m: any = this.mascota;
+    return (
+      m?.dueno?.barrio ||
+      m?.barrioDueno ||
+      m?.barrio ||
+      'N/A'
+    );
   }
 
 }

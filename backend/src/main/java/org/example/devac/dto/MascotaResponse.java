@@ -19,6 +19,26 @@ public class MascotaResponse {
     private String coordenadas;
     private String descripcion;
     private String fotoUrl;
+    private DuenoResumen dueno;
+
+    public static class DuenoResumen {
+        private String telefono;
+        private String barrio;
+        private String ciudad;
+        private String coordenadas;
+
+        public String getTelefono() { return telefono; }
+        public void setTelefono(String telefono) { this.telefono = telefono; }
+
+        public String getBarrio() { return barrio; }
+        public void setBarrio(String barrio) { this.barrio = barrio; }
+
+        public String getCiudad() { return ciudad; }
+        public void setCiudad(String ciudad) { this.ciudad = ciudad; }
+
+        public String getCoordenadas() { return coordenadas; }
+        public void setCoordenadas(String coordenadas) { this.coordenadas = coordenadas; }
+    }
 
     public MascotaResponse() {}
 
@@ -57,4 +77,7 @@ public class MascotaResponse {
 
     public String getFotoUrl() { return fotoUrl; }
     public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
+
+    public DuenoResumen getDueno() { return dueno; }
+    public void setDueno(DuenoResumen dueno) { this.dueno = dueno; }
 }

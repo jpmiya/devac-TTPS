@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 @Service
 public class UserEditerService {
 
@@ -27,7 +29,10 @@ public class UserEditerService {
         }
 
         // Obtener los nombres de las propiedades que son null en 'cambios'
-        String[] ignorar = PropertyUtils.getNullPropertyNames(cambios);
+        // y forzar que coordenadas no se persista (solo se usa para Georef).
+        String[] nullProps = PropertyUtils.getNullPropertyNames(cambios);
+        String[] ignorar = Arrays.copyOf(nullProps, nullProps.length + 1);
+        ignorar[nullProps.length] = "coordenadas";
 
         // Copiar solo las propiedades no-null de 'cambios' a 'existente'
         BeanUtils.copyProperties(cambios, existente, ignorar);
