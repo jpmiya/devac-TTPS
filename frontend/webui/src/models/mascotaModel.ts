@@ -9,7 +9,6 @@ export interface Mascota {
   fecha_de_perdida?: string;
   estado?: EstadoMascota;
   foto?: string;            // URL
-  coordenadas?: string;
   descripcion?: string;
   tipo?: string;
   raza?: string;

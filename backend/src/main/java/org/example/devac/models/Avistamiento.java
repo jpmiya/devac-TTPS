@@ -16,6 +16,8 @@ public class Avistamiento {
     private String foto; // arreglo de bytes
     private String coordenadas;
     private String comentario;
+    private String barrio;
+    private String ciudad;
     // que no se permita un Avistamiento q no tiene un usuario ni una mascota
     @ManyToOne
     @JoinColumn(name = "USUARIO_ID", nullable = false)
@@ -64,4 +66,19 @@ public class Avistamiento {
         return id;
     }
 
+    public String getBarrio() {
+        return barrio;
+    }
+
+    public void setBarrio(String barrio) {
+        this.barrio = barrio;
+    }
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
 }

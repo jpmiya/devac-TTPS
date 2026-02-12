@@ -16,7 +16,6 @@ type MascotaResponse = {
   color?: string;
   fechaDePerdida?: any;
   estado?: any;
-  coordenadas?: string;
   descripcion?: string;
   fotoUrl?: string;
 };
@@ -55,7 +54,6 @@ export class EditMascotaComponent implements OnInit {
     raza: '',
     tamanio: '',
     color: '',
-    coordenadas: '',
     descripcion: ''
   };
 
@@ -164,8 +162,7 @@ export class EditMascotaComponent implements OnInit {
           this.form.tamanio = (m.tamanio as any) ?? '';
           this.form.color = m.color ?? '';
           this.form.fechaDePerdida = fecha;
-          this.form.estado = estadoStr as any;
-          this.form.coordenadas = m.coordenadas ?? '';
+          this.form.estado = (m.estado as any) ?? 'PERDIDO_PROPIO';
           this.form.descripcion = m.descripcion ?? '';
 
           this.currentFotoUrl = m.fotoUrl ?? null;

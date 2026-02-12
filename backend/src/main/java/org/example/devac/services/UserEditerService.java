@@ -15,6 +15,9 @@ public class UserEditerService {
     @Autowired
     private UsuarioDAO<Usuario> usuarioDAO;
 
+    @Autowired
+    private GeorefService georefService;
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Usuario edit(Long id, Usuario cambios) {
@@ -28,6 +31,15 @@ public class UserEditerService {
 
         // Copiar solo las propiedades no-null de 'cambios' a 'existente'
         BeanUtils.copyProperties(cambios, existente, ignorar);
+
+        // Si vienen coordenadas, resolver barrio y ciudad con Georef
+        if (cambios.getCoordenadas() != null && !cambios.getCoordenadas().isBlank()) {
+            GeorefService.UbicacionResult ubicacion = georefService.resolverUbicacion(cambios.getCoordenadas());
+            if (ubicacion != null) {
+                existente.setBarrio(ubicacion.getBarrio());
+                existente.setCiudad(ubicacion.getCiudad());
+            }
+        }
 
         // Manejar password por separado (si viene, hashearlo)
         if (cambios.getPassword() != null && !cambios.getPassword().isEmpty()) {

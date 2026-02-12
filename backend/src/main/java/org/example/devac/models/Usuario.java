@@ -24,6 +24,7 @@ public class Usuario {
     private String telefono;
     private String barrio;
     private String ciudad;
+    private String coordenadas;
     private int posicion;
     private int puntos;
     private RolEnum rol;
@@ -160,6 +161,14 @@ public class Usuario {
 
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
+    }
+
+    public String getCoordenadas() {
+        return coordenadas;
+    }
+
+    public void setCoordenadas(String coordenadas) {
+        this.coordenadas = coordenadas;
     }
 
     public void setPosicion(int posicion) {

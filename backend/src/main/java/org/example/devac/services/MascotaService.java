@@ -16,6 +16,6 @@ public interface MascotaService {
     Mascota buscarPorId(Long id);
     Optional<Mascota> findById(Long id);
 
-    Mascota editar(Mascota mascota);
+    Mascota editar(Long mascotaId, MascotaRequest request, MultipartFile foto, Long usuarioId);
     Mascota editarConFoto(Long mascotaId, Mascota mascotaActualizada, MultipartFile foto);
 }

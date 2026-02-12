@@ -57,7 +57,6 @@ public class MascotaServiceImpl implements MascotaService {
                 .tamaño(request.getTamaño())
                 .color(request.getColor())
                 .fechaDePerdida(request.getFechaDePerdida())
-                .coordenadas(request.getCoordenadas())
                 .descripcion(request.getDescripcion())
                 .tipo(request.getTipo())
                 .raza(request.getRaza())
@@ -165,9 +164,48 @@ public class MascotaServiceImpl implements MascotaService {
 
     @Override
     @Transactional
-    public Mascota editar(Mascota mascota) {
-        // lógica de edición sin foto
-        return mascotaEditerService.edit(mascota.getId(), mascota);
+    public Mascota editar(Long mascotaId, MascotaRequest request, MultipartFile foto, Long usuarioId) {
+        // 1) Buscar mascota existente
+        Mascota actual = buscarPorId(mascotaId);
+
+        // 2) Validar dueño
+        if (actual.getDueno() == null || actual.getDueno().getId() == null) {
+            throw new BadRequestException("Mascota sin dueño (datos corruptos)");
+        }
+        if (!actual.getDueno().getId().equals(usuarioId)) {
+            throw new BadRequestException("No sos el dueño de esta mascota");
+        }
+
+        // 3) Construir mascota actualizada
+        Mascota mascota = new Mascota.Builder()
+                .dueno(actual.getDueno())
+                .nombre(request.getNombre())
+                .tipo(request.getTipo())
+                .raza(request.getRaza())
+                .tamaño(request.getTamaño())
+                .color(request.getColor())
+                .fechaDePerdida(request.getFechaDePerdida())
+                .descripcion(request.getDescripcion())
+                .estado(request.getEstado())
+                .build();
+        mascota.setId(mascotaId);
+
+        // 4) Actualizar en BD
+        Mascota updated = mascotaEditerService.edit(mascotaId, mascota);
+
+        // 5) Subir foto si vino
+        if (foto != null && !foto.isEmpty()) {
+            try {
+                String uploadedFileName = minioService.uploadFile(foto, mascotaId);
+                String fileUrl = minioService.getFileUrl(uploadedFileName);
+                updated.setFotoUrl(fileUrl);
+                updated = mascotaDAO.update(updated);
+            } catch (Exception e) {
+                throw new BadRequestException("Error al subir foto: " + e.getMessage());
+            }
+        }
+
+        return updated;
     }
 
     /**

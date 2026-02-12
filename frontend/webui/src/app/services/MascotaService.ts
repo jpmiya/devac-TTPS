@@ -9,6 +9,9 @@ export interface UsuarioRef {
   id: number;
   nombre?: string;
   email?: string;
+  barrio?: string;
+  ciudad?: string;
+  coordenadas?: string;   // "lat,lon"
 }
 
 export interface MascotaRequest {
@@ -19,7 +22,6 @@ export interface MascotaRequest {
   fechaDePerdida: string;    // camelCase
   estado: EstadoMascota;
   foto?: string;
-  coordenadas?: string;
   descripcion?: string;
   tipo?: string;
   raza?: string;
@@ -35,7 +37,6 @@ export interface Mascota {
   tamaño?: string;
   foto?: string;
   fotoUrl?: string;
-  coordenadas?: string;
   descripcion?: string;
 
   estado?: EstadoMascota;
@@ -74,7 +75,6 @@ export class MascotasService {
       fechaDePerdida: req.fechaDePerdida,
       estado: req.estado,
       foto: req.foto ?? null,
-      coordenadas: req.coordenadas ?? null,
       descripcion: req.descripcion ?? null,
       tipo: req.tipo ?? null,
       raza: req.raza ?? null,
