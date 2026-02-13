@@ -17,16 +17,30 @@
   <header class="topbar">
     <div class="topbar-left">
       <h1>Perros perdidos</h1>
-      <p>Reportes recientes en tu zona</p>
+      <p>
+        Reportes recientes en tu zona
+        <span *ngIf="searchText || filterType !== 'all'" style="margin-left: 8px; color: #666;">
+          ({{ filteredDogs.length }} {{ filteredDogs.length === 1 ? 'resultado' : 'resultados' }})
+        </span>
+      </p>
     </div>
 
     <div class="topbar-actions">
       <div class="search">
         <span class="icon">🔎</span>
-        <input type="text" placeholder="Buscar por nombre, zona o raza..." />
+        <input 
+          type="text" 
+          placeholder="Buscar por nombre, zona o raza..." 
+          [(ngModel)]="searchText"
+          (input)="onSearchChange(searchText)"
+        />
       </div>
 
-      <select class="select">
+      <select 
+        class="select" 
+        [(ngModel)]="filterType"
+        (change)="onFilterChange(filterType)"
+      >
         <option value="all">Todos</option>
         <option value="today">Hoy</option>
         <option value="week">Esta semana</option>
@@ -42,6 +56,20 @@
 
   <!-- ================= MAP ================= -->
   <section class="map-section" *ngIf="showMap && !loading">
+    <div class="map-controls" style="position: absolute; top: 20px; right: 20px; z-index: 1000; background: white; padding: 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+      <div style="font-weight: bold; margin-bottom: 8px;">Leyenda</div>
+      <div style="display: flex; align-items: center; margin-bottom: 4px;">
+        <span style="display: inline-block; width: 12px; height: 12px; background: #d32f2f; border-radius: 50%; margin-right: 8px;"></span>
+        <span style="font-size: 0.9em;">Perdidos ({{ missingDogsCount }})</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <span style="display: inline-block; width: 12px; height: 12px; background: #388e3c; border-radius: 50%; margin-right: 8px;"></span>
+        <span style="font-size: 0.9em;">Encontrados ({{ foundDogsCount }})</span>
+      </div>
+      <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #ddd; font-size: 0.85em; color: #666;">
+        Mostrando {{ filteredDogs.length }} de {{ dogs.length }}
+      </div>
+    </div>
     <div #lostDogsMap class="lost-dogs-map"></div>
   </section>
 
@@ -50,7 +78,12 @@
     <div class="stat-card">
       <div class="stat-title">Avisos</div>
       <div class="stat-value">{{ dogs.length || 0 }}</div>
-      <div class="stat-sub">Total</div>
+      <div class="stat-sub">
+        <span *ngIf="filteredDogs.length !== dogs.length">
+          ({{ filteredDogs.length }} filtrados)
+        </span>
+        <span *ngIf="filteredDogs.length === dogs.length">Total</span>
+      </div>
     </div>
 
     <div class="stat-card">
@@ -71,14 +104,18 @@
   </section>
 
   <!-- ================= EMPTY ================= -->
-  <div class="empty" *ngIf="!loading && !error && dogs.length === 0 && !showMap">
-    No hay avisos por el momento.
+  <div class="empty" *ngIf="!loading && !error && filteredDogs.length === 0 && !showMap">
+    <div *ngIf="searchText || filterType !== 'all'">
+      <p>No se encontraron resultados con los filtros aplicados.</p>
+      <button class="primary" (click)="clearFilters()">Limpiar filtros</button>
+    </div>
+    <p *ngIf="!searchText && filterType === 'all'">No hay avisos por el momento.</p>
   </div>
 
   <!-- ================= GRID ================= -->
-  <section class="grid" *ngIf="!loading && dogs.length && !showMap">
+  <section class="grid" *ngIf="!loading && filteredDogs.length && !showMap">
 
-    <article class="dog-card" *ngFor="let dog of dogs">
+    <article class="dog-card" *ngFor="let dog of paginatedDogs">
       <div class="thumb">
 
         <!-- IMAGEN -->
@@ -99,9 +136,9 @@
         <!-- BADGE -->
         <span
           class="badge"
-          [ngClass]="dog.estado === 'PERDIDO_PROPIO' ? 'missing' : 'found'"
+          [ngClass]="isMissing(dog) ? 'missing' : 'found'"
         >
-          {{ dog.estado === 'PERDIDO_PROPIO' ? 'PERDIDO' : 'ENCONTRADO' }}
+          {{ getStatusLabel(dog) }}
         </span>
       </div>
 
@@ -140,10 +177,26 @@
   </section>
 
   <!-- ================= FOOTER ================= -->
-  <footer class="bottom" *ngIf="!loading && dogs.length">
-    <button class="ghost">← Anterior</button>
-    <span class="pageinfo">Página 1 de 1</span>
-    <button class="ghost">Siguiente →</button>
+  <footer class="bottom" *ngIf="!loading && filteredDogs.length && !showMap">
+    <button 
+      class="ghost" 
+      (click)="prevPage()" 
+      [disabled]="!canGoPrev"
+      [style.opacity]="canGoPrev ? '1' : '0.5'"
+      [style.cursor]="canGoPrev ? 'pointer' : 'not-allowed'"
+    >
+      ← Anterior
+    </button>
+    <span class="pageinfo">Página {{ currentPage }} de {{ totalPages }}</span>
+    <button 
+      class="ghost" 
+      (click)="nextPage()" 
+      [disabled]="!canGoNext"
+      [style.opacity]="canGoNext ? '1' : '0.5'"
+      [style.cursor]="canGoNext ? 'pointer' : 'not-allowed'"
+    >
+      Siguiente →
+    </button>
   </footer>
 
 </div>

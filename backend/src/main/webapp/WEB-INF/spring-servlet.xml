@@ -16,4 +16,14 @@
 
     <mvc:annotation-driven />
 
+    <!-- Interceptor para validación de JWT -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/usuario/login"/>
+            <mvc:exclude-mapping path="/usuario/register"/>
+            <bean class="org.example.devac.config.AuthInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
 </beans>

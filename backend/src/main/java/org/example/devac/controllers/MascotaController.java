@@ -7,7 +7,7 @@ import org.example.devac.models.Usuario;
 import org.example.devac.services.MascotaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.devac.dto.MascotaResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,7 +56,7 @@ public class MascotaController {
             @PathVariable("id") Long id,
             @RequestPart("mascota") String mascotaJson,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
-            HttpSession session
+            HttpServletRequest request
     ) {
         System.out.println("ENTRE AL PUT editar id=" + id);
 
@@ -69,11 +69,11 @@ public class MascotaController {
         }
 
         // 1) Parse JSON -> DTO
-        final MascotaRequest request;
+        final MascotaRequest requestDto;
         try {
             System.out.println("[PUT] mascotaJson length=" + mascotaJson.length());
             System.out.println("[PUT] mascotaJson head=" + mascotaJson.substring(0, Math.min(200, mascotaJson.length())));
-            request = objectMapper.readValue(mascotaJson, MascotaRequest.class);
+            requestDto = objectMapper.readValue(mascotaJson, MascotaRequest.class);
         } catch (JsonProcessingException e) {
             System.err.println("[PUT] ERROR parseando JSON 'mascota': " + e.getMessage());
             return ResponseEntity.badRequest().body("JSON inválido en parte 'mascota': " + e.getOriginalMessage());
@@ -83,8 +83,8 @@ public class MascotaController {
         }
 
         try {
-            // 2) Auth por session
-            Long meId = (Long) session.getAttribute("USER_ID");
+            // 2) Auth por JWT (desde request attribute)
+            Long meId = (Long) request.getAttribute("USER_ID");
             if (meId == null) return ResponseEntity.status(401).body("No logueado");
 
             // 3) Buscar mascota actual
@@ -102,7 +102,6 @@ public class MascotaController {
 
             // 5) Logs de multipart
             System.out.println("=== PUT /mascota/" + id + " ===");
-            System.out.println("sessionId=" + session.getId());
             System.out.println("USER_ID=" + meId);
             System.out.println("foto null? " + (foto == null));
             if (foto != null) {
@@ -115,15 +114,15 @@ public class MascotaController {
             // 6) Construir “parcial” manteniendo dueño + id
             Mascota mascotaActualizada = new Mascota.Builder()
                     .dueno(actual.getDueno())
-                    .nombre(request.getNombre())
-                    .tipo(request.getTipo())
-                    .raza(request.getRaza())
-                    .tamaño(request.getTamaño())
-                    .color(request.getColor())
-                    .fechaDePerdida(request.getFechaDePerdida())
-                    .coordenadas(request.getCoordenadas())
-                    .descripcion(request.getDescripcion())
-                    .estado(request.getEstado() != null ? request.getEstado() : actual.getEstado())
+                    .nombre(requestDto.getNombre())
+                    .tipo(requestDto.getTipo())
+                    .raza(requestDto.getRaza())
+                    .tamaño(requestDto.getTamaño())
+                    .color(requestDto.getColor())
+                    .fechaDePerdida(requestDto.getFechaDePerdida())
+                    .coordenadas(requestDto.getCoordenadas() != null ? requestDto.getCoordenadas() : actual.getCoordenadas())
+                    .descripcion(requestDto.getDescripcion())
+                    .estado(requestDto.getEstado() != null ? requestDto.getEstado() : actual.getEstado())
                     .build();
 
             mascotaActualizada.setId(id);
@@ -151,8 +150,14 @@ public class MascotaController {
         return ResponseEntity.ok(toResponse(m));
     }
 
-
-
+    @GetMapping("/findAll")
+    public ResponseEntity<List<MascotaResponse>> getAll() {
+        List<Mascota> todas = mascotaService.findAll();
+        List<MascotaResponse> resp = todas.stream()
+                .map(this::toResponse)
+                .toList();
+        return ResponseEntity.ok(resp);
+    }
 
     @GetMapping("/findAllLost")
     public ResponseEntity<List<MascotaResponse>> getAllLost() {

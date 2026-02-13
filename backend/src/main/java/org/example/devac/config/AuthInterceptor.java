@@ -26,11 +26,14 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // Rutas públicas adicionales (GET únicamente)
+        // Rutas públicas adicionales: GET de mascotas específicas
         String path = request.getRequestURI();
         if ("GET".equalsIgnoreCase(request.getMethod())) {
-            if (path.matches("/mascota/\\d+") || path.equals("/mascota/findAllLost")) {
-                return true; // Permitir acceso sin JWT
+            // /mascota/{id}, /mascota/findAll o /mascota/findAllLost
+            if (path.matches(".*/mascota/\\d+$") 
+                || path.endsWith("/mascota/findAll")
+                || path.endsWith("/mascota/findAllLost")) {
+                return true;
             }
         }
 
@@ -42,7 +45,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                     String token = cookie.getValue();
                     if (JwtUtils.validateToken(token)) {
                         userId = JwtUtils.extractUserId(token);
-                        request.setAttribute("USER_ID", userId); // para usar en controllers
+                        request.setAttribute("USER_ID", userId);
                     } else {
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                         return false;

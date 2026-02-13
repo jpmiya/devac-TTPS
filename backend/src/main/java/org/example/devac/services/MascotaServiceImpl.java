@@ -32,6 +32,11 @@ public class MascotaServiceImpl implements MascotaService {
 
 
     @Override
+    public List<Mascota> findAll() {
+        return mascotaDAO.getAll("id");
+    }
+
+    @Override
     public Mascota registrar(MascotaRequest request) {
         return registrar(request, null);
     }

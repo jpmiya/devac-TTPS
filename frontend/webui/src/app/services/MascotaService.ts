@@ -68,6 +68,12 @@ export class MascotasService {
     });
   }
 
+  findAll(): Observable<Mascota[]> {
+    return this.http.get<Mascota[]>(`${this.baseUrl}/mascota/findAll`, {
+      withCredentials: true,
+    });
+  }
+
   findAllAdopted(): Observable<Mascota[]> {
     return this.http.get<Mascota[]>(`${this.baseUrl}/mascota/findAllAdopted`, {
       withCredentials: true,
