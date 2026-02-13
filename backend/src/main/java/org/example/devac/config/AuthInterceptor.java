@@ -26,6 +26,13 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        // Rutas públicas adicionales (GET únicamente)
+        String path = request.getRequestURI();
+        if ("GET".equalsIgnoreCase(request.getMethod())) {
+            if (path.matches("/mascota/\\d+") || path.equals("/mascota/findAllLost")) {
+                return true; // Permitir acceso sin JWT
+            }
+        }
 
         Cookie[] cookies = request.getCookies();
         Long userId = null;
